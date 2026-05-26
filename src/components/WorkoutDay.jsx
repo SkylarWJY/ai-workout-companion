@@ -8,9 +8,12 @@ import ProgressionHint from './ProgressionHint.jsx';
 import WorkoutSummary from './WorkoutSummary.jsx';
 import ProgressBar from './ProgressBar.jsx';
 import VariantBadge from './VariantBadge.jsx';
+import WarmUpSection from './WarmUpSection.jsx';
+import CoolDownSection from './CoolDownSection.jsx';
 import { useRestTimer } from '../hooks/useRestTimer.js';
 import { parseRepRange, fmtRest } from '../utils/format.js';
 import { useLang, locEx, locWorkout } from '../i18n/index.jsx';
+import { WARMUPS, COOLDOWNS } from '../data/warmCoolData.js';
 
 export default function WorkoutDay({ workout, session, setSession, onBack, onComplete }) {
   const { t, lang } = useLang();
@@ -114,6 +117,17 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
         onDismiss={() => setHintFor(null)}
       />
 
+      {WARMUPS[workout.id] && (
+        <div className="mt-4">
+          <WarmUpSection
+            workoutType={workout.id}
+            warmup={WARMUPS[workout.id]}
+            done={!!session.warmUpDone}
+            onMarkDone={() => setSession({ ...session, warmUpDone: !session.warmUpDone })}
+          />
+        </div>
+      )}
+
       {activeExercise && !allDone && (
         <div className="px-5 pt-4">
           <div className="text-[11px] uppercase tracking-[0.18em] text-ink-300 mb-2">
@@ -149,6 +163,14 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
           );
         })}
       </div>
+
+      {COOLDOWNS[workout.id] && (
+        <CoolDownSection
+          stretches={COOLDOWNS[workout.id]}
+          done={!!session.coolDownDone}
+          onDone={() => setSession({ ...session, coolDownDone: true })}
+        />
+      )}
 
       {allDone && !showSummary && (
         <div className="px-5 pt-6">

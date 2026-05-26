@@ -2,6 +2,7 @@ import React, { createContext, useContext, useCallback } from 'react';
 import { STRINGS } from './strings.js';
 import { EXERCISES_ZH } from './exercisesZh.js';
 import { WORKOUTS_ZH } from './workoutsZh.js';
+import { COOLDOWNS_ZH } from './warmCoolZh.js';
 import { useLocalStorage } from '../hooks/useLocalStorage.js';
 
 const LanguageContext = createContext({
@@ -52,4 +53,11 @@ export function locWorkout(workout, field, lang) {
   const zh = WORKOUTS_ZH[workout.id]?.[field];
   if (zh != null) return zh;
   return workout[field];
+}
+
+export function locStretch(stretch, field, lang) {
+  if (lang !== 'zh') return stretch[field];
+  const zh = COOLDOWNS_ZH[stretch.id]?.[field];
+  if (zh != null) return zh;
+  return stretch[field];
 }

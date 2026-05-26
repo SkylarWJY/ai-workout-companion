@@ -149,6 +149,26 @@ export const STRINGS = {
     'demo.loading': 'Loading demo…',
     'demo.unavailable': 'demo unavailable',
 
+    // Warm-up / Cool-down
+    'warm.title': 'Warm-Up',
+    'warm.subPush': 'Follow along · 10–15 reps each move · Repeat 2 rounds',
+    'warm.subPull': 'Follow along · 10–15 reps each move · Repeat 2 rounds',
+    'warm.subLeg': 'Follow along · 10 reps each move',
+    'warm.play': 'Play warm-up',
+    'warm.pause': 'Pause',
+    'warm.replay': 'Replay',
+    'warm.markDone': 'Mark warm-up done',
+    'warm.done': 'Warm-up done',
+    'cool.title': 'Cool-Down',
+    'cool.sub': '30 seconds per stretch · breathe deep',
+    'cool.start': 'Start cool-down',
+    'cool.next': 'Next stretch',
+    'cool.finish': 'Finish',
+    'cool.done': 'Cool-down done',
+    'cool.target': 'Targets',
+    'cool.holdEach': 'Hold each · 30s',
+    'cool.stretchOf': 'Stretch',
+
     // Variants
     'variant.or': 'or',
     'variant.alsoAs': 'Also as',
@@ -315,6 +335,26 @@ export const STRINGS = {
     'demo.live': '动作演示',
     'demo.loading': '加载演示中…',
     'demo.unavailable': '演示暂不可用',
+
+    // Warm-up / Cool-down
+    'warm.title': '热身',
+    'warm.subPush': '跟练 · 每个动作 10–15 次 · 重复 2 轮',
+    'warm.subPull': '跟练 · 每个动作 10–15 次 · 重复 2 轮',
+    'warm.subLeg': '跟练 · 每个动作 10 次',
+    'warm.play': '开始热身',
+    'warm.pause': '暂停',
+    'warm.replay': '重播',
+    'warm.markDone': '热身完成',
+    'warm.done': '热身已完成',
+    'cool.title': '拉伸放松',
+    'cool.sub': '每个动作 30 秒 · 深呼吸',
+    'cool.start': '开始拉伸',
+    'cool.next': '下一个拉伸',
+    'cool.finish': '完成',
+    'cool.done': '拉伸完成',
+    'cool.target': '目标部位',
+    'cool.holdEach': '每个保持 · 30 秒',
+    'cool.stretchOf': '第',
 
     // Variants
     'variant.or': '或',
