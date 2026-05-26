@@ -1,0 +1,18 @@
+{
+  "name": "ATLAS — AI Workout Companion",
+  "short_name": "ATLAS",
+  "description": "Your AI workout companion for body recomposition.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAF9F6",
+  "theme_color": "#0A0A0A",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
