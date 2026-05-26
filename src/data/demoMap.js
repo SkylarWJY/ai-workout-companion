@@ -37,7 +37,7 @@ export const DEMO_VARIANTS = {
         hold: 'Abs braced · glutes tight · body straight',
         lower: 'No movement — pure isometric',
       },
-      youtubeId: null, // no Plank tutorial in pack
+      youtubeId: 'gni543DXmvI', // ArielYu_Fit — how to perfect plank
     },
   ],
 

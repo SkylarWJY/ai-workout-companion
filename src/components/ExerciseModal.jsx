@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import PriorityChip from './PriorityChip.jsx';
 import ExerciseDemo from './ExerciseDemo.jsx';
 import TempoBlock from './TempoBlock.jsx';
-import YouTubeEmbed from './YouTubeEmbed.jsx';
 import { useLang, locEx } from '../i18n/index.jsx';
 import { fmtRest } from '../utils/format.js';
 import { demoVariants } from '../data/demoMap.js';
@@ -89,8 +88,6 @@ export default function ExerciseModal({ open, exercise, onClose }) {
                   isStatic={meta.isStatic}
                 />
               )}
-
-              {meta?.youtubeId && <YouTubeEmbed videoId={meta.youtubeId} />}
 
               <Section title={t('modal.whyMatters')}>
                 <p className="text-[14px] leading-relaxed text-ink-700 dark:text-bone-100">

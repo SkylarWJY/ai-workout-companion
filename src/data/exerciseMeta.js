@@ -133,8 +133,7 @@ export const EXERCISE_META = {
       hold: '1 sec stretched hold',
       lower: '3 sec roll outward',
     },
-    // No specific Ab Wheel tutorial in pack — leave empty so embed hides.
-    youtubeId: null,
+    youtubeId: 'XWJmFD_AdbM', // Jeremy Ethier — STOP Using The Ab Roller Like This!
   },
 
   // ── LEG ──
@@ -206,7 +205,7 @@ export const EXERCISE_META = {
       hold: '1 sec hold while bracing core',
       lower: '2 sec return to starting position',
     },
-    youtubeId: null, // No specific Deadbug tutorial in pack
+    youtubeId: 'qV0K0dwPYAU', // Nuffield Health — The Deadbug: Master This Core Exercise
   },
 };
 
