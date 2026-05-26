@@ -149,6 +149,23 @@ export const STRINGS = {
     'demo.loading': 'Loading demo…',
     'demo.unavailable': 'demo unavailable',
 
+    // Tempo
+    'tempo.label': 'Tempo',
+    'tempo.lift': 'Lift',
+    'tempo.hold': 'Hold',
+    'tempo.lower': 'Lower',
+    'tempo.static': 'Static Hold',
+    'tempo.sec': 'sec',
+    'tempo.format': 'lift · hold · lower',
+
+    // Tutorial
+    'tutorial.label': 'Tutorial',
+    'tutorial.watch': 'Watch tutorial',
+    'tutorial.openYouTube': 'Open in YouTube',
+
+    // Warm-up alt
+    'warm.altWatch': 'Watch alternate',
+
     // Warm-up / Cool-down
     'warm.title': 'Warm-Up',
     'warm.subPush': 'Follow along · 10–15 reps each move · Repeat 2 rounds',
@@ -335,6 +352,23 @@ export const STRINGS = {
     'demo.live': '动作演示',
     'demo.loading': '加载演示中…',
     'demo.unavailable': '演示暂不可用',
+
+    // Tempo
+    'tempo.label': '节奏',
+    'tempo.lift': '发力',
+    'tempo.hold': '顶部停留',
+    'tempo.lower': '离心',
+    'tempo.static': '静态保持',
+    'tempo.sec': '秒',
+    'tempo.format': '发力 · 停留 · 离心',
+
+    // Tutorial
+    'tutorial.label': '教学视频',
+    'tutorial.watch': '观看教学',
+    'tutorial.openYouTube': '在 YouTube 中打开',
+
+    // Warm-up alt
+    'warm.altWatch': '看备选热身',
 
     // Warm-up / Cool-down
     'warm.title': '热身',

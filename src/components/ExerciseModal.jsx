@@ -1,12 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import PriorityChip from './PriorityChip.jsx';
 import ExerciseDemo from './ExerciseDemo.jsx';
+import TempoBlock from './TempoBlock.jsx';
+import YouTubeEmbed from './YouTubeEmbed.jsx';
 import { useLang, locEx } from '../i18n/index.jsx';
 import { fmtRest } from '../utils/format.js';
+import { demoVariants } from '../data/demoMap.js';
+import { resolveMeta } from '../data/exerciseMeta.js';
 
 export default function ExerciseModal({ open, exercise, onClose }) {
   const { t, lang } = useLang();
+  const variants = useMemo(
+    () => (exercise ? demoVariants(exercise.id) : []),
+    [exercise],
+  );
+  const [variantIdx, setVariantIdx] = useState(0);
+
+  // reset variant when modal re-opens for a different exercise
+  useEffect(() => {
+    setVariantIdx(0);
+  }, [exercise?.id]);
+
+  const variant = variants[variantIdx];
+  const meta = exercise ? resolveMeta(exercise.id, variant) : null;
+
   return (
     <AnimatePresence>
       {open && exercise && (
@@ -24,7 +42,7 @@ export default function ExerciseModal({ open, exercise, onClose }) {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', stiffness: 280, damping: 32 }}
-            className="fixed inset-x-0 bottom-0 z-40 max-h-[88vh] overflow-y-auto rounded-t-[28px] bg-bone-50 dark:bg-ink-900 border-t border-black/5 dark:border-white/5 pb-safe"
+            className="fixed inset-x-0 bottom-0 z-40 max-h-[90vh] overflow-y-auto rounded-t-[28px] bg-bone-50 dark:bg-ink-900 border-t border-black/5 dark:border-white/5 pb-safe"
           >
             <div className="sticky top-0 z-10 flex justify-between items-center bg-bone-50/85 dark:bg-ink-900/85 backdrop-blur-xl px-5 pt-3 pb-2 border-b border-black/5 dark:border-white/5">
               <div className="w-9 h-1 mx-auto bg-ink-200 dark:bg-ink-600 rounded-full absolute left-1/2 -translate-x-1/2 top-2" />
@@ -48,12 +66,31 @@ export default function ExerciseModal({ open, exercise, onClose }) {
                 <div className="mt-1 text-sm text-ink-400 dark:text-ink-200 tabular">
                   {exercise.sets} × {exercise.repRange} · {t('workout.rest').toLowerCase()} {fmtRest(exercise.restSeconds)} · {exercise.suggestedWeight}
                 </div>
+                {meta?.tempo && (
+                  <div className="mt-1 text-[12px] tabular text-ink-500 dark:text-ink-100">
+                    {t('tempo.label')} · {meta.tempo === 'Static' ? t('tempo.static') : meta.tempo}
+                  </div>
+                )}
               </div>
 
               <ExerciseDemo
                 exerciseId={exercise.id}
                 name={locEx(exercise, 'name', lang)}
+                variantIdx={variantIdx}
+                onVariantChange={setVariantIdx}
               />
+
+              {meta?.tempo && (
+                <TempoBlock
+                  exerciseId={exercise.id}
+                  variantKey={variant?.key}
+                  tempo={meta.tempo}
+                  tempoCues={meta.tempoCues}
+                  isStatic={meta.isStatic}
+                />
+              )}
+
+              {meta?.youtubeId && <YouTubeEmbed videoId={meta.youtubeId} />}
 
               <Section title={t('modal.whyMatters')}>
                 <p className="text-[14px] leading-relaxed text-ink-700 dark:text-bone-100">

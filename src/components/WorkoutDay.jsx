@@ -14,6 +14,7 @@ import { useRestTimer } from '../hooks/useRestTimer.js';
 import { parseRepRange, fmtRest } from '../utils/format.js';
 import { useLang, locEx, locWorkout } from '../i18n/index.jsx';
 import { WARMUPS, COOLDOWNS } from '../data/warmCoolData.js';
+import { exerciseMeta } from '../data/exerciseMeta.js';
 
 export default function WorkoutDay({ workout, session, setSession, onBack, onComplete }) {
   const { t, lang } = useLang();
@@ -247,6 +248,7 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
 function ActiveFocus({ exercise, setNumber, onLog, onOpen, restRunning }) {
   const { t, lang } = useLang();
   const muscles = locEx(exercise, 'primaryMuscles', lang);
+  const meta = exerciseMeta(exercise.id);
   return (
     <motion.div
       layout
@@ -277,10 +279,10 @@ function ActiveFocus({ exercise, setNumber, onLog, onOpen, restRunning }) {
         </button>
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-2 text-[11px] uppercase tracking-wider opacity-70">
+      <div className="mt-4 grid grid-cols-4 gap-2 text-[11px] uppercase tracking-wider opacity-70">
         <div>
           <div>{t('workout.weight')}</div>
-          <div className="mt-0.5 text-sm normal-case tracking-normal opacity-100 font-medium tabular">
+          <div className="mt-0.5 text-sm normal-case tracking-normal opacity-100 font-medium tabular leading-tight">
             {exercise.suggestedWeight}
           </div>
         </div>
@@ -296,6 +298,14 @@ function ActiveFocus({ exercise, setNumber, onLog, onOpen, restRunning }) {
             {fmtRest(exercise.restSeconds)}
           </div>
         </div>
+        {meta.tempo && (
+          <div>
+            <div>{t('tempo.label')}</div>
+            <div className="mt-0.5 text-sm normal-case tracking-normal opacity-100 font-medium tabular">
+              {meta.tempo === 'Static' ? '—' : meta.tempo}
+            </div>
+          </div>
+        )}
       </div>
 
       <button

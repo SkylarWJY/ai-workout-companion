@@ -1,12 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useT } from '../i18n/index.jsx';
+import YouTubeEmbed from './YouTubeEmbed.jsx';
 
 export default function WarmUpSection({ workoutType, warmup, done, onMarkDone }) {
   const t = useT();
   const videoRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [ended, setEnded] = useState(false);
+  const [showAlt, setShowAlt] = useState(false);
 
   const subKey = {
     push: 'warm.subPush',
@@ -122,7 +124,32 @@ export default function WarmUpSection({ workoutType, warmup, done, onMarkDone })
               {done ? t('warm.done') : t('warm.markDone')}
             </button>
           </div>
+
+          {warmup.altYoutubeId && (
+            <button
+              onClick={() => setShowAlt((v) => !v)}
+              className="w-full text-[11px] uppercase tracking-wider text-ink-300 hover:text-ink-700 dark:hover:text-bone-100 pt-1"
+            >
+              {showAlt ? '↑' : '↓'} {t('warm.altWatch')}
+            </button>
+          )}
         </div>
+
+        <AnimatePresence>
+          {showAlt && warmup.altYoutubeId && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="overflow-hidden border-t border-black/5 dark:border-white/5"
+            >
+              <div className="p-4">
+                <YouTubeEmbed videoId={warmup.altYoutubeId} />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </section>
   );

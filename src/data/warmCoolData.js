@@ -6,16 +6,19 @@ export const WARMUPS = {
     video: '/warmup/upper.mov',
     repsPerMove: '10–15',
     rounds: 2,
+    altYoutubeId: '3eRXUNyOsYc',
   },
   pull: {
     video: '/warmup/upper.mov',
     repsPerMove: '10–15',
     rounds: 2,
+    altYoutubeId: '3eRXUNyOsYc',
   },
   leg: {
     video: '/warmup/leg.mov',
     repsPerMove: '10',
     rounds: 1,
+    altYoutubeId: 'KDI03y0rzvs',
   },
 };
 

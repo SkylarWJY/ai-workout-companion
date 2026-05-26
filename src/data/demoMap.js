@@ -27,7 +27,18 @@ export const DEMO_VARIANTS = {
   ],
   'push-6': [
     { key: 'bodyweight', slug: 'Hanging_Leg_Raise' },
-    { key: 'plank', slug: 'Plank' },
+    {
+      key: 'plank',
+      slug: 'Plank',
+      isStatic: true,
+      tempo: 'Static',
+      tempoCues: {
+        lift: 'Hold a tight core position for 20–40 seconds',
+        hold: 'Abs braced · glutes tight · body straight',
+        lower: 'No movement — pure isometric',
+      },
+      youtubeId: null, // no Plank tutorial in pack
+    },
   ],
 
   // ── PULL ──
@@ -45,7 +56,17 @@ export const DEMO_VARIANTS = {
   ],
   'pull-7': [
     { key: 'abwheel', slug: 'Ab_Roller' },
-    { key: 'cablecrunch', slug: 'Cable_Crunch' },
+    {
+      key: 'cablecrunch',
+      slug: 'Cable_Crunch',
+      tempo: '2-1-3',
+      tempoCues: {
+        lift: '2 sec crunch downward',
+        hold: '1 sec squeeze abs',
+        lower: '3 sec return upward',
+      },
+      youtubeId: 'K2m0jj6RfYg', // STOP Making This Cable Crunch MISTAKE
+    },
   ],
 
   // ── LEG ──

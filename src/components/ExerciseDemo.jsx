@@ -3,10 +3,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { demoVariants, demoUrlsForSlug } from '../data/demoMap.js';
 import { useT } from '../i18n/index.jsx';
 
-export default function ExerciseDemo({ exerciseId, name, intervalMs = 900 }) {
+export default function ExerciseDemo({
+  exerciseId,
+  name,
+  intervalMs = 900,
+  variantIdx: controlledIdx,
+  onVariantChange,
+}) {
   const t = useT();
   const variants = useMemo(() => demoVariants(exerciseId), [exerciseId]);
-  const [variantIdx, setVariantIdx] = useState(0);
+  const [localIdx, setLocalIdx] = useState(0);
+  const variantIdx = controlledIdx ?? localIdx;
+  const setVariantIdx = (i) => {
+    if (onVariantChange) onVariantChange(i);
+    else setLocalIdx(i);
+  };
   const variant = variants[variantIdx];
   const urls = useMemo(
     () => (variant ? demoUrlsForSlug(variant.slug) : null),
