@@ -16,6 +16,11 @@ export const DEMO_VARIANTS = {
   ],
   'push-2': [
     { key: 'dumbbell', slug: 'Side_Lateral_Raise' },
+    {
+      key: 'machine',
+      slug: 'Side_Lateral_Raise',
+      youtubeId: 'JlT2xB92lY8', // DeltaBolic — Cable Lateral Raise Complete Guide
+    },
     { key: 'band', slug: 'Lateral_Raise_-_With_Bands' },
   ],
   'push-3': [{ key: 'dumbbell', slug: 'Incline_Dumbbell_Press' }],
@@ -74,11 +79,22 @@ export const DEMO_VARIANTS = {
   'leg-2': [{ key: 'dumbbell', slug: 'Romanian_Deadlift' }],
   'leg-3': [{ key: 'dumbbell', slug: 'Dumbbell_Lunges' }],
   'leg-4': [
+    { key: 'dumbbell', slug: 'Barbell_Hip_Thrust' },
+    {
+      key: 'machine',
+      slug: 'Barbell_Hip_Thrust',
+      youtubeId: '0xfdeCBwoYw', // Booty Builder — Hip Thrust Machine Correct vs Incorrect
+    },
     { key: 'barbell', slug: 'Barbell_Hip_Thrust' },
     { key: 'smith', slug: 'Smith_Machine_Hip_Raise' },
   ],
   'leg-5': [
     { key: 'dumbbell', slug: 'Side_Lateral_Raise' },
+    {
+      key: 'machine',
+      slug: 'Side_Lateral_Raise',
+      youtubeId: 'JlT2xB92lY8', // DeltaBolic — Cable Lateral Raise Complete Guide
+    },
     { key: 'band', slug: 'Lateral_Raise_-_With_Bands' },
   ],
   'leg-6': [{ key: 'bodyweight', slug: 'Standing_Calf_Raises' }],
