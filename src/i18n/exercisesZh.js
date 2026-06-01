@@ -154,7 +154,7 @@ export const EXERCISES_ZH = {
     primaryMuscles: ['背阔肌', '背宽'],
     secondaryMuscles: ['肱二头肌', '后束'],
     whyItMatters:
-      '直接训练背阔宽度。恢复 70–80 lb 是 V 形身材的关键里程碑。',
+      '直接训练背阔宽度。渐进超负荷是打造 V 形身材的关键。',
     howTo: [
       '握距略宽于肩。',
       '拉到上胸 — 肘部向下向后。',

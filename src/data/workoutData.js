@@ -1,16 +1,18 @@
 // Workout program — designed for body recomposition, shoulder/back hypertrophy,
 // athletic aesthetic physique. Knee + lower-back friendly.
 
+// Default demo profile. Every field is user-editable from the Dashboard
+// goals editor — these values are just sensible placeholders.
 export const USER_PROFILE = {
   name: 'Athlete',
   goals: ['Fat Loss', 'Shoulder & Back Hypertrophy', 'Athletic Aesthetic'],
-  currentBodyFat: 25,
-  targetBodyFat: 18.5,
+  currentBodyFat: 20,
+  targetBodyFat: 15,
   weakPoints: ['Mid delts', 'Rear delts', 'Upper back', 'Lats'],
   constraints: ['Knee-friendly', 'Lower-back friendly'],
   pullUpProgression: {
-    current: '−50 lb',
-    target: 'Goal: unassisted × 6',
+    current: 'Assisted',
+    target: 'Unassisted × 6',
   },
 };
 
@@ -266,7 +268,7 @@ export const PULL_DAY = {
       sets: 4,
       repRange: '6–10',
       restSeconds: 90,
-      suggestedWeight: '~50 lb assistance',
+      suggestedWeight: 'Assisted as needed',
       currentWeight: '',
       goalWeight: 'Reduce assistance progressively',
       priority: 'extreme',
@@ -333,14 +335,14 @@ export const PULL_DAY = {
       sets: 3,
       repRange: '8–12',
       restSeconds: 90,
-      suggestedWeight: '40–55 lb · goal 70–80 lb',
+      suggestedWeight: 'Moderate–heavy',
       currentWeight: '',
-      goalWeight: '70–80 lb',
+      goalWeight: '',
       priority: 'extreme',
       primaryMuscles: ['Lats', 'Back Width'],
       secondaryMuscles: ['Biceps', 'Rear Delts'],
       whyItMatters:
-        'Direct lat width work. Returning to 70–80 lb load is the key milestone for the v-taper.',
+        'Direct lat width work. Progressive overload here is the key milestone for the v-taper.',
       howTo: [
         'Grip slightly wider than shoulders.',
         'Pull bar to upper chest — drive elbows down and back.',
@@ -400,9 +402,9 @@ export const PULL_DAY = {
       sets: 3,
       repRange: '8–12 ea',
       restSeconds: 90,
-      suggestedWeight: '7.5 lb · goal 15–25 lb',
-      currentWeight: '7.5 lb',
-      goalWeight: '15–25 lb',
+      suggestedWeight: 'DB 10–25 lb ea',
+      currentWeight: '',
+      goalWeight: '',
       priority: 'high',
       primaryMuscles: ['Lats', 'Mid Back'],
       secondaryMuscles: ['Core', 'Biceps', 'Forearms'],
@@ -433,8 +435,8 @@ export const PULL_DAY = {
       sets: 3,
       repRange: '10–15',
       restSeconds: 90,
-      suggestedWeight: '~20 lb',
-      currentWeight: '20 lb',
+      suggestedWeight: 'DB / machine — moderate',
+      currentWeight: '',
       goalWeight: '',
       priority: 'moderate',
       primaryMuscles: ['Biceps'],
