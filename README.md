@@ -94,7 +94,27 @@ Each row has color-coded icon + seconds + verbal coaching cue. No fitness jargon
 
 <br clear="right"/>
 
-### ⑥ Cool-down — 30-second ring timer
+### ⑥ Logger — record every set so you can dial in the load
+
+<img src="docs/screenshots/05b-logger.png" alt="Set Logger" width="320" align="right" />
+
+**EN.** Tap **COMPLETE SET** on the active card and a quick-entry sheet slides up. Log three things per set:
+- **Weight** — in lb or kg (toggle in Settings)
+- **Reps** — the number you actually hit, not the target
+- **Difficulty** — Easy · Moderate · Hard · Failure
+
+That last column is the unlock. After a few weeks every set you've ever done is on file in **Session History (⑨)**, so you can see *"I hit 25 lb × 12 'Easy' last Monday → bump to 30 lb today"* or *"shoulder press has been 'Hard' three sessions in a row → de-load 10%."* Progressive overload, but driven by data instead of guesswork.
+
+**中文.** 在当前训练卡片上点 **COMPLETE SET**，会从底部弹出快速录入面板，每组记三件事：
+- **重量** — lb 或 kg（设置里切换单位）
+- **次数** — 你实际完成的，不是目标数
+- **吃力程度** — 轻松 · 中等 · 吃力 · 力竭
+
+最后一栏才是真正的杀手锏。练几周之后所有历史组都在 **训练历史 (⑨)** 里，你可以一眼看出 *"上周一 25 lb × 12 标了'轻松' → 今天加到 30 lb"* 或 *"肩推连续三次'吃力' → 减 10% 重量先稳定一下"*。**渐进超负荷**不再靠感觉，靠数据。
+
+<br clear="right"/>
+
+### ⑦ Cool-down — 30-second ring timer
 
 <img src="docs/screenshots/06-cooldown-timer.png" alt="Cool-down Timer" width="320" align="right" />
 
@@ -104,7 +124,7 @@ Each row has color-coded icon + seconds + verbal coaching cue. No fitness jargon
 
 <br clear="right"/>
 
-### ⑦ Settings — gear icon top-right
+### ⑧ Settings — gear icon top-right
 
 <img src="docs/screenshots/07-settings.png" alt="Settings" width="320" align="right" />
 
@@ -124,7 +144,7 @@ Each row has color-coded icon + seconds + verbal coaching cue. No fitness jargon
 
 <br clear="right"/>
 
-### ⑧ Session History — every set you logged
+### ⑨ Session History — every set you logged
 
 <img src="docs/screenshots/08-history-empty.png" alt="History" width="320" align="right" />
 
@@ -138,7 +158,7 @@ Each row has color-coded icon + seconds + verbal coaching cue. No fitness jargon
 
 <br clear="right"/>
 
-### ⑨ Bilingual — the entire app in 中文
+### ⑩ Bilingual — the entire app in 中文
 
 <table>
 <tr>

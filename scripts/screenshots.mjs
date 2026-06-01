@@ -75,6 +75,9 @@ await page.evaluate(() => {
   day?.click();
 });
 await sleep(1200);
+// Wait for poster image to load
+await page.waitForSelector('video[poster]', { timeout: 4000 }).catch(() => {});
+await sleep(800);
 await shot('02-workout-day');
 
 // -------- 3. Body Map close-up --------
@@ -103,6 +106,38 @@ await page.evaluate(() => {
 });
 await sleep(600);
 await shot('05-tempo-tutorial');
+
+// -------- 5b. Logger sheet (record a set) --------
+// First close the open exercise modal so we're back on the workout day
+await page.evaluate(() => {
+  const done = [...document.querySelectorAll('button')].find(
+    (b) => b.textContent.trim() === 'Done',
+  );
+  done?.click();
+});
+await sleep(500);
+await page.evaluate(() => {
+  window.scrollTo(0, 0);
+});
+await sleep(300);
+// Tap "Complete Set" on the Up Next active focus card
+await page.evaluate(() => {
+  const btn = [...document.querySelectorAll('button')].find(
+    (b) => b.textContent.trim().toUpperCase() === 'COMPLETE SET',
+  );
+  btn?.click();
+});
+await sleep(900);
+await shot('05b-logger');
+
+// Close logger
+await page.evaluate(() => {
+  const cancel = [...document.querySelectorAll('button')].find(
+    (b) => b.textContent.trim() === 'Cancel',
+  );
+  cancel?.click();
+});
+await sleep(500);
 
 // -------- 6. Cool-down active --------
 await page.evaluate(() => {

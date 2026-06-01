@@ -4,18 +4,21 @@
 export const WARMUPS = {
   push: {
     video: '/warmup/upper.mov',
+    poster: '/warmup/upper-poster.jpg',
     repsPerMove: '10–15',
     rounds: 2,
     altYoutubeId: '3eRXUNyOsYc',
   },
   pull: {
     video: '/warmup/upper.mov',
+    poster: '/warmup/upper-poster.jpg',
     repsPerMove: '10–15',
     rounds: 2,
     altYoutubeId: '3eRXUNyOsYc',
   },
   leg: {
     video: '/warmup/leg.mov',
+    poster: '/warmup/leg-poster.jpg',
     repsPerMove: '10',
     rounds: 1,
     altYoutubeId: 'KDI03y0rzvs',

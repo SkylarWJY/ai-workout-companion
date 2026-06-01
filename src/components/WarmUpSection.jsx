@@ -59,6 +59,7 @@ export default function WarmUpSection({ workoutType, warmup, done, onMarkDone })
           <video
             ref={videoRef}
             src={warmup.video}
+            poster={warmup.poster}
             playsInline
             preload="metadata"
             controls={false}
