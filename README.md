@@ -1,96 +1,177 @@
 # ATLAS — AI Workout Companion
 
-> **Live:** [ai-workout-companion.vercel.app](https://ai-workout-companion.vercel.app)
->
-> A mobile-first, AI-grade fitness PWA. Not a static workout PDF. Not another rep counter. A *companion* — every move shows you the right tempo, the right tutorial video, the right intensity, and which muscles you actually trained.
+> **Live:** [ai-workout-companion.vercel.app](https://ai-workout-companion.vercel.app) · **Free · PWA · No login**
 
-![ATLAS Body Map](public/anatomy/front.png)
+A mobile-first fitness app that actually knows what you're training.
+Real anatomical body map, YouTube Shorts tutorials per variant, tempo coaching,
+warm-up / cool-down videos, and full session history — all offline-first.
 
----
-
-## Why ATLAS is different
-
-Most fitness apps are one of two things:
-
-1. **A logbook** — you type numbers into rows.
-2. **A workout PDF in HTML** — pictures + sets/reps with no intelligence.
-
-ATLAS is built around **what your trainer would actually say to you mid-set**.
-
-### 1. Real anatomical body map per training day
-
-![Body Map](https://github.com/SkylarWJY/ai-workout-companion/raw/main/public/anatomy/front.png)
-
-Tap into any training day and the top of the screen shows a **front + back view of the human body** rendered from Julien Bouglé's 1899 anatomical plates (public domain). Each muscle is highlighted by **training intensity** — Light → Moderate → Heavy → Peak — computed from every exercise's priority, primary muscle, and secondary muscle. You see at a glance: "today, side delts get hammered, lats are at rest."
-
-### 2. Tempo notation that actually means something
-
-Every exercise carries the exact lift-hold-lower seconds (or 4-phase for compound lifts like the leg press at `3-1-2-1`). The detail page splits it into colored rows with phase cues — no fitness jargon glossary required.
-
-### 3. Curated YouTube Shorts tutorials, per variant
-
-Every exercise has a **9:16 YouTube Shorts tutorial** lazy-loaded as the demo. Switch the variant (Dumbbell → Machine → Barbell) and the tutorial swaps too. Picked from credentialed fitness creators (DeltaBolic, ArielYu_Fit, Jeremy Ethier, etc.) and curated — not auto-suggested junk.
-
-### 4. Warm-up videos + 30-second cool-down ring timer
-
-Each training day starts with an embedded warm-up video. Each ends with a guided cool-down sequence — 30 seconds per stretch, auto-flips L → R for unilateral stretches, haptic buzz at zero, progress ring overlay so the timer is readable on any image.
-
-### 5. Multi-variant equipment switching
-
-Got dumbbells today? Or a leg press? Or just the hip thrust machine? Tap the variant chip — `DUMBBELL`, `LEG PRESS`, `MACHINE`, `BARBELL`, `SMITH`, `CABLE`, `BAND` — and the demo video + tempo + suggested weight all swap to that equipment's setup.
-
-### 6. Everything is editable
-
-Goals, body fat, pull-up status, suggested/current/goal weights per exercise, YouTube tutorial overrides — every field has a pencil icon → editor sheet → save. Stored locally in one localStorage doc. One "Reset all" wipes everything back to defaults.
-
-### 7. Session history that comes from real logs
-
-Each set you complete (weight, reps, difficulty, notes, side) gets stored. The session is auto-saved with total volume, sets, elapsed time. Open Settings → "View past sessions" to scrub through everything you've ever done.
-
-### 8. Bilingual (EN + 中), PWA-installable, dark mode, kg / lb
-
-Three toggles in Settings. Add to home screen on iOS and it acts like a native app — black-letter A icon, full screen, no browser chrome.
+一个真正懂你训练的移动健身 App。真实解剖图人体地图、每个变体对应的 YouTube 教学短视频、节奏指导、暖身 / 拉伸视频、完整训练历史 — 全部本地优先，无需登录。
 
 ---
 
-## Tech stack
-
-| Layer | Choice | Why |
-|---|---|---|
-| Framework | **React 18 + Vite** | Instant HMR, tiny bundle (~108 KB gzip) |
-| Styling | **Tailwind CSS** | Custom palette (bone/ink) matches Apple Fitness / Linear aesthetic |
-| Animations | **Framer Motion** | Smooth cross-fades on muscle intensity, sheet transitions, ring countdowns |
-| State | **localStorage + Context** | No backend — every byte stays on your device |
-| i18n | **Custom** | Single `STRINGS` dict + `useT()`, ~200 keys for two languages |
-| Hosting | **Vercel** | Static SPA, edge CDN, HTTPS, free tier |
-| Anatomy assets | Bouglé 1899 plates (public domain) | Real anatomical illustrations, not robot silhouettes |
-
----
-
-## Run it locally
+## ⚡ Quick start / 快速开始
 
 ```bash
 git clone https://github.com/SkylarWJY/ai-workout-companion.git
 cd ai-workout-companion
 npm install
 npm run dev
-# → open http://localhost:5173
+# → http://localhost:5173
 ```
 
-Production build:
-```bash
-npm run build
-npm run preview
-```
+**Or just open** [ai-workout-companion.vercel.app](https://ai-workout-companion.vercel.app) on your phone → Safari → Share → **Add to Home Screen**. Looks and feels like a native app.
 
-Deploy your own copy:
-```bash
-npx vercel        # one-time auth, then deploys instantly
-```
+**或者**直接在 iPhone Safari 打开 [ai-workout-companion.vercel.app](https://ai-workout-companion.vercel.app) → 分享 → **添加到主屏幕**。装好后跟原生 app 体感一样（黑底 A 图标 / 全屏 / 无浏览器栏）。
 
 ---
 
-## Project structure
+## 🚶 Walkthrough / 使用流程
+
+### ① Dashboard — your starting point
+
+<img src="docs/screenshots/01-dashboard.png" alt="Dashboard" width="320" align="right" />
+
+**EN.** The dashboard tells you what to train *today*. Big black CTA jumps you straight into the day's session. The 7-day grid below shows what's coming and which days you've completed (green dot). Stats tiles track sessions per week, current streak, body-fat progress, and pull-up status. Tap the pencil next to **Current Mission** to edit your goals — every number is overridable.
+
+**中文.** 主页直接告诉你今天练什么。黑色大按钮一秒进入当日训练。下方 7 天周历显示这周安排和完成状态（绿点 = 完成）。再下方四个数据卡：每周训练次数 / 连续打卡 / 体脂进度 / 引体向上目标。点 **Current Mission** 旁的铅笔可以编辑所有目标 — 每个数值都能改。
+
+<br clear="right"/>
+
+### ② Workout Day — warm-up first
+
+<img src="docs/screenshots/02-workout-day.png" alt="Workout Day" width="320" align="right" />
+
+**EN.** Every training day starts with an embedded warm-up video (10-15 reps per move × 2 rounds for Push / Pull, 10 reps for Leg). Below it lives the **Today's Hits** anatomical body map. Tap **Mark warm-up done** when finished — the green check persists across the session.
+
+**中文.** 每个训练日的最上方就是嵌入式暖身视频（推日 / 拉日：每个动作 10–15 次 × 2 轮；腿日：每个动作 10 次）。下方是**今日训练部位**人体解剖图。暖身做完后点 **MARK WARM-UP DONE**，状态会一直保留到训练结束。
+
+<br clear="right"/>
+
+### ③ Today's Hits — anatomical body map
+
+<img src="docs/screenshots/03-body-map.png" alt="Body Map" width="320" align="right" />
+
+**EN.** Real 1899 anatomical plates (Bouglé, public domain) painted with today's training intensity. Each muscle is bucketed into 4 levels by exercise priority × primary/secondary contribution:
+- 🟡 **Light** · 🟠 **Moderate** · 🔴 **Heavy** · ⛔ **Peak**
+
+Below the figures is a grouped list — at a glance you know "today peaks side delts, hits abs + upper back heavy, light on lower back."
+
+**中文.** 1899 年 Bouglé 真实解剖图作为底图（公共领域）。当日训练的每块肌肉按优先级 × 主肌群/次肌群算分，分 4 级强度叠加红橙黄色块：
+- 🟡 **轻** · 🟠 **中** · 🔴 **重** · ⛔ **极重**
+
+下方按强度分组列出所有训练部位，一眼看清"今天极重打中束、重练腹肌和上背、轻碰下背"。
+
+<br clear="right"/>
+
+### ④ Exercise Detail — tap any move
+
+<img src="docs/screenshots/04-exercise-modal.png" alt="Exercise Modal" width="320" align="right" />
+
+**EN.** Every exercise card opens to a detail sheet. Top: priority chip + edit pencil + Done. Then a **9:16 YouTube Shorts tutorial** (lazy-loaded — tap to play). Above it: variant chips (DUMBBELL / MACHINE / BARBELL / CABLE / BAND etc.) — switch the chip and the video swaps too. Below summary: sets × reps · rest time · tempo · suggested weight.
+
+**中文.** 任意动作卡片都能展开详情。顶部：优先级标签 + 编辑铅笔 + 完成。然后是 **9:16 YouTube Shorts 教学短视频**（懒加载，点了才播放）。上方有变体切换（哑铃 / 器械 / 杠铃 / 绳索 / 弹力带等）— 点变体视频跟着换。下方一行汇总组数 × 次数 · 休息 · 节奏 · 推荐重量。
+
+<br clear="right"/>
+
+### ⑤ Tempo block — phase-by-phase coaching
+
+<img src="docs/screenshots/05-tempo-tutorial.png" alt="Tempo Block" width="320" align="right" />
+
+**EN.** Below the tutorial video, the **Tempo** block breaks down the lift into 3 phases (or 4 for compound lifts like leg press `3-1-2-1`):
+- 🔴 **Lift** — concentric phase, seconds + cue text
+- 🟡 **Hold** — top pause
+- 🔵 **Lower** — controlled eccentric
+
+Each row has color-coded icon + seconds + verbal coaching cue. No fitness jargon glossary required.
+
+**中文.** 教学视频下方的 **节奏（Tempo）** 块把动作拆成 3 个阶段（compound 动作如腿举是 4 阶段 `3-1-2-1`）：
+- 🔴 **发力** — 向心收缩，秒数 + 提示
+- 🟡 **顶部停留**
+- 🔵 **离心** — 控制下放
+
+每行颜色 + 秒数 + 文字提示，不用再查健身术语。
+
+<br clear="right"/>
+
+### ⑥ Cool-down — 30-second ring timer
+
+<img src="docs/screenshots/06-cooldown-timer.png" alt="Cool-down Timer" width="320" align="right" />
+
+**EN.** After all sets, a guided cool-down sequence kicks in. Each stretch displays for **30 seconds with a circular countdown timer** in a dark backdrop pill (readable on any image). For unilateral stretches (kneeling hip flexor, pigeon, etc.), the red **Side L ⇄** chip auto-flips to **R** at 0 with a haptic buzz — you get 30s left, 30s right, then the **Next Stretch** button advances.
+
+**中文.** 全部组完成后进入引导式拉伸。每个动作 **30 秒倒计时**，时间显示在深色磨砂胶囊里（任何底图都能看清）。单边动作（跪姿髂腰肌、鸽子式等）会自动 **左 → 右** 翻转，并伴随震动反馈 — 左侧 30 秒 → 自动跳到右侧 30 秒 → 然后按 **Next Stretch** 进入下一个。
+
+<br clear="right"/>
+
+### ⑦ Settings — gear icon top-right
+
+<img src="docs/screenshots/07-settings.png" alt="Settings" width="320" align="right" />
+
+**EN.** Tap the gear icon (header right). The bottom-sheet has:
+- **Language** — EN / 中
+- **Theme** — Light / Dark
+- **Weight unit** — lb / kg (applies to the Logger)
+- **View past sessions** — opens session history
+- **Reset all overrides** — wipes your custom goals + weights + video overrides back to defaults
+
+**中文.** 点右上齿轮，底部弹出设置：
+- **语言** — EN / 中
+- **主题** — 浅色 / 深色
+- **重量单位** — lb / kg（Logger 输入框跟着切）
+- **查看历史训练** — 打开记录页
+- **重置所有自定义** — 一键还原所有自定义编辑
+
+<br clear="right"/>
+
+### ⑧ Session History — every set you logged
+
+<img src="docs/screenshots/08-history-empty.png" alt="History" width="320" align="right" />
+
+**EN.** Open Settings → **View past sessions**. Every completed workout shows as a card with date / workout name / sets done / total volume (lb·rep) / elapsed time. **Tap a card to expand** — you get the per-exercise breakdown with every logged set in `weight × reps (L/R)` format. Newest first.
+
+(Screenshot shows the empty state before any session is saved.)
+
+**中文.** 设置 → **查看历史训练**。完成的每次训练都是一个卡片：日期 / 训练名 / 完成组数 / 总容量 / 用时。**点卡片展开** — 每个动作每组的 `重量 × 次数 (L/R)` 全部展开。最新在最上。
+
+（截图是空状态 — 还没保存训练时的样子。）
+
+<br clear="right"/>
+
+### ⑨ Bilingual — the entire app in 中文
+
+<table>
+<tr>
+<td width="50%"><img src="docs/screenshots/09-dashboard-zh.png" alt="ZH cool-down" /></td>
+<td width="50%"><img src="docs/screenshots/10-body-map-zh.png" alt="ZH body map" /></td>
+</tr>
+</table>
+
+**EN.** Switch language in Settings — entire UI plus all exercise names, muscle groups, tempo cues, stretch descriptions, region labels, intensity levels are translated. (~200 keys across the i18n dict, all hand-curated, no machine translation.)
+
+**中文.** 设置里切换语言 — 整个 UI 加上所有动作名称、肌群名、节奏提示、拉伸描述、部位标签、强度等级都翻译过。（i18n 字典约 200 个 key，全部手工翻译，没用机翻。）
+
+---
+
+## 🛠 Tech stack / 技术栈
+
+| Layer / 层 | Choice / 选型 | Why / 为什么 |
+|---|---|---|
+| Framework | **React 18 + Vite** | Tiny bundle (~108 KB gzip) · HMR ~50ms |
+| Styling | **Tailwind CSS** | Custom palette (bone/ink/priority colors) |
+| Animations | **Framer Motion** | Sheet transitions · ring countdowns · cross-fades |
+| State | **localStorage + React Context** | No backend · works offline · zero infra |
+| i18n | **Custom** | `STRINGS` dict + `useT()` hook, 200+ keys |
+| Hosting | **Vercel** | Static SPA · edge CDN · HTTPS · free |
+| Anatomy | **Bouglé 1899 plates** (PD) | Real anatomical illustrations |
+
+**Bundle size:** 108 KB gzip total (JS + CSS + HTML). Loads in under 1 second on 4G.
+
+**包大小：** 总 108 KB gzip（JS + CSS + HTML）。4G 网络 1 秒内打开。
+
+---
+
+## 📁 Project structure / 项目结构
 
 ```
 src/
@@ -100,7 +181,7 @@ src/
     BodyMap.jsx             — Anatomical overlay (hand-calibrated SVG paths)
     BodyMapSection.jsx      — Today's Hits card + intensity legend
     WarmUpSection.jsx       — Embedded video + alt YouTube
-    CoolDownSection.jsx     — 30-second ring timer with L/R auto-flip
+    CoolDownSection.jsx     — 30s ring timer with L/R auto-flip
     ExerciseModal.jsx       — Detail sheet (demo + tempo + tutorial)
     ExerciseDemo.jsx        — Variant switcher + YouTube Shorts embed
     TempoBlock.jsx          — 3-phase + 4-phase tempo renderer
@@ -124,42 +205,62 @@ src/
     muscleMap.js            — Muscle → body region + intensity scoring
     format.js               — Time / rest / repRange parsing
   i18n/
-    strings.js              — All UI strings (EN + ZH)
-    exercisesZh.js          — Per-exercise ZH translations
-    exerciseMetaZh.js       — Tempo cue ZH translations
-    warmCoolZh.js           — Stretch ZH translations
+    strings.js              — UI strings (EN + ZH)
+    exercisesZh.js          — Per-exercise ZH content
+    exerciseMetaZh.js       — Tempo cue ZH
+    warmCoolZh.js           — Stretch ZH
 public/
-  anatomy/                  — Bouglé 1899 plates (PD)
+  anatomy/                  — Bouglé 1899 plates
   warmup/                   — Warm-up MOV videos
   cooldown/                 — Cool-down stretch JPGs
   manifest.webmanifest      — PWA manifest
-  icon.svg                  — App icon
+docs/
+  screenshots/              — Screenshots used in this README
 ```
 
 ---
 
-## Credits
+## 🚢 Deploy your own / 部署自己的副本
 
-- **Anatomical illustrations** — Julien Bouglé, *Le corps humain en grandeur naturelle* (1899). Public domain via Wikimedia Commons.
-- **Exercise demo images** (fallback) — [yuhonas/free-exercise-db](https://github.com/yuhonas/free-exercise-db), CC0.
-- **Tutorial videos** — embedded from YouTube; credit to the individual creators on each thumbnail.
-- **Cool-down stretches** — Verywell Fit (Standing Shoulder / Crescent Moon / Chest Opener); @fitzyelifts (leg recovery series).
+```bash
+npx vercel        # one-time browser login, then deploys instantly
+                  # 浏览器登录一次后秒部署
+```
 
----
+Vercel free tier covers it: 100 GB bandwidth/month, custom domain, HTTPS — all $0.
 
-## License
-
-MIT. Use, fork, modify — just don't remove the credit to the anatomical plate creators.
+Vercel 免费版完全够：100 GB 月流量 + HTTPS + 自定义域名都 $0。
 
 ---
 
-## Roadmap
+## 🙏 Credits / 致谢
 
-- [ ] Supabase backend for cross-device sync (currently localStorage-only)
-- [ ] Apple Watch companion app
-- [ ] Generate training programs from goals (currently a single PPL split)
-- [ ] Weekly volume tracker per muscle group
-- [ ] Body fat / weight progression chart on Dashboard
-- [ ] PWA offline mode with service worker
+- **Anatomical plates** — Julien Bouglé, *Le corps humain en grandeur naturelle* (1899). Public domain via Wikimedia Commons.
+- **Exercise fallback images** — [yuhonas/free-exercise-db](https://github.com/yuhonas/free-exercise-db), CC0.
+- **YouTube tutorials** — embedded from the original creators (DeltaBolic / Andrew Kwong, ArielYu_Fit, Jeremy Ethier, Nuffield Health, Colossus Fitness, Booty Builder, Gerardi Performance, and others). Credit displayed on each thumbnail.
+- **Cool-down stretches** — Verywell Fit (shoulder/crescent moon/chest opener); @fitzyelifts (leg recovery series).
 
-PRs welcome.
+**解剖图** — Julien Bouglé《等身人体图》（1899）公共领域，来自 Wikimedia Commons
+**动作教学视频** — 嵌入自原作者频道，每个缩略图上有创作者名
+**拉伸图** — Verywell Fit · @fitzyelifts
+
+---
+
+## 📜 License
+
+**MIT.** Use, fork, modify, sell — just keep the original LICENSE file and credit the anatomical plate creators.
+
+**MIT.** 随便用、fork、改、卖钱都行 — 只要保留原始 LICENSE 文件并致谢解剖图作者。
+
+---
+
+## 🗺 Roadmap / 路线图
+
+- [ ] Supabase backend for cross-device sync / 后端云同步
+- [ ] Apple Watch companion / Apple Watch 配套
+- [ ] Generate programs from goals / AI 根据目标生成训练计划
+- [ ] Weekly muscle-group volume chart / 周度肌群训练量图表
+- [ ] BF / weight progression chart / 体脂体重进展图
+- [ ] PWA offline service worker / PWA 离线 service worker
+
+PRs welcome. Issues at [github.com/SkylarWJY/ai-workout-companion/issues](https://github.com/SkylarWJY/ai-workout-companion/issues).
