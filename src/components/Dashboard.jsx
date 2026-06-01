@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { USER_PROFILE, WORKOUTS, getTodayWorkoutType } from '../data/workoutData.js';
 import WeeklyCalendar from './WeeklyCalendar.jsx';
 import ProgressBar from './ProgressBar.jsx';
+import GoalsEditor from './GoalsEditor.jsx';
 import { useLang, locWorkout } from '../i18n/index.jsx';
+import { useOverrides } from '../hooks/useOverrides.jsx';
 
 const StatTile = ({ label, value, sub, accent }) => (
   <div className="rounded-3xl bg-white dark:bg-ink-800 border border-black/5 dark:border-white/5 p-4 shadow-card dark:shadow-cardDark">
@@ -23,8 +25,10 @@ const StatTile = ({ label, value, sub, accent }) => (
   </div>
 );
 
-export default function Dashboard({ onOpenWorkout, history = {}, bodyStats }) {
+export default function Dashboard({ onOpenWorkout, history = {} }) {
   const { t, lang } = useLang();
+  const { overrides } = useOverrides();
+  const [goalsEditorOpen, setGoalsEditorOpen] = useState(false);
   const todayType = getTodayWorkoutType();
   const isRest = todayType === 'rest';
   const workout = !isRest ? WORKOUTS[todayType] : null;
@@ -34,15 +38,22 @@ export default function Dashboard({ onOpenWorkout, history = {}, bodyStats }) {
   ).length;
   const streak = computeStreak(history);
 
-  const currentBF = bodyStats?.bf ?? USER_PROFILE.currentBodyFat;
+  // overrides
+  const o = overrides.profile || {};
+  const currentBF = o.bf ?? USER_PROFILE.currentBodyFat;
+  const targetBF = o.targetBf ?? USER_PROFILE.targetBodyFat;
+  const goalsList = o.goals ?? USER_PROFILE.goals;
+  const pullUpCurrent = o.pullUpCurrent ?? USER_PROFILE.pullUpProgression.current;
+  const pullUpTarget = o.pullUpTarget ?? USER_PROFILE.pullUpProgression.target;
+
   const bfProgress =
     100 -
     Math.min(
       100,
       Math.max(
         0,
-        ((currentBF - USER_PROFILE.targetBodyFat) /
-          (USER_PROFILE.currentBodyFat - USER_PROFILE.targetBodyFat)) *
+        ((currentBF - targetBF) /
+          (USER_PROFILE.currentBodyFat - targetBF)) *
           100,
       ),
     );
@@ -126,22 +137,33 @@ export default function Dashboard({ onOpenWorkout, history = {}, bodyStats }) {
         <StatTile
           label={t('dash.bodyFat')}
           value={`${currentBF}%`}
-          sub={`${t('dash.target')} ${USER_PROFILE.targetBodyFat}%`}
+          sub={`${t('dash.target')} ${targetBF}%`}
         />
         <StatTile
           label={t('dash.pullup')}
-          value="−50 lb"
-          sub={t('dash.pullupSub')}
+          value={pullUpCurrent}
+          sub={pullUpTarget}
           accent
         />
       </section>
 
       <section className="rounded-3xl bg-white dark:bg-ink-800 border border-black/5 dark:border-white/5 p-5 shadow-card dark:shadow-cardDark">
-        <SectionLabel className="!mb-3">{t('dash.mission')}</SectionLabel>
+        <div className="flex items-center justify-between mb-3">
+          <SectionLabel className="!mb-0">{t('dash.mission')}</SectionLabel>
+          <button
+            onClick={() => setGoalsEditorOpen(true)}
+            aria-label={t('edit.button')}
+            className="w-7 h-7 rounded-full bg-bone-100 dark:bg-ink-700 flex items-center justify-center text-ink-400 dark:text-ink-200 active:scale-95 transition"
+          >
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+              <path d="M12 20h9M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        </div>
         <div className="space-y-3">
           <GoalRow
             label={t('dash.goal.recomp')}
-            value={`${currentBF}% → ${USER_PROFILE.targetBodyFat}%`}
+            value={`${currentBF}% → ${targetBF}%`}
             progress={bfProgress}
           />
           <GoalRow
@@ -156,16 +178,17 @@ export default function Dashboard({ onOpenWorkout, history = {}, bodyStats }) {
           />
           <GoalRow
             label={t('dash.goal.pullup')}
-            value={t('dash.goal.pullupSub')}
+            value={pullUpTarget}
             progress={20}
           />
         </div>
         <div className="mt-5 flex flex-wrap gap-1.5">
-          <GoalChip>{t('dash.goal.FatLoss')}</GoalChip>
-          <GoalChip>{t('dash.goal.Shoulder')}</GoalChip>
-          <GoalChip>{t('dash.goal.Aesthetic')}</GoalChip>
+          {goalsList.map((g) => (
+            <GoalChip key={g}>{g}</GoalChip>
+          ))}
         </div>
       </section>
+      <GoalsEditor open={goalsEditorOpen} onClose={() => setGoalsEditorOpen(false)} />
 
       <section className="rounded-3xl border border-black/5 dark:border-white/5 p-5">
         <SectionLabel className="!mb-2">{t('dash.notes')}</SectionLabel>

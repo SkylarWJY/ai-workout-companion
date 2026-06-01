@@ -9,8 +9,8 @@ export const USER_PROFILE = {
   weakPoints: ['Mid delts', 'Rear delts', 'Upper back', 'Lats'],
   constraints: ['Knee-friendly', 'Lower-back friendly'],
   pullUpProgression: {
-    current: 'Assisted (~50 lbs assistance)',
-    target: 'Unassisted x 6–10',
+    current: '−50 lb',
+    target: 'Goal: unassisted × 6',
   },
 };
 

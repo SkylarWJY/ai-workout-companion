@@ -4,6 +4,7 @@ import PriorityChip from './PriorityChip.jsx';
 import VariantBadge from './VariantBadge.jsx';
 import { useLang, locEx } from '../i18n/index.jsx';
 import { fmtRest } from '../utils/format.js';
+import { useOverrides } from '../hooks/useOverrides.jsx';
 
 export default function ExerciseCard({
   exercise,
@@ -15,8 +16,12 @@ export default function ExerciseCard({
   onOpen,
 }) {
   const { t, lang } = useLang();
+  const { overrides } = useOverrides();
   const name = locEx(exercise, 'name', lang);
   const muscles = locEx(exercise, 'primaryMuscles', lang);
+  const suggestedWeight =
+    overrides.exercise?.[exercise.id]?.suggestedWeight ??
+    exercise.suggestedWeight;
 
   return (
     <motion.button
@@ -83,7 +88,7 @@ export default function ExerciseCard({
 
       <div className="mt-3 flex items-center justify-between">
         <span className={`text-[11px] ${active ? 'opacity-70' : 'text-ink-400 dark:text-ink-200'}`}>
-          {exercise.suggestedWeight}
+          {suggestedWeight}
         </span>
         <span className={`text-[11px] tabular ${active ? 'opacity-90' : 'text-ink-500 dark:text-ink-100'}`}>
           {completedSets}/{totalSets} {t('workout.sets')}

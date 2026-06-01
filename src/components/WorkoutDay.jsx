@@ -15,6 +15,7 @@ import { parseRepRange, fmtRest } from '../utils/format.js';
 import { useLang, locEx, locWorkout } from '../i18n/index.jsx';
 import { WARMUPS, COOLDOWNS } from '../data/warmCoolData.js';
 import { exerciseMeta } from '../data/exerciseMeta.js';
+import { useOverrides } from '../hooks/useOverrides.jsx';
 
 export default function WorkoutDay({ workout, session, setSession, onBack, onComplete }) {
   const { t, lang } = useLang();
@@ -247,8 +248,12 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
 
 function ActiveFocus({ exercise, setNumber, onLog, onOpen, restRunning }) {
   const { t, lang } = useLang();
+  const { overrides } = useOverrides();
   const muscles = locEx(exercise, 'primaryMuscles', lang);
   const meta = exerciseMeta(exercise.id);
+  const suggestedWeight =
+    overrides.exercise?.[exercise.id]?.suggestedWeight ??
+    exercise.suggestedWeight;
   return (
     <motion.div
       layout
@@ -283,7 +288,7 @@ function ActiveFocus({ exercise, setNumber, onLog, onOpen, restRunning }) {
         <div>
           <div>{t('workout.weight')}</div>
           <div className="mt-0.5 text-sm normal-case tracking-normal opacity-100 font-medium tabular leading-tight">
-            {exercise.suggestedWeight}
+            {suggestedWeight}
           </div>
         </div>
         <div>

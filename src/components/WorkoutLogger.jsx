@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useLang, locEx } from '../i18n/index.jsx';
+import { useOverrides } from '../hooks/useOverrides.jsx';
 
 export default function WorkoutLogger({
   exercise,
@@ -12,6 +13,7 @@ export default function WorkoutLogger({
   onSave,
 }) {
   const { t, lang } = useLang();
+  const { weightUnit } = useOverrides();
   const [weight, setWeight] = useState(defaultWeight ?? '');
   const [reps, setReps] = useState(defaultReps ?? '');
   const [difficulty, setDifficulty] = useState('moderate');
@@ -47,7 +49,7 @@ export default function WorkoutLogger({
       <div className="grid grid-cols-2 gap-3">
         <NumField
           label={t('workout.weight')}
-          suffix={t('log.weightSuffix')}
+          suffix={weightUnit}
           value={weight}
           onChange={setWeight}
           placeholder={String(defaultWeight ?? '—')}
@@ -105,6 +107,7 @@ export default function WorkoutLogger({
           onClick={() =>
             onSave({
               weight: weight === '' ? null : Number(weight),
+              weightUnit,
               reps: reps === '' ? null : Number(reps),
               difficulty,
               notes,

@@ -3,13 +3,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 import PriorityChip from './PriorityChip.jsx';
 import ExerciseDemo from './ExerciseDemo.jsx';
 import TempoBlock from './TempoBlock.jsx';
+import ExerciseEditor from './ExerciseEditor.jsx';
 import { useLang, locEx } from '../i18n/index.jsx';
 import { fmtRest } from '../utils/format.js';
 import { demoVariants } from '../data/demoMap.js';
 import { resolveMeta } from '../data/exerciseMeta.js';
+import { useOverrides } from '../hooks/useOverrides.jsx';
 
 export default function ExerciseModal({ open, exercise, onClose }) {
   const { t, lang } = useLang();
+  const { overrides } = useOverrides();
+  const [editorOpen, setEditorOpen] = useState(false);
+
   const variants = useMemo(
     () => (exercise ? demoVariants(exercise.id) : []),
     [exercise],
@@ -22,7 +27,15 @@ export default function ExerciseModal({ open, exercise, onClose }) {
   }, [exercise?.id]);
 
   const variant = variants[variantIdx];
-  const meta = exercise ? resolveMeta(exercise.id, variant) : null;
+  const baseMeta = exercise ? resolveMeta(exercise.id, variant) : null;
+  const exOverrides = exercise ? overrides.exercise?.[exercise.id] : null;
+
+  // Apply user overrides over the resolved meta + exercise fields
+  const meta = baseMeta && {
+    ...baseMeta,
+    youtubeId: exOverrides?.youtubeId ?? baseMeta.youtubeId,
+  };
+  const suggestedWeight = exOverrides?.suggestedWeight ?? exercise?.suggestedWeight;
 
   return (
     <AnimatePresence>
@@ -48,13 +61,24 @@ export default function ExerciseModal({ open, exercise, onClose }) {
               <div className="pt-3">
                 <PriorityChip priority={exercise.priority} />
               </div>
-              <button
-                onClick={onClose}
-                aria-label={t('modal.done')}
-                className="pt-3 text-ink-400 dark:text-ink-200 text-sm font-medium"
-              >
-                {t('modal.done')}
-              </button>
+              <div className="pt-3 flex items-center gap-3">
+                <button
+                  onClick={() => setEditorOpen(true)}
+                  aria-label={t('edit.button')}
+                  className="text-ink-400 dark:text-ink-200"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 20h9M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <button
+                  onClick={onClose}
+                  aria-label={t('modal.done')}
+                  className="text-ink-400 dark:text-ink-200 text-sm font-medium"
+                >
+                  {t('modal.done')}
+                </button>
+              </div>
             </div>
 
             <div className="px-5 pt-4 pb-10 space-y-6">
@@ -63,7 +87,7 @@ export default function ExerciseModal({ open, exercise, onClose }) {
                   {locEx(exercise, 'name', lang)}
                 </h2>
                 <div className="mt-1 text-sm text-ink-400 dark:text-ink-200 tabular">
-                  {exercise.sets} × {exercise.repRange} · {t('workout.rest').toLowerCase()} {fmtRest(exercise.restSeconds)} · {exercise.suggestedWeight}
+                  {exercise.sets} × {exercise.repRange} · {t('workout.rest').toLowerCase()} {fmtRest(exercise.restSeconds)} · {suggestedWeight}
                 </div>
                 {meta?.tempo && (
                   <div className="mt-1 text-[12px] tabular text-ink-500 dark:text-ink-100">
@@ -77,6 +101,7 @@ export default function ExerciseModal({ open, exercise, onClose }) {
                 name={locEx(exercise, 'name', lang)}
                 variantIdx={variantIdx}
                 onVariantChange={setVariantIdx}
+                overrideYoutubeId={exOverrides?.youtubeId}
               />
 
               {meta?.tempo && (
@@ -172,6 +197,12 @@ export default function ExerciseModal({ open, exercise, onClose }) {
               )}
             </div>
           </motion.div>
+          <ExerciseEditor
+            open={editorOpen}
+            onClose={() => setEditorOpen(false)}
+            exercise={exercise}
+            defaultYouTubeId={baseMeta?.youtubeId}
+          />
         </>
       )}
     </AnimatePresence>

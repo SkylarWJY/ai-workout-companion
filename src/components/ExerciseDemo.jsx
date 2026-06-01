@@ -13,6 +13,7 @@ export default function ExerciseDemo({
   name,
   variantIdx: controlledIdx,
   onVariantChange,
+  overrideYoutubeId,
 }) {
   const { t, lang } = useLang();
   const variants = useMemo(() => demoVariants(exerciseId), [exerciseId]);
@@ -25,7 +26,8 @@ export default function ExerciseDemo({
 
   const variant = variants[variantIdx];
   const meta = resolveMeta(exerciseId, variant);
-  const videoId = meta?.youtubeId;
+  // User-provided override wins over the variant/base youtubeId
+  const videoId = overrideYoutubeId || meta?.youtubeId;
 
   // de-dupe: only show variant tabs if at least one variant has its own
   // distinct video (otherwise switching does nothing visible).

@@ -25,6 +25,10 @@ export const fmtRest = (seconds) => {
   return `${m}m ${s}s`;
 };
 
+// Weight unit conversion (1 kg ≈ 2.2046 lb)
+export const lbToKg = (lb) => lb / 2.2046;
+export const kgToLb = (kg) => kg * 2.2046;
+
 // Detects unilateral exercises by repRange wording — "each", "per side",
 // "per leg", "ea" all count.
 export const isUnilateral = (repRange) => {
