@@ -165,6 +165,33 @@ export const STRINGS = {
     'tutorial.watch': 'Watch tutorial',
     'tutorial.openYouTube': 'Open in YouTube',
 
+    // Body map
+    'body.title': "Today's Hits",
+    'body.front': 'FRONT',
+    'body.back': 'BACK',
+    'body.legend.primary': 'Primary',
+    'body.legend.secondary': 'Secondary',
+
+    // Region labels
+    'region.front-delts': 'Front delts',
+    'region.side-delts': 'Side delts',
+    'region.rear-delts': 'Rear delts',
+    'region.chest': 'Chest',
+    'region.upper-back': 'Upper back',
+    'region.lats': 'Lats',
+    'region.traps': 'Traps',
+    'region.biceps': 'Biceps',
+    'region.triceps': 'Triceps',
+    'region.forearms': 'Forearms',
+    'region.abs': 'Abs / core',
+    'region.hip-flexors': 'Hip flexors',
+    'region.lower-back': 'Lower back',
+    'region.quads': 'Quads',
+    'region.glutes': 'Glutes',
+    'region.hamstrings': 'Hamstrings',
+    'region.adductors': 'Adductors',
+    'region.calves': 'Calves',
+
     // Settings sheet
     'settings.title': 'Settings',
     'settings.done': 'Done',
@@ -409,6 +436,33 @@ export const STRINGS = {
     'tutorial.label': '教学视频',
     'tutorial.watch': '观看教学',
     'tutorial.openYouTube': '在 YouTube 中打开',
+
+    // Body map
+    'body.title': '今日训练部位',
+    'body.front': '正面',
+    'body.back': '背面',
+    'body.legend.primary': '主肌群',
+    'body.legend.secondary': '协同肌群',
+
+    // Region labels
+    'region.front-delts': '前束',
+    'region.side-delts': '中束',
+    'region.rear-delts': '后束',
+    'region.chest': '胸',
+    'region.upper-back': '上背',
+    'region.lats': '背阔肌',
+    'region.traps': '斜方肌',
+    'region.biceps': '肱二头肌',
+    'region.triceps': '肱三头肌',
+    'region.forearms': '前臂',
+    'region.abs': '腹肌 / 核心',
+    'region.hip-flexors': '髂腰肌',
+    'region.lower-back': '下背',
+    'region.quads': '股四头肌',
+    'region.glutes': '臀肌',
+    'region.hamstrings': '腘绳肌',
+    'region.adductors': '内收肌',
+    'region.calves': '小腿',
 
     // Settings sheet
     'settings.title': '设置',
