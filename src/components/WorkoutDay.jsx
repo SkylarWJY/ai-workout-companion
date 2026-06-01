@@ -10,7 +10,6 @@ import ProgressBar from './ProgressBar.jsx';
 import VariantBadge from './VariantBadge.jsx';
 import WarmUpSection from './WarmUpSection.jsx';
 import CoolDownSection from './CoolDownSection.jsx';
-import BodyMapSection from './BodyMapSection.jsx';
 import { useRestTimer } from '../hooks/useRestTimer.js';
 import { parseRepRange, fmtRest } from '../utils/format.js';
 import { useLang, locEx, locWorkout } from '../i18n/index.jsx';
@@ -130,8 +129,6 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
           />
         </div>
       )}
-
-      <BodyMapSection workout={workout} />
 
       {activeExercise && !allDone && (
         <div className="px-5 pt-4">
