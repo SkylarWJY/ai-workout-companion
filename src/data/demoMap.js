@@ -75,9 +75,50 @@ export const DEMO_VARIANTS = {
   ],
 
   // ── LEG ──
-  'leg-1': [{ key: 'dumbbell', slug: 'Goblet_Squat' }],
-  'leg-2': [{ key: 'dumbbell', slug: 'Romanian_Deadlift' }],
-  'leg-3': [{ key: 'dumbbell', slug: 'Dumbbell_Lunges' }],
+  'leg-1': [
+    { key: 'dumbbell', slug: 'Goblet_Squat' },
+    {
+      key: 'machine',
+      slug: 'Goblet_Squat',
+      youtubeId: 'ahaJTts1f3s', // Gerardi Performance — Leg Press Machine
+      tempo: '3-1-2-1', // lower-bottomPause-lift-topHold (eccentric-first)
+      tempoCues: {
+        lower: '3 sec lower platform back — knees track over toes',
+        bottomPause: '1 sec stretched pause at the bottom',
+        lift: '2 sec drive platform away — heels through',
+        hold: '1 sec brief hold at top, knees soft (not locked)',
+      },
+      suggestedWeight: 'Leg Press 55 lb · 3 × 12',
+    },
+  ],
+  'leg-2': [
+    { key: 'dumbbell', slug: 'Romanian_Deadlift' },
+    {
+      key: 'machine',
+      slug: 'Romanian_Deadlift',
+      youtubeId: 'xdbEG3xGLI8', // DeltaBolic — PERFECT Seated Leg Curl Tips
+      tempoCues: {
+        lift: '2 sec curl heels toward glutes',
+        hold: '1 sec squeeze hamstrings at bottom',
+        lower: '3 sec extend legs back out',
+      },
+      suggestedWeight: 'Seated Leg Curl 25 lb',
+    },
+  ],
+  'leg-3': [
+    { key: 'dumbbell', slug: 'Dumbbell_Lunges' },
+    {
+      key: 'machine',
+      slug: 'Dumbbell_Lunges',
+      youtubeId: 'UbOcViik3hk', // DeltaBolic — Glute Kickback Variations
+      tempoCues: {
+        lift: '2 sec drive leg back + up',
+        hold: '1 sec squeeze glute at top',
+        lower: '3 sec return with control',
+      },
+      suggestedWeight: 'Glute Kickback 15 lb each side',
+    },
+  ],
   'leg-4': [
     { key: 'dumbbell', slug: 'Barbell_Hip_Thrust' },
     {
@@ -97,8 +138,34 @@ export const DEMO_VARIANTS = {
     },
     { key: 'band', slug: 'Lateral_Raise_-_With_Bands' },
   ],
-  'leg-6': [{ key: 'bodyweight', slug: 'Standing_Calf_Raises' }],
-  'leg-7': [{ key: 'bodyweight', slug: 'Dead_Bug' }],
+  'leg-6': [
+    { key: 'bodyweight', slug: 'Standing_Calf_Raises' },
+    {
+      key: 'machine',
+      slug: 'Standing_Calf_Raises',
+      youtubeId: 'GnrwIpDtuto', // DeltaBolic — Struggling to Grow Your Calves
+      tempoCues: {
+        lift: '2 sec press up onto the big toe',
+        hold: '1 sec squeeze calves hard at top',
+        lower: '3 sec lower below platform — full stretch',
+      },
+      suggestedWeight: 'Calf Machine — moderate, full ROM',
+    },
+  ],
+  'leg-7': [
+    { key: 'bodyweight', slug: 'Dead_Bug' },
+    {
+      key: 'machine',
+      slug: 'Dead_Bug',
+      youtubeId: 'fl9FSpCpvq0', // Colossus Fitness — Ab Crunch Machine
+      tempoCues: {
+        lift: '2 sec crunch down — round the spine',
+        hold: '1 sec squeeze abs hard',
+        lower: '3 sec return upward with control',
+      },
+      suggestedWeight: 'Ab Crunch Machine — moderate',
+    },
+  ],
 };
 
 export const demoVariants = (exerciseId) => DEMO_VARIANTS[exerciseId] || [];

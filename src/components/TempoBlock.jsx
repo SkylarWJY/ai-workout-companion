@@ -35,7 +35,27 @@ export default function TempoBlock({ exerciseId, variantKey, tempo, tempoCues, i
     );
   }
 
-  const [liftSec, holdSec, lowerSec] = tempo.split('-').map((s) => parseInt(s, 10));
+  const parts = tempo.split('-').map((s) => parseInt(s, 10));
+  const has4Phase = parts.length === 4 && Number.isFinite(parts[3]);
+
+  // Notation conventions:
+  //   3-phase X-Y-Z = lift-hold-lower
+  //   4-phase X-Y-Z-W = lower-bottomPause-lift-hold (Poliquin-style, eccentric first)
+  let rows;
+  if (has4Phase) {
+    rows = [
+      { color: 'bg-priority-low', label: t('tempo.lower'), icon: '↓', sec: parts[0], cue: cues.lower },
+      { color: 'bg-priority-veryhigh', label: t('tempo.bottomPause'), icon: '○', sec: parts[1], cue: cues.bottomPause },
+      { color: 'bg-priority-extreme', label: t('tempo.lift'), icon: '↑', sec: parts[2], cue: cues.lift },
+      { color: 'bg-priority-high', label: t('tempo.hold'), icon: '◆', sec: parts[3], cue: cues.hold },
+    ];
+  } else {
+    rows = [
+      { color: 'bg-priority-extreme', label: t('tempo.lift'), icon: '↑', sec: parts[0], cue: cues.lift },
+      { color: 'bg-priority-high', label: t('tempo.hold'), icon: '◆', sec: parts[1], cue: cues.hold },
+      { color: 'bg-priority-low', label: t('tempo.lower'), icon: '↓', sec: parts[2], cue: cues.lower },
+    ];
+  }
 
   return (
     <div className="rounded-2xl bg-bone-100 dark:bg-ink-700 border border-black/5 dark:border-white/5 p-4">
@@ -49,34 +69,21 @@ export default function TempoBlock({ exerciseId, variantKey, tempo, tempoCues, i
       </div>
 
       <div className="space-y-2">
-        <PhaseRow
-          color="bg-priority-extreme"
-          label={t('tempo.lift')}
-          seconds={liftSec}
-          unit={t('tempo.sec')}
-          cue={cues.lift}
-          icon="↑"
-        />
-        <PhaseRow
-          color="bg-priority-high"
-          label={t('tempo.hold')}
-          seconds={holdSec}
-          unit={t('tempo.sec')}
-          cue={cues.hold}
-          icon="◆"
-        />
-        <PhaseRow
-          color="bg-priority-low"
-          label={t('tempo.lower')}
-          seconds={lowerSec}
-          unit={t('tempo.sec')}
-          cue={cues.lower}
-          icon="↓"
-        />
+        {rows.map((r, i) => (
+          <PhaseRow
+            key={i}
+            color={r.color}
+            label={r.label}
+            seconds={r.sec}
+            unit={t('tempo.sec')}
+            cue={r.cue}
+            icon={r.icon}
+          />
+        ))}
       </div>
 
       <div className="mt-3 text-[10px] uppercase tracking-wider text-ink-300 text-right">
-        {t('tempo.format')}
+        {has4Phase ? t('tempo.format4') : t('tempo.format')}
       </div>
     </div>
   );

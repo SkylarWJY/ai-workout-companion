@@ -154,9 +154,11 @@ export const STRINGS = {
     'tempo.lift': 'Lift',
     'tempo.hold': 'Hold',
     'tempo.lower': 'Lower',
+    'tempo.bottomPause': 'Bottom Pause',
     'tempo.static': 'Static Hold',
     'tempo.sec': 'sec',
     'tempo.format': 'lift · hold · lower',
+    'tempo.format4': 'lower · pause · lift · hold',
 
     // Tutorial
     'tutorial.label': 'Tutorial',
@@ -358,9 +360,11 @@ export const STRINGS = {
     'tempo.lift': '发力',
     'tempo.hold': '顶部停留',
     'tempo.lower': '离心',
+    'tempo.bottomPause': '底部停留',
     'tempo.static': '静态保持',
     'tempo.sec': '秒',
     'tempo.format': '发力 · 停留 · 离心',
+    'tempo.format4': '离心 · 底部 · 发力 · 顶部',
 
     // Tutorial
     'tutorial.label': '教学视频',
