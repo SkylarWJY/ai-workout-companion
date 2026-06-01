@@ -11,7 +11,7 @@ import VariantBadge from './VariantBadge.jsx';
 import WarmUpSection from './WarmUpSection.jsx';
 import CoolDownSection from './CoolDownSection.jsx';
 import { useRestTimer } from '../hooks/useRestTimer.js';
-import { parseRepRange, fmtRest } from '../utils/format.js';
+import { parseRepRange, fmtRest, isUnilateral } from '../utils/format.js';
 import { useLang, locEx, locWorkout } from '../i18n/index.jsx';
 import { WARMUPS, COOLDOWNS } from '../data/warmCoolData.js';
 import { exerciseMeta } from '../data/exerciseMeta.js';
@@ -51,11 +51,29 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
     setLoggerOpen(true);
   };
 
+  const currentSide = (ex) => session.currentSide?.[ex.id] || 'L';
+
+  const flipSide = (ex) => {
+    const cur = currentSide(ex);
+    setSession({
+      ...session,
+      currentSide: { ...(session.currentSide || {}), [ex.id]: cur === 'L' ? 'R' : 'L' },
+    });
+  };
+
   const handleSaveSet = (log) => {
     const ex = activeExercise;
+    const isUni = isUnilateral(ex.repRange);
+    const sideForLog = isUni ? currentSide(ex) : null;
+    const fullLog = sideForLog ? { ...log, side: sideForLog } : log;
+
     const next = { ...session.completedSets };
-    next[ex.id] = [...(next[ex.id] || []), log];
-    setSession({ ...session, completedSets: next });
+    next[ex.id] = [...(next[ex.id] || []), fullLog];
+
+    const newCurrentSide = { ...(session.currentSide || {}) };
+    if (isUni) newCurrentSide[ex.id] = sideForLog === 'L' ? 'R' : 'L';
+
+    setSession({ ...session, completedSets: next, currentSide: newCurrentSide });
     setLoggerOpen(false);
 
     const { high } = parseRepRange(ex.repRange);
@@ -140,6 +158,8 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
             onLog={handleStartLog}
             onOpen={() => setOpenExerciseId(activeExercise.id)}
             restRunning={timer.active || timer.done}
+            side={currentSide(activeExercise)}
+            onFlipSide={() => flipSide(activeExercise)}
           />
         </div>
       )}
@@ -224,6 +244,11 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
                   defaultReps={
                     parseRepRange(activeExercise.repRange).high ?? ''
                   }
+                  side={
+                    isUnilateral(activeExercise.repRange)
+                      ? currentSide(activeExercise)
+                      : null
+                  }
                   onCancel={() => setLoggerOpen(false)}
                   onSave={handleSaveSet}
                 />
@@ -245,10 +270,11 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
   );
 }
 
-function ActiveFocus({ exercise, setNumber, onLog, onOpen, restRunning }) {
+function ActiveFocus({ exercise, setNumber, onLog, onOpen, restRunning, side, onFlipSide }) {
   const { t, lang } = useLang();
   const muscles = locEx(exercise, 'primaryMuscles', lang);
   const meta = exerciseMeta(exercise.id);
+  const isUni = isUnilateral(exercise.repRange);
   return (
     <motion.div
       layout
@@ -264,8 +290,20 @@ function ActiveFocus({ exercise, setNumber, onLog, onOpen, restRunning }) {
           <div className="mt-1 text-xl font-semibold leading-tight">
             {locEx(exercise, 'name', lang)}
           </div>
-          <div className="mt-1.5">
+          <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">
             <VariantBadge exerciseId={exercise.id} tone="dark" />
+            {isUni && (
+              <button
+                onClick={onFlipSide}
+                className="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.14em] rounded-full px-2 py-0.5 bg-priority-extreme/80 text-bone-50 active:scale-[0.95] transition"
+              >
+                <span className="opacity-70">{t('side.label')}</span>
+                <span className="font-semibold tabular">{t(`side.${side}`)}</span>
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none">
+                  <path d="M7 7h11M17 4l3 3-3 3M17 17H6M7 14l-3 3 3 3" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            )}
           </div>
           <div className="mt-1.5 text-[12px] opacity-70 tabular">
             {t('workout.set')} {setNumber}/{exercise.sets} · {t('workout.target')} {exercise.repRange}

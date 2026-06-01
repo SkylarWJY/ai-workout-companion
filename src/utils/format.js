@@ -25,6 +25,13 @@ export const fmtRest = (seconds) => {
   return `${m}m ${s}s`;
 };
 
+// Detects unilateral exercises by repRange wording — "each", "per side",
+// "per leg", "ea" all count.
+export const isUnilateral = (repRange) => {
+  if (!repRange) return false;
+  return /\b(each|per\s*(side|leg|arm)|ea)\b/i.test(repRange);
+};
+
 export const parseRepRange = (rangeStr) => {
   // "8–12" or "6–10" or "10–15 / 20–40s" → return top number for first segment
   const first = (rangeStr || '').split('/')[0].trim();

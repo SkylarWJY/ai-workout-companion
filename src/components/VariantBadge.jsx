@@ -1,15 +1,23 @@
 import React from 'react';
-import { useT } from '../i18n/index.jsx';
+import { useLang } from '../i18n/index.jsx';
 import { demoVariants } from '../data/demoMap.js';
 
-// Renders "OR MACHINE · BARBELL" style chip when an exercise has > 1 variant.
+// Returns the human label for a variant — uses the variant's own `label`/`labelZh`
+// override if set, otherwise falls back to t(`variant.${key}`).
+export function variantLabel(v, t, lang) {
+  if (lang === 'zh' && v.labelZh) return v.labelZh;
+  if (v.label) return v.label;
+  return t(`variant.${v.key}`);
+}
+
+// Renders "OR LEG PRESS · BARBELL" style chip when an exercise has > 1 variant.
 // `tone` controls colour against dark vs light backgrounds.
 export default function VariantBadge({ exerciseId, tone = 'light', className = '' }) {
-  const t = useT();
+  const { t, lang } = useLang();
   const variants = demoVariants(exerciseId);
   if (variants.length <= 1) return null;
 
-  const alts = variants.slice(1).map((v) => t(`variant.${v.key}`));
+  const alts = variants.slice(1).map((v) => variantLabel(v, t, lang));
 
   const palette =
     tone === 'dark'

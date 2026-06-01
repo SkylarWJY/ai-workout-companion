@@ -160,11 +160,11 @@ function ActiveView({ current, idx, total, remaining, running, onNext, onRestart
             alt={locStretch(current, 'name', lang)}
             className="absolute inset-0 w-full h-full object-cover"
           />
-          {/* progress ring overlay */}
+          {/* progress ring overlay — dark pill so the timer is readable on any image */}
           <div className="absolute top-3 right-3">
-            <div className="relative w-[78px] h-[78px]">
-              <svg width="78" height="78" viewBox="0 0 160 160" className="-rotate-90">
-                <circle cx="80" cy="80" r={R} stroke="rgba(255,255,255,0.25)" strokeWidth="10" fill="none" />
+            <div className="relative w-[88px] h-[88px] rounded-full bg-ink-900/70 backdrop-blur-md border border-white/10 shadow-card">
+              <svg width="88" height="88" viewBox="0 0 160 160" className="-rotate-90 absolute inset-0">
+                <circle cx="80" cy="80" r={R} stroke="rgba(255,255,255,0.18)" strokeWidth="10" fill="none" />
                 <motion.circle
                   cx="80" cy="80" r={R}
                   stroke="white"
@@ -176,12 +176,12 @@ function ActiveView({ current, idx, total, remaining, running, onNext, onRestart
                   transition={{ type: 'spring', stiffness: 80, damping: 22 }}
                 />
               </svg>
-              <div className="absolute inset-0 flex items-center justify-center text-bone-50 font-semibold tabular text-base">
+              <div className="absolute inset-0 flex items-center justify-center text-bone-50 font-semibold tabular text-[17px] drop-shadow-sm">
                 {fmtTime(remaining)}
               </div>
             </div>
           </div>
-          <div className="absolute top-3 left-3 bg-ink-900/60 backdrop-blur-md text-bone-50 rounded-full px-2.5 py-0.5 text-[10px] uppercase tracking-wider tabular">
+          <div className="absolute top-3 left-3 bg-ink-900/70 backdrop-blur-md border border-white/10 text-bone-50 rounded-full px-2.5 py-0.5 text-[10px] uppercase tracking-wider tabular">
             {t('cool.stretchOf')} {idx + 1} / {total}
           </div>
         </div>

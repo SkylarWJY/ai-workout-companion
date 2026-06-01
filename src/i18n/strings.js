@@ -165,6 +165,14 @@ export const STRINGS = {
     'tutorial.watch': 'Watch tutorial',
     'tutorial.openYouTube': 'Open in YouTube',
 
+    // Sides (for unilateral exercises)
+    'side.label': 'Side',
+    'side.left': 'Left',
+    'side.right': 'Right',
+    'side.L': 'L',
+    'side.R': 'R',
+    'side.eachShort': 'each',
+
     // Warm-up alt
     'warm.altWatch': 'Watch alternate',
 
@@ -370,6 +378,14 @@ export const STRINGS = {
     'tutorial.label': '教学视频',
     'tutorial.watch': '观看教学',
     'tutorial.openYouTube': '在 YouTube 中打开',
+
+    // Sides (for unilateral exercises)
+    'side.label': '侧',
+    'side.left': '左',
+    'side.right': '右',
+    'side.L': '左',
+    'side.R': '右',
+    'side.eachShort': '每侧',
 
     // Warm-up alt
     'warm.altWatch': '看备选热身',

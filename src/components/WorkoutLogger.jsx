@@ -8,6 +8,7 @@ export default function WorkoutLogger({
   totalSets,
   defaultWeight,
   defaultReps,
+  side,
   onCancel,
   onSave,
 }) {
@@ -30,8 +31,8 @@ export default function WorkoutLogger({
       animate={{ opacity: 1, y: 0 }}
       className="rounded-3xl bg-white dark:bg-ink-800 border border-black/5 dark:border-white/5 shadow-card dark:shadow-cardDark p-5 space-y-4"
     >
-      <div className="flex items-start justify-between">
-        <div>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
           <div className="text-[10px] uppercase tracking-wider text-ink-300">
             {t('log.title')}
           </div>
@@ -42,6 +43,12 @@ export default function WorkoutLogger({
             {t('workout.set')} {setNumber}/{totalSets} · {t('workout.target')} {exercise.repRange}
           </div>
         </div>
+        {side && (
+          <span className="shrink-0 inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.14em] rounded-full px-2.5 py-1 bg-priority-extreme/15 text-priority-extreme border border-priority-extreme/30">
+            <span className="opacity-70">{t('side.label')}</span>
+            <span className="font-semibold tabular">{t(`side.${side}`)}</span>
+          </span>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-3">

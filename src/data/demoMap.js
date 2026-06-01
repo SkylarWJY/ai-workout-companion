@@ -18,6 +18,8 @@ export const DEMO_VARIANTS = {
     { key: 'dumbbell', slug: 'Side_Lateral_Raise' },
     {
       key: 'machine',
+      label: 'Cable / Machine',
+      labelZh: '绳索 / 器械',
       slug: 'Side_Lateral_Raise',
       youtubeId: 'JlT2xB92lY8', // DeltaBolic — Cable Lateral Raise Complete Guide
     },
@@ -57,7 +59,12 @@ export const DEMO_VARIANTS = {
   'pull-5': [{ key: 'dumbbell', slug: 'One-Arm_Dumbbell_Row' }],
   'pull-6': [
     { key: 'dumbbell', slug: 'Dumbbell_Bicep_Curl' },
-    { key: 'machine', slug: 'Machine_Bicep_Curl' },
+    {
+      key: 'machine',
+      label: 'Curl Machine',
+      labelZh: '弯举机',
+      slug: 'Machine_Bicep_Curl',
+    },
   ],
   'pull-7': [
     { key: 'abwheel', slug: 'Ab_Roller' },
@@ -79,6 +86,8 @@ export const DEMO_VARIANTS = {
     { key: 'dumbbell', slug: 'Goblet_Squat' },
     {
       key: 'machine',
+      label: 'Leg Press',
+      labelZh: '腿举机',
       slug: 'Goblet_Squat',
       youtubeId: 'ahaJTts1f3s', // Gerardi Performance — Leg Press Machine
       tempo: '3-1-2-1', // lower-bottomPause-lift-topHold (eccentric-first)
@@ -95,6 +104,8 @@ export const DEMO_VARIANTS = {
     { key: 'dumbbell', slug: 'Romanian_Deadlift' },
     {
       key: 'machine',
+      label: 'Seated Leg Curl',
+      labelZh: '坐姿腿弯举',
       slug: 'Romanian_Deadlift',
       youtubeId: 'xdbEG3xGLI8', // DeltaBolic — PERFECT Seated Leg Curl Tips
       tempoCues: {
@@ -109,6 +120,8 @@ export const DEMO_VARIANTS = {
     { key: 'dumbbell', slug: 'Dumbbell_Lunges' },
     {
       key: 'machine',
+      label: 'Glute Kickback',
+      labelZh: '臀部后踢机',
       slug: 'Dumbbell_Lunges',
       youtubeId: 'UbOcViik3hk', // DeltaBolic — Glute Kickback Variations
       tempoCues: {
@@ -123,6 +136,8 @@ export const DEMO_VARIANTS = {
     { key: 'dumbbell', slug: 'Barbell_Hip_Thrust' },
     {
       key: 'machine',
+      label: 'Hip Thrust Machine',
+      labelZh: '臀推机',
       slug: 'Barbell_Hip_Thrust',
       youtubeId: '0xfdeCBwoYw', // Booty Builder — Hip Thrust Machine Correct vs Incorrect
     },
@@ -133,6 +148,8 @@ export const DEMO_VARIANTS = {
     { key: 'dumbbell', slug: 'Side_Lateral_Raise' },
     {
       key: 'machine',
+      label: 'Cable / Machine',
+      labelZh: '绳索 / 器械',
       slug: 'Side_Lateral_Raise',
       youtubeId: 'JlT2xB92lY8', // DeltaBolic — Cable Lateral Raise Complete Guide
     },
@@ -142,6 +159,8 @@ export const DEMO_VARIANTS = {
     { key: 'bodyweight', slug: 'Standing_Calf_Raises' },
     {
       key: 'machine',
+      label: 'Calf Machine',
+      labelZh: '提踵机',
       slug: 'Standing_Calf_Raises',
       youtubeId: 'GnrwIpDtuto', // DeltaBolic — Struggling to Grow Your Calves
       tempoCues: {
@@ -156,6 +175,8 @@ export const DEMO_VARIANTS = {
     { key: 'bodyweight', slug: 'Dead_Bug' },
     {
       key: 'machine',
+      label: 'Ab Crunch Machine',
+      labelZh: '卷腹机',
       slug: 'Dead_Bug',
       youtubeId: 'fl9FSpCpvq0', // Colossus Fitness — Ab Crunch Machine
       tempoCues: {

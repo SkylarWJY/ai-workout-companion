@@ -2,7 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { demoVariants } from '../data/demoMap.js';
 import { resolveMeta } from '../data/exerciseMeta.js';
-import { useT } from '../i18n/index.jsx';
+import { useLang } from '../i18n/index.jsx';
+import { variantLabel } from './VariantBadge.jsx';
 
 // YouTube-only demo (start/end image animation removed in v0.4).
 // If multiple variants exist with different youtubeIds, shows a segmented
@@ -13,7 +14,7 @@ export default function ExerciseDemo({
   variantIdx: controlledIdx,
   onVariantChange,
 }) {
-  const t = useT();
+  const { t, lang } = useLang();
   const variants = useMemo(() => demoVariants(exerciseId), [exerciseId]);
   const [localIdx, setLocalIdx] = useState(0);
   const variantIdx = controlledIdx ?? localIdx;
@@ -52,7 +53,7 @@ export default function ExerciseDemo({
   return (
     <div className="space-y-2">
       {distinctVariants.length > 0 && (
-        <div className="flex items-center gap-1 overflow-x-auto scroll-clean -mx-1 px-1">
+        <div className="flex items-center gap-1 overflow-x-auto scroll-clean -mx-1 px-1 pb-1">
           {variants.map((v, i) => (
             <button
               key={v.key + i}
@@ -64,7 +65,7 @@ export default function ExerciseDemo({
                     : 'bg-transparent text-ink-500 dark:text-ink-100 border-black/10 dark:border-white/10'
                 }`}
             >
-              {t(`variant.${v.key}`)}
+              {variantLabel(v, t, lang)}
             </button>
           ))}
         </div>
@@ -119,7 +120,7 @@ export default function ExerciseDemo({
           </span>
           {variant?.key && (
             <span className="text-[10px] uppercase tracking-wider bg-ink-900/60 backdrop-blur-md text-bone-50 rounded-full px-2 py-0.5">
-              {t(`variant.${variant.key}`)}
+              {variantLabel(variant, t, lang)}
             </span>
           )}
         </div>
