@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLang } from '../i18n/index.jsx';
 import { useTheme } from '../hooks/useTheme.js';
 import { useOverrides } from '../hooks/useOverrides.jsx';
+import SessionHistorySheet from './SessionHistorySheet.jsx';
 
 export default function SettingsSheet({ open, onClose }) {
   const { t, lang, setLang } = useLang();
   const { theme, setTheme } = useTheme();
   const { weightUnit, setWeightUnit, resetAll } = useOverrides();
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   const handleReset = () => {
     if (window.confirm(t('settings.resetConfirm'))) {
@@ -82,17 +84,28 @@ export default function SettingsSheet({ open, onClose }) {
               </Row>
 
               <button
+                onClick={() => setHistoryOpen(true)}
+                className="w-full mt-2 py-3 rounded-2xl bg-ink-900 dark:bg-bone-100 text-bone-50 dark:text-ink-900 text-[12px] uppercase tracking-wider font-semibold active:scale-[0.98] flex items-center justify-center gap-2"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 8v4l3 3M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0z" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                {t('history.open')}
+              </button>
+
+              <button
                 onClick={handleReset}
-                className="w-full mt-4 py-3 rounded-2xl border border-priority-extreme/30 text-priority-extreme text-[12px] uppercase tracking-wider font-medium active:scale-[0.98]"
+                className="w-full mt-2 py-3 rounded-2xl border border-priority-extreme/30 text-priority-extreme text-[12px] uppercase tracking-wider font-medium active:scale-[0.98]"
               >
                 {t('settings.reset')}
               </button>
 
               <div className="pt-4 text-center text-[11px] text-ink-300">
-                ATLAS · {t('settings.aboutVersion')} 0.5.0
+                ATLAS · {t('settings.aboutVersion')} 0.5.2
               </div>
             </div>
           </motion.div>
+          <SessionHistorySheet open={historyOpen} onClose={() => setHistoryOpen(false)} />
         </>
       )}
     </AnimatePresence>

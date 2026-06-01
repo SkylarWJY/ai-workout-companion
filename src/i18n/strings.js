@@ -176,6 +176,11 @@ export const STRINGS = {
     'intensity.heavy': 'Heavy',
     'intensity.peak': 'Peak',
 
+    // Session history
+    'history.title': 'Session History',
+    'history.open': 'View past sessions',
+    'history.empty': 'No saved sessions yet. Finish a workout to record one here.',
+
     // Region labels
     'region.delts-front': 'Front delts',
     'region.delts-side': 'Side delts',
@@ -451,6 +456,11 @@ export const STRINGS = {
     'intensity.moderate': '中',
     'intensity.heavy': '重',
     'intensity.peak': '极重',
+
+    // Session history
+    'history.title': '训练记录',
+    'history.open': '查看历史训练',
+    'history.empty': '还没有保存的训练。完成一次训练后会自动记录到这里。',
 
     // Region labels
     'region.delts-front': '前束',
