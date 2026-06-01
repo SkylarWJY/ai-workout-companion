@@ -8,14 +8,24 @@ export default function CoolDownSection({ stretches, done, onDone }) {
   const { t, lang } = useLang();
   const [active, setActive] = useState(false);
   const [idx, setIdx] = useState(0);
+  const [side, setSide] = useState('L'); // current side for unilateral stretches
   const [remaining, setRemaining] = useState(COOLDOWN_HOLD_SECS);
   const [running, setRunning] = useState(false);
   const endRef = useRef(0);
   const tickRef = useRef(null);
+  // refs that the interval can read without restarting
+  const sideRef = useRef('L');
+  const idxRef = useRef(0);
+  const stretchesRef = useRef(stretches);
+
+  useEffect(() => { sideRef.current = side; }, [side]);
+  useEffect(() => { idxRef.current = idx; }, [idx]);
+  useEffect(() => { stretchesRef.current = stretches; }, [stretches]);
 
   const total = stretches.length;
   const current = stretches[idx];
   const lastOne = idx === total - 1;
+  const isUni = !!current?.unilateral;
 
   const clearTick = () => {
     if (tickRef.current) {
@@ -35,6 +45,14 @@ export default function CoolDownSection({ stretches, done, onDone }) {
         clearTick();
         setRunning(false);
         if (navigator.vibrate) navigator.vibrate([60, 40, 60]);
+        // for unilateral stretches: after L finishes, auto-flip to R + restart
+        const cur = stretchesRef.current[idxRef.current];
+        if (cur?.unilateral && sideRef.current === 'L') {
+          setSide('R');
+          sideRef.current = 'R';
+          setRemaining(COOLDOWN_HOLD_SECS);
+          startInterval(COOLDOWN_HOLD_SECS);
+        }
       }
     }, 200);
   };
@@ -42,6 +60,9 @@ export default function CoolDownSection({ stretches, done, onDone }) {
   const beginCool = () => {
     setActive(true);
     setIdx(0);
+    setSide('L');
+    sideRef.current = 'L';
+    idxRef.current = 0;
     setRemaining(COOLDOWN_HOLD_SECS);
     startInterval(COOLDOWN_HOLD_SECS);
   };
@@ -54,12 +75,24 @@ export default function CoolDownSection({ stretches, done, onDone }) {
       onDone?.();
       return;
     }
-    setIdx((i) => i + 1);
+    const newIdx = idx + 1;
+    idxRef.current = newIdx;
+    setIdx(newIdx);
+    setSide('L');
+    sideRef.current = 'L';
     setRemaining(COOLDOWN_HOLD_SECS);
     startInterval(COOLDOWN_HOLD_SECS);
   };
 
   const restart = () => {
+    setRemaining(COOLDOWN_HOLD_SECS);
+    startInterval(COOLDOWN_HOLD_SECS);
+  };
+
+  const flipSide = () => {
+    const newSide = side === 'L' ? 'R' : 'L';
+    setSide(newSide);
+    sideRef.current = newSide;
     setRemaining(COOLDOWN_HOLD_SECS);
     startInterval(COOLDOWN_HOLD_SECS);
   };
@@ -87,7 +120,6 @@ export default function CoolDownSection({ stretches, done, onDone }) {
           startLabel={t('cool.start')}
           holdLabel={t('cool.holdEach')}
           lang={lang}
-          targetLabel={t('cool.target')}
         />
       ) : (
         <ActiveView
@@ -96,6 +128,9 @@ export default function CoolDownSection({ stretches, done, onDone }) {
           total={total}
           remaining={remaining}
           running={running}
+          isUni={isUni}
+          side={side}
+          onFlipSide={flipSide}
           onNext={next}
           onRestart={restart}
           lastOne={lastOne}
@@ -107,7 +142,7 @@ export default function CoolDownSection({ stretches, done, onDone }) {
   );
 }
 
-function CollapsedView({ stretches, done, onStart, sub, startLabel, holdLabel, lang, targetLabel }) {
+function CollapsedView({ stretches, done, onStart, sub, startLabel, holdLabel, lang }) {
   return (
     <motion.div
       layout
@@ -139,7 +174,21 @@ function CollapsedView({ stretches, done, onStart, sub, startLabel, holdLabel, l
   );
 }
 
-function ActiveView({ current, idx, total, remaining, running, onNext, onRestart, lastOne, t, lang }) {
+function ActiveView({
+  current,
+  idx,
+  total,
+  remaining,
+  running,
+  isUni,
+  side,
+  onFlipSide,
+  onNext,
+  onRestart,
+  lastOne,
+  t,
+  lang,
+}) {
   const pct = remaining / 30;
   const R = 70;
   const C = 2 * Math.PI * R;
@@ -147,7 +196,7 @@ function ActiveView({ current, idx, total, remaining, running, onNext, onRestart
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key={current.id}
+        key={current.id + side}
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -8 }}
@@ -181,14 +230,33 @@ function ActiveView({ current, idx, total, remaining, running, onNext, onRestart
               </div>
             </div>
           </div>
-          <div className="absolute top-3 left-3 bg-ink-900/70 backdrop-blur-md border border-white/10 text-bone-50 rounded-full px-2.5 py-0.5 text-[10px] uppercase tracking-wider tabular">
-            {t('cool.stretchOf')} {idx + 1} / {total}
+          <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+            <div className="bg-ink-900/70 backdrop-blur-md border border-white/10 text-bone-50 rounded-full px-2.5 py-0.5 text-[10px] uppercase tracking-wider tabular">
+              {t('cool.stretchOf')} {idx + 1} / {total}
+            </div>
+            {isUni && (
+              <button
+                onClick={onFlipSide}
+                className="inline-flex items-center gap-1.5 bg-priority-extreme/85 backdrop-blur-md text-bone-50 rounded-full px-2.5 py-0.5 text-[10px] uppercase tracking-wider active:scale-[0.95] transition self-start"
+              >
+                <span className="opacity-70">{t('side.label')}</span>
+                <span className="font-semibold tabular">{t(`side.${side}`)}</span>
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none">
+                  <path d="M7 7h11M17 4l3 3-3 3M17 17H6M7 14l-3 3 3 3" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            )}
           </div>
         </div>
 
         <div className="p-4 space-y-2.5">
           <div className="text-base font-semibold text-ink-900 dark:text-bone-100 leading-tight">
             {locStretch(current, 'name', lang)}
+            {isUni && (
+              <span className="ml-2 text-[12px] font-normal text-priority-extreme">
+                · {t(`side.${side === 'L' ? 'left' : 'right'}`)}
+              </span>
+            )}
           </div>
           <div className="text-[11px] uppercase tracking-wider text-ink-300">
             {t('cool.target')} · <span className="text-ink-500 dark:text-ink-100 normal-case tracking-normal">{locStretch(current, 'target', lang)}</span>

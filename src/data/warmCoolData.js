@@ -33,6 +33,7 @@ export const COOLDOWNS = {
       name: 'Standing Shoulder Stretch',
       target: 'Shoulders',
       cue: 'Stand tall with shoulders relaxed. Hold your arm just above the elbow.',
+      unilateral: true,
     },
     {
       id: 'p-crescent-moon',
@@ -40,6 +41,7 @@ export const COOLDOWNS = {
       name: 'Crescent Moon Stretch',
       target: 'Side body / lats',
       cue: 'Keep shoulders down, away from ears. Stretch one side then the other.',
+      unilateral: true,
     },
     {
       id: 'p-chest-opener',
@@ -54,6 +56,7 @@ export const COOLDOWNS = {
       name: 'Standing Tricep Stretch',
       target: 'Triceps',
       cue: 'Reach fingertips down your spine. Keep shoulders relaxed.',
+      unilateral: true,
     },
     {
       id: 'p-cross-body',
@@ -61,6 +64,7 @@ export const COOLDOWNS = {
       name: 'Cross-Body Shoulder Stretch',
       target: 'Posterior shoulder',
       cue: 'Pull the arm across the body just above the elbow.',
+      unilateral: true,
     },
     {
       id: 'p-wall-chest',
@@ -68,6 +72,7 @@ export const COOLDOWNS = {
       name: 'Wall Chest Stretch',
       target: 'Chest · Biceps',
       cue: 'Plant hand on wall at shoulder height. Rotate body away gently.',
+      unilateral: true,
     },
   ],
 
@@ -78,6 +83,7 @@ export const COOLDOWNS = {
       name: 'Overhead Tricep & Lat Stretch',
       target: 'Triceps · Lats',
       cue: 'Reach one arm overhead, bend the elbow, pull gently with the other hand.',
+      unilateral: true,
     },
     {
       id: 'pl-neck',
@@ -85,6 +91,7 @@ export const COOLDOWNS = {
       name: 'Neck Lateral Stretch',
       target: 'Neck · Upper traps',
       cue: 'Tilt head to one side, place hand on top of head, breathe.',
+      unilateral: true,
     },
     {
       id: 'pl-cobra',
@@ -99,6 +106,7 @@ export const COOLDOWNS = {
       name: 'Thread the Needle',
       target: 'Mid-back · Shoulders',
       cue: 'From all-fours, slide one arm under the other. Sink shoulder to floor.',
+      unilateral: true,
     },
     {
       id: 'pl-doorway-chest',
@@ -106,6 +114,7 @@ export const COOLDOWNS = {
       name: 'Doorway / Wall Chest Stretch',
       target: 'Chest · Biceps',
       cue: 'Arm against the wall at shoulder height, rotate body away.',
+      unilateral: true,
     },
   ],
 
@@ -116,6 +125,7 @@ export const COOLDOWNS = {
       name: 'Kneeling Hip Flexor Stretch',
       target: 'Hip flexors',
       cue: 'One knee down. Tuck pelvis. Reach the opposite arm overhead.',
+      unilateral: true,
     },
     {
       id: 'l-quad',
@@ -123,6 +133,7 @@ export const COOLDOWNS = {
       name: 'Standing Quad Stretch',
       target: 'Quadriceps',
       cue: 'Pull heel to glute. Keep knees together, tuck pelvis.',
+      unilateral: true,
     },
     {
       id: 'l-glute-lying',
@@ -130,6 +141,7 @@ export const COOLDOWNS = {
       name: 'Lying Glute Stretch',
       target: 'Glutes',
       cue: 'Cross ankle over opposite knee. Pull the bottom thigh toward chest.',
+      unilateral: true,
     },
     {
       id: 'l-cobra',
@@ -151,6 +163,7 @@ export const COOLDOWNS = {
       name: 'Pigeon Pose',
       target: 'Glutes · Hip rotators',
       cue: 'Front shin across, back leg long. Sink hips down. Square pelvis.',
+      unilateral: true,
     },
     {
       id: 'l-neck-side',
@@ -158,6 +171,7 @@ export const COOLDOWNS = {
       name: 'Neck Side Stretch',
       target: 'Neck',
       cue: 'Hand on top of head, tilt ear to shoulder, breathe deep.',
+      unilateral: true,
     },
     {
       id: 'l-hamstring-9090',
@@ -165,6 +179,7 @@ export const COOLDOWNS = {
       name: '90/90 Hamstring Stretch',
       target: 'Hamstrings',
       cue: 'On back, knee + hip 90°. Slowly straighten the leg.',
+      unilateral: true,
     },
     {
       id: 'l-butterfly',
