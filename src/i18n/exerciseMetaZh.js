@@ -73,6 +73,81 @@ export const EXERCISE_META_ZH = {
     hold: '1 秒挤压腹肌',
     lower: '3 秒回放向上',
   },
+  'push-1.barbell': {
+    lift: '2 秒杠铃推过头',
+    hold: '1 秒锁定 — 头穿过窗口',
+    lower: '3 秒下放到锁骨',
+  },
+  'push-5.rope': {
+    lift: '2 秒下压 + 底部撕开绳索',
+    hold: '1 秒挤压三头 — 双手分开',
+    lower: '3 秒回放到肩部高度',
+  },
+  'push-5.kickback': {
+    lift: '2 秒向后 + 略向上踢哑铃',
+    hold: '1 秒狠挤压 — 肘部锁住',
+    lower: '2 秒回放但上臂不掉',
+  },
+  'pull-1.bestpick': {
+    lift: '1 秒驱动肘部下沉到肋骨',
+    hold: '1 秒下巴过杠 — 完全挤压背阔',
+    lower: '3 秒控制下放到完全悬挂',
+  },
+  'pull-2.bestpick': {
+    lift: '2 秒划船到下胸 — 肘部略外展',
+    hold: '1 秒挤压肩胛骨',
+    lower: '3 秒手臂前伸还原',
+  },
+  'pull-3.bestpick': {
+    lift: '2 秒拉到上胸',
+    hold: '1 秒拉伸然后驱动肘部下 + 后',
+    lower: '3 秒手臂向上回到完全拉伸位',
+  },
+  'pull-4.bestpick': {
+    lift: '2 秒向外打开 — 肘部带动',
+    hold: '1 秒最大外旋位狠挤压',
+    lower: '2 秒离心 — 控制回放',
+  },
+  'pull-5.bestpick': {
+    lift: '2 秒划船哑铃到髋部 — 肘部紧贴',
+    hold: '1 秒狠挤压背阔',
+    lower: '3 秒下放到完全背阔拉伸',
+  },
+  'pull-6.bestpick': {
+    lift: '2 秒弯举 — 手臂在身体后方',
+    hold: '1 秒挤压 + 顶部略微旋后',
+    lower: '3 秒控制离心到完全拉伸',
+  },
+  'pull-7.bestpick': {
+    lift: '2 秒向下卷腹 — 卷起脊柱',
+    hold: '1 秒腹肌硬挤',
+    lower: '3 秒回放向上',
+  },
+  'leg-1.bestpick': {
+    lift: '2 秒完全伸直 — 狠挤压',
+    hold: '1 秒锁定位停住',
+    lower: '3 秒下放到股四头完全拉伸',
+  },
+  'leg-3.bestpick': {
+    lift: '2 秒臀部上顶',
+    hold: '2 秒顶部狠挤臀',
+    lower: '3 秒控制下放',
+  },
+  'leg-4.bestpick': {
+    lift: '2 秒腿向后 + 上踢',
+    hold: '1 秒顶部挤臀',
+    lower: '3 秒控制回放',
+  },
+  'leg-5.bestpick': {
+    lift: '2 秒向外抬起',
+    hold: '1 秒肩高停住',
+    lower: '3 秒离心 — 控制下落',
+  },
+  'leg-7.bestpick': {
+    lift: '2 秒向下卷腹 — 卷起脊柱',
+    hold: '1 秒腹肌硬挤',
+    lower: '3 秒回放向上',
+  },
 };
 
 export const tempoCuesZh = (exerciseId, variantKey) => {

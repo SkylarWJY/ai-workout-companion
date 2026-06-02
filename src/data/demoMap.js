@@ -84,7 +84,59 @@ export const DEMO_VARIANTS = {
         },
       },
     },
-    { key: 'barbell', slug: 'Standing_Military_Press' },
+    {
+      key: 'barbell',
+      slug: 'Standing_Military_Press',
+      youtubeId: '4LBVP2Oe7fg', // DeltaBolic — The PERFECT Barbell Overhead Press
+      tempo: '2-1-3',
+      tempoCues: {
+        lift: '2 sec press the bar overhead',
+        hold: '1 sec hold at lockout — head through the window',
+        lower: '3 sec lower to clavicle',
+      },
+      content: {
+        en: {
+          name: 'Barbell Overhead Press',
+          whyItMatters:
+            'Highest absolute loading potential of any shoulder movement. The bar locks your hands in one plane so you can press genuinely heavy without coordination tax — strength built here carries over to every other press in your program.',
+          howTo: [
+            'Set the J-hooks around upper-chest height. Bar in front rack, elbows pointed mostly down, hands just outside shoulder width.',
+            'Brace the core hard, glutes tight. Pull head back as the bar leaves the rack.',
+            'Press straight up; once the bar clears the forehead, push your head through so the bar finishes over the mid-foot.',
+            'Lower with control to the clavicle — touch lightly, do not bounce.',
+          ],
+          tips: [
+            'False (thumbless) grip lets the bar sit on the heel of the palm — less wrist strain on heavy sets.',
+            'Squeeze the bar hard — it tightens up the whole upper body and saves the shoulder joint.',
+          ],
+          commonMistakes: [
+            'Hyper-extending the lower back to "press" — that\'s a hip drive, not a shoulder press. Brace abs hard, glutes tight.',
+            'Pressing the bar straight up without re-stacking the head — the bar drifts forward and the shoulder takes all the load.',
+            'Catching the bar on the descent instead of guiding it — wrist + clavicle slam.',
+          ],
+        },
+        zh: {
+          name: '杠铃过头推举',
+          whyItMatters:
+            '所有肩部动作里绝对负荷最高的。杠铃把双手锁在同一平面上，你不用维持哑铃平衡，能真的推大重量 — 这里练出的力量会带动你训练里所有其他推举进步。',
+          howTo: [
+            'J 钩调到上胸高度。杠铃落在前架位，肘部基本朝下，手在肩宽外一点。',
+            '核心狠收紧，臀夹紧。杠铃离架时头先往后躲让位。',
+            '直线向上推；杠铃过额头后，头部前送让杠铃停在脚弓正上方。',
+            '控制下放到锁骨 — 轻碰即可，不要弹起。',
+          ],
+          tips: [
+            '不握紧大拇指（假握）让杠铃压在掌根 — 大重量时手腕压力小。',
+            '握杠握紧 — 整个上半身收紧，肩关节受力会减少。',
+          ],
+          commonMistakes: [
+            '腰椎反弓"推"起 — 那是髋部发力，不是肩推。腹肌狠绷，臀夹紧。',
+            '直推不让头过 — 杠铃轨迹前移，肩部承担所有负荷。',
+            '下放时去接杠铃而不是控制 — 手腕和锁骨会被砸。',
+          ],
+        },
+      },
+    },
     {
       key: 'bestpick',
       label: 'Best for Front Delts',
@@ -447,8 +499,112 @@ export const DEMO_VARIANTS = {
 
   'push-5': [
     { key: 'cable', slug: 'Triceps_Pushdown' },
-    { key: 'rope', slug: 'Triceps_Pushdown_-_Rope_Attachment' },
-    { key: 'kickback', slug: 'Tricep_Dumbbell_Kickback' },
+    {
+      key: 'rope',
+      slug: 'Triceps_Pushdown_-_Rope_Attachment',
+      youtubeId: '-PqzEk57xiw', // DeltaBolic — The PERFECT Triceps Pushdown
+      tempo: '2-1-3',
+      tempoCues: {
+        lift: '2 sec push down + flare rope at the bottom',
+        hold: '1 sec squeeze triceps — hands wide apart',
+        lower: '3 sec return upward in line with shoulders',
+      },
+      content: {
+        en: {
+          name: 'Rope Tricep Pushdown',
+          whyItMatters:
+            'The rope unlocks a flare at the bottom — pulling the rope ends apart at lockout gets a peak contraction the bar never can. Best for lateral + medial head detail (the horseshoe shape) and the easiest variant on the wrists.',
+          howTo: [
+            'Rope attachment, cable at the top. Step a half-foot back so the line of resistance falls along your forearm at lockout.',
+            'Elbows pinned to ribs, slight forward lean (~15°).',
+            'Push down keeping the rope together until just past mid-thigh; then flare the rope ends apart for the last few inches.',
+            '3-sec return upward — fight the cable.',
+          ],
+          tips: [
+            'Thumbless grip on the rope ends — less forearm pump, more triceps.',
+            'The flare is the whole point — if you finish the rep with the rope still together, you skipped the contraction.',
+          ],
+          commonMistakes: [
+            'Treating it like a straight-bar pushdown (no flare) — you bought the rope for nothing.',
+            'Elbows drifting forward — turns it into a half-press, loses tension.',
+            'Going too heavy and using bodyweight to push down — that\'s back, not triceps.',
+          ],
+        },
+        zh: {
+          name: '绳索三头下压',
+          whyItMatters:
+            '绳索的关键在底部能"撕开" — 锁定时把绳子两端向外拉开，得到杠铃永远不可能给的顶峰收缩。最适合外侧头 + 中头细节（马蹄形轮廓），手腕负担也最小。',
+          howTo: [
+            '挂绳索把手，绳索调到最高。后退半步，让锁定时阻力线沿着前臂方向。',
+            '肘部紧贴肋骨，身体微微前倾（约 15°）。',
+            '下压时保持双手在一起到大腿中段；最后几寸把绳索两端向外撕开。',
+            '3 秒控制回放 — 跟绳索"较劲"。',
+          ],
+          tips: [
+            '绳索末端不要握死大拇指 — 前臂不充血，三头感受更强。',
+            '撕开就是这个变体的全部意义 — 如果你做完一次绳子还在一起，那等于跳过了收缩位。',
+          ],
+          commonMistakes: [
+            '当成直杆下压（不撕开）— 那买绳索就白费了。',
+            '肘部前移 — 变成了半推，张力丢失。',
+            '太重，用体重往下压 — 那是背部发力，不是三头。',
+          ],
+        },
+      },
+    },
+    {
+      key: 'kickback',
+      slug: 'Tricep_Dumbbell_Kickback',
+      youtubeId: 'GZ3NzlJs_yg', // DeltaBolic — STOP THIS Tricep Kickback MISTAKE!
+      tempo: '2-1-2',
+      tempoCues: {
+        lift: '2 sec extend the dumbbell back + slightly up',
+        hold: '1 sec hard squeeze — elbow stays locked',
+        lower: '2 sec return without dropping the elbow',
+      },
+      content: {
+        en: {
+          name: 'Tricep Kickback',
+          whyItMatters:
+            'Puts the long head of the triceps under tension at full shortening — exactly the position pushdowns CANNOT reach because the elbow needs to be behind the body. Pair it with overhead extensions and you cover the full long-head range.',
+          howTo: [
+            'Knee + same-side hand on bench. Hinge so the torso is parallel to the floor, flat back.',
+            'Lock the upper arm against the ribs — parallel to the floor, elbow bent 90°.',
+            'Extend ONLY from the elbow — kick the dumbbell back + slightly up until the arm is fully straight.',
+            'Pause 1 sec at full extension. Slow 2-sec return — DO NOT let the upper arm drop.',
+          ],
+          tips: [
+            'Light dumbbell. This is a contraction movement, not a strength one — 5-12 lb is usually plenty.',
+            'Rotate the pinky up slightly at the top for an extra squeeze on the lateral head.',
+          ],
+          commonMistakes: [
+            'Upper arm rocking up and down — that\'s the #1 mistake. The whole point is the upper arm STAYS PUT.',
+            'Going too heavy — you end up swinging the dumbbell, not contracting the tricep.',
+            'Half-rep at the top — the contraction is only real if the elbow fully straightens.',
+          ],
+        },
+        zh: {
+          name: '三头后踢',
+          whyItMatters:
+            '让三头长头在完全缩短位置承受张力 — 这正是下压做不到的位置，因为肘部必须在身体后方。配合头后屈伸一起做，长头的全行程就覆盖了。',
+          howTo: [
+            '同侧膝盖 + 手撑在凳子上。躯干跟地面平行，背部挺直。',
+            '上臂锁在肋骨旁 — 跟地面平行，肘部弯 90°。',
+            '只从肘部伸展 — 把哑铃向后 + 略向上踢，直到手臂完全伸直。',
+            '完全伸直时停 1 秒。2 秒控制回放 — 上臂绝对不能掉下来。',
+          ],
+          tips: [
+            '哑铃要轻。这是收缩动作不是力量动作 — 通常 5-12 lb 就够。',
+            '顶部小指略微向上旋一下，外侧头收缩更强。',
+          ],
+          commonMistakes: [
+            '上臂上下晃 — 头号错误。这个动作的全部意义就是上臂"不动"。',
+            '太重 — 最后变成甩哑铃，不是收缩三头。',
+            '顶部半程 — 肘部完全伸直才算真的收缩。',
+          ],
+        },
+      },
+    },
     {
       key: 'bestpick',
       label: 'Best for Triceps',
@@ -524,6 +680,52 @@ export const DEMO_VARIANTS = {
         lower: 'No movement — pure isometric',
       },
       youtubeId: 'gni543DXmvI', // ArielYu_Fit — how to perfect plank
+      content: {
+        en: {
+          name: 'Plank',
+          primaryMuscles: ['Deep Core (TVA)', 'Abs'],
+          secondaryMuscles: ['Glutes', 'Shoulders', 'Lower-Back Stabilizers'],
+          whyItMatters:
+            'Anti-extension hold — the muscles that PREVENT the lower back from arching when you squat, press, and pull. Different job from a crunch: the crunch makes abs visible, the plank stops the lower back from blowing up under load.',
+          howTo: [
+            'Forearms shoulder-width on the floor, elbows directly under shoulders.',
+            'Tuck pelvis under (posterior tilt) — flatten the lower back.',
+            'Squeeze glutes hard, brace abs like you\'re about to take a punch.',
+            'Hold 20–40 seconds. Stop the set when the lower back starts to sag, NOT when arms get tired.',
+          ],
+          tips: [
+            'Drive elbows down into the floor — that turns on the serratus and locks the shoulder blades flat.',
+            'Breathe shallow in the rib cage — if you can\'t breathe at all, you\'re holding wrong.',
+          ],
+          commonMistakes: [
+            'Hips sagging toward the floor — the lower back compensates instead of the abs working. Stop the set, no point grinding.',
+            'Hips pointed up like a downward dog — easier but it stops being a plank. Body must be in one straight line.',
+            'Holding 2+ minutes — past 40-60 seconds it\'s mostly an endurance test, not a strength one. Pile on more sets instead.',
+          ],
+        },
+        zh: {
+          name: '平板支撑',
+          primaryMuscles: ['深层核心（腹横肌）', '腹肌'],
+          secondaryMuscles: ['臀部', '肩部', '下背稳定肌群'],
+          whyItMatters:
+            '抗伸展等长 — 就是深蹲、推举、引体下拉时阻止腰椎反弓的那些肌肉。跟卷腹工作完全不同：卷腹让腹肌看得见，平板让下背在负重时不爆。',
+          howTo: [
+            '前臂着地与肩同宽，肘部正在肩关节正下方。',
+            '骨盆后倾收紧 — 把腰椎压平。',
+            '臀部狠夹，腹肌像迎接一记重拳那样绷紧。',
+            '撑 20–40 秒。腰下沉的瞬间就停 — 不是手臂酸了才停。',
+          ],
+          tips: [
+            '肘部往地面用力下压 — 前锯肌激活，肩胛骨锁平。',
+            '肋骨那块浅呼吸 — 如果完全憋气说明姿势错了。',
+          ],
+          commonMistakes: [
+            '臀部下沉接近地面 — 腰椎在代偿，腹肌没工作。下沉就停组，硬撑没意义。',
+            '臀部翘高像下犬式 — 轻松但不算平板了。身体必须一条直线。',
+            '撑 2 分钟以上 — 40–60 秒以后基本就是耐力测试，不是力量。多做几组比一组撑久强。',
+          ],
+        },
+      },
     },
     {
       key: 'bestpick',
@@ -591,11 +793,319 @@ export const DEMO_VARIANTS = {
   'pull-1': [
     { key: 'pullup', slug: 'Pullups' },
     { key: 'latpulldown', slug: 'Wide-Grip_Lat_Pulldown' },
+    {
+      key: 'bestpick',
+      label: 'Best for Lats',
+      labelZh: '背阔最佳',
+      isBestPick: true,
+      slug: 'Pullups',
+      youtubeId: 'ZPG8OsHKXLw', // Jeremy Ethier — The PERFECT Pull-Up (5 Steps)
+      tempo: '1-1-3',
+      tempoCues: {
+        lift: '1 sec drive elbows down to ribs',
+        hold: '1 sec chin over the bar — full lat squeeze',
+        lower: '3 sec controlled eccentric to full hang',
+      },
+      content: {
+        en: {
+          name: 'Unassisted Pull-Up (target)',
+          primaryMuscles: ['Lats', 'Upper Back'],
+          secondaryMuscles: ['Biceps', 'Core', 'Forearms'],
+          whyItMatters:
+            'The keystone movement for back width. Nothing trains the lats through their full stretched-to-shortened range with this much loading potential. Your current Assisted variant is the runway TO this — the second you can hit unassisted × 6 your lat development takes a step you cannot get any other way.',
+          howTo: [
+            'Full dead hang to start — shoulders packed down and back, NOT shrugged.',
+            'Pull as if driving the elbows down into your back pockets — chest leads, lats do the work.',
+            'Chin over the bar; squeeze for 1 sec — feel the lat shorten.',
+            '3-sec eccentric back to full hang. The negative is where the lat actually grows.',
+          ],
+          tips: [
+            'Engage the lats BEFORE you start pulling — do a scapular pull-up first (just depress the shoulders), then start the bend.',
+            'Slight backward lean (~10°) keeps tension on the lats, not the biceps.',
+          ],
+          commonMistakes: [
+            'Kipping/swinging — momentum kills the lat work.',
+            'Pulling with arms first — biceps fail before lats are challenged.',
+            'Dropping out of the eccentric — you skipped 50% of the growth stimulus.',
+          ],
+        },
+        zh: {
+          name: '徒手引体向上（目标）',
+          primaryMuscles: ['背阔肌', '上背'],
+          secondaryMuscles: ['肱二头肌', '核心', '前臂'],
+          whyItMatters:
+            '背宽的基石动作。没有任何动作能在拉伸位到缩短位的全行程里给背阔这么大的负荷潜力。你现在做的辅助版本就是通往这里的跑道 — 一旦能做无辅助 × 6，背阔的发展会跳一个层级，其他动作给不了。',
+          howTo: [
+            '完全悬挂开始 — 肩胛骨下沉收紧，不是耸肩。',
+            '想象把肘部往后裤兜方向压 — 胸先上，背阔发力。',
+            '下巴过杠，挤压 1 秒 — 感受背阔缩短。',
+            '3 秒离心回到完全悬挂。离心阶段才是背阔真正生长的时候。',
+          ],
+          tips: [
+            '开拉之前先激活背阔 — 先做一个肩胛引体（只下沉肩胛骨），然后再屈臂。',
+            '身体略后倾约 10° 让张力留在背阔，不去二头。',
+          ],
+          commonMistakes: [
+            '甩腿借力 — 惯性把背阔的工作毁掉。',
+            '先用胳膊拉 — 二头先力竭，背阔还没受刺激。',
+            '离心阶段直接掉下来 — 50% 的生长刺激跳过了。',
+          ],
+        },
+      },
+    },
   ],
-  'pull-2': [{ key: 'cable', slug: 'Seated_Cable_Rows' }],
-  'pull-3': [{ key: 'cable', slug: 'Wide-Grip_Lat_Pulldown' }],
-  'pull-4': [{ key: 'dumbbell', slug: 'Reverse_Flyes' }],
-  'pull-5': [{ key: 'dumbbell', slug: 'One-Arm_Dumbbell_Row' }],
+  'pull-2': [
+    { key: 'cable', slug: 'Seated_Cable_Rows' },
+    {
+      key: 'bestpick',
+      label: 'Best for Upper Back',
+      labelZh: '上背最佳',
+      isBestPick: true,
+      slug: 'T_Bar_Row_with_Handle',
+      youtubeId: '4v59ShSjX2w', // DeltaBolic — BIGGER Back Workout (chest-supported row featured)
+      tempo: '2-1-3',
+      tempoCues: {
+        lift: '2 sec row to lower chest — elbows out wider',
+        hold: '1 sec squeeze blades together',
+        lower: '3 sec extend arms forward',
+      },
+      content: {
+        en: {
+          name: 'Chest-Supported T-Bar Row (45°)',
+          primaryMuscles: ['Mid Traps', 'Rhomboids', 'Upper Back'],
+          secondaryMuscles: ['Rear Delts', 'Lats'],
+          whyItMatters:
+            'The 45° chest-supported angle with elbows slightly flared targets MIDDLE/LOWER traps for back THICKNESS — that\'s the dimension Cable Rows can\'t quite get because their pulling angle is too low. This is the upgrade for the area between the shoulder blades.',
+          howTo: [
+            'Set the bench to 45° and lay chest-down. T-bar or pair of dumbbells.',
+            'Slight elbow flare (~45° from torso) — this aims the load at the upper back, not just the lats.',
+            'Row to the lower chest, squeeze the shoulder blades hard for 1 sec.',
+            '3-sec eccentric, get a real stretch in the upper back at the bottom.',
+          ],
+          tips: [
+            'Pretend you\'re pinching a credit card between the shoulder blades at the top.',
+            'Drop the weight 20% from your normal cable row weight — strict form here matters way more than load.',
+          ],
+          commonMistakes: [
+            'Lifting the chest off the pad to get more range — that\'s a barbell row, not the chest-supported version.',
+            'Elbows tucked tight — that\'s a lat exercise. You came here for upper back, keep them slightly out.',
+            'Yanking and bouncing — the bottom stretch is the most valuable part.',
+          ],
+        },
+        zh: {
+          name: '上斜俯卧划船（45°胸支撑）',
+          primaryMuscles: ['中斜方肌', '菱形肌', '上背'],
+          secondaryMuscles: ['后束', '背阔'],
+          whyItMatters:
+            '45° 胸支撑配合肘部略微外展，把负荷打到中下斜方肌做背部"厚度" — 这是普通坐姿划船很难拿到的维度，因为拉的角度太低了。这是肩胛骨之间那块区域的升级方案。',
+          howTo: [
+            '凳子调到 45°，胸朝下趴上去。T 杠或一对哑铃。',
+            '肘部略微外展（跟躯干约 45°）— 这才能把负荷打到上背，不只是背阔。',
+            '划到下胸位置，肩胛骨用力夹紧 1 秒。',
+            '3 秒离心，让上背在底部真正拉伸开。',
+          ],
+          tips: [
+            '想象顶部用肩胛骨夹住一张信用卡。',
+            '比平时坐姿划船的重量减 20% — 这个动作严格做远比重量重要。',
+          ],
+          commonMistakes: [
+            '把胸从靠垫上抬起来增加行程 — 那是杠铃划船，不是胸支撑版本。',
+            '肘部完全夹紧 — 那是背阔动作。你来这里练上背，肘部要略外展。',
+            '甩起来弹起来 — 底部的拉伸才是最有价值的部分。',
+          ],
+        },
+      },
+    },
+  ],
+  'pull-3': [
+    { key: 'cable', slug: 'Wide-Grip_Lat_Pulldown' },
+    {
+      key: 'bestpick',
+      label: 'Best for Lat Width',
+      labelZh: '背宽最佳',
+      isBestPick: true,
+      slug: 'Wide-Grip_Lat_Pulldown',
+      youtubeId: '4v59ShSjX2w', // DeltaBolic — BIGGER Back Workout
+      tempo: '2-1-3',
+      tempoCues: {
+        lift: '2 sec pull bar to upper chest',
+        hold: '1 sec stretch then drive elbows down + back',
+        lower: '3 sec extend arms upward to full stretch',
+      },
+      content: {
+        en: {
+          name: 'Single-Arm Lat Pulldown',
+          primaryMuscles: ['Lats'],
+          secondaryMuscles: ['Lower Traps', 'Biceps'],
+          whyItMatters:
+            'Unilateral pulldown gets you a longer stretched-position than the bar version — the working arm can travel farther overhead because the other side isn\'t in the way. Stretched-position training is where the lats grow fastest. Also fixes any side-to-side imbalance.',
+          howTo: [
+            'Cable high, single D-handle. Sit so the cable is in line with the working shoulder.',
+            'Reach UP overhead first — let the lat fully stretch before you start pulling.',
+            'Pull the elbow down and slightly back, like a unilateral pull-up.',
+            'Pause at full contraction (handle near rib cage). 3-sec controlled return to full overhead stretch.',
+          ],
+          tips: [
+            'Hand stays in neutral or supinated grip — neutral often feels best on the shoulder.',
+            'Lean slightly away from the cable on the eccentric to maximize the stretch.',
+          ],
+          commonMistakes: [
+            'Pulling straight down beside the body — turns into a triceps movement.',
+            'Cutting the stretch short — the OVERHEAD position is where the lat gets longest.',
+            'Rotating the torso to "help" — fix the torso, work the lat only.',
+          ],
+        },
+        zh: {
+          name: '单臂高位下拉',
+          primaryMuscles: ['背阔肌'],
+          secondaryMuscles: ['下斜方肌', '肱二头肌'],
+          whyItMatters:
+            '单臂下拉能拿到比直杆版本更长的拉伸位 — 工作臂可以举得更高，因为另一侧不挡路。背阔在拉伸位生长最快。还能修正左右不平衡。',
+          howTo: [
+            '绳索调到最高，挂单 D 把。坐姿让绳索跟工作侧肩在一条线上。',
+            '先向上充分伸展 — 让背阔完全拉伸再开始拉。',
+            '把肘部向下 + 略后拉，像单臂引体一样。',
+            '完全收缩位（手到肋骨旁）停 1 秒。3 秒控制回到完全过头位的拉伸。',
+          ],
+          tips: [
+            '中立握或反握 — 中立握对肩部通常最舒服。',
+            '离心阶段身体略微往绳索反方向倾，拉伸最大化。',
+          ],
+          commonMistakes: [
+            '直接沿身体侧拉下 — 变成三头动作。',
+            '拉伸做不到位 — 完全过头位才是背阔最长的位置。',
+            '躯干旋转借力 — 固定躯干，只让背阔工作。',
+          ],
+        },
+      },
+    },
+  ],
+  'pull-4': [
+    { key: 'dumbbell', slug: 'Reverse_Flyes' },
+    {
+      key: 'bestpick',
+      label: 'Best for Rear Delts',
+      labelZh: '后束最佳',
+      isBestPick: true,
+      slug: 'Reverse_Grip_Bent-Over_Rows',
+      youtubeId: 'H5UxZFl0lgk', // DeltaBolic — The PERFECT Rear Delt Machine Fly
+      tempo: '2-1-2',
+      tempoCues: {
+        lift: '2 sec open arms wide — elbows lead',
+        hold: '1 sec hard squeeze at full external rotation',
+        lower: '2 sec eccentric — control the return',
+      },
+      content: {
+        en: {
+          name: 'Reverse Pec Deck',
+          primaryMuscles: ['Rear Delts'],
+          secondaryMuscles: ['Upper Back', 'Rotator Cuff'],
+          whyItMatters:
+            'Machine reverse fly locks the path so the rear delt does ALL the work — no torso swing, no lat / trap assistance, no balance compensation. For a muscle this small and stubborn, locking out every other muscle is what unlocks growth.',
+          howTo: [
+            'Chest pressed FIRMLY to the pad. Adjust the seat so the handles align with the shoulders, NOT chest height.',
+            'Grab with a neutral or pronated grip (thumb-up reduces some bicep involvement).',
+            'Pull the handles out wide — lead with the ELBOWS, not the hands.',
+            'Squeeze hard at full external rotation. 2-sec eccentric, controlled return — do not let the stack crash.',
+          ],
+          tips: [
+            'A 70-80% weight feels like 100% on rear delts. Resist the urge to load it heavier.',
+            'Pause at the start of each rep (arms extended) — kills any trap/swing assist.',
+          ],
+          commonMistakes: [
+            'Lifting the chest off the pad to get the weight back — turns it into a rowing motion. Restrains the rear delt instead of working it.',
+            'Going too heavy — traps + rhomboids take over and you grow those instead.',
+            'Stopping short — the back-half of the fly (when arms cross past the body line) is where the rear delt peaks.',
+          ],
+        },
+        zh: {
+          name: '反向飞鸟器械',
+          primaryMuscles: ['后束'],
+          secondaryMuscles: ['上背', '肩袖'],
+          whyItMatters:
+            '器械反向飞鸟把轨迹锁住，后束做"全部"工作 — 没有躯干借力、没有背阔 / 斜方肌帮忙、没有平衡补偿。对一块这么小又这么顽固的肌肉，锁住其他肌肉才能解锁增长。',
+          howTo: [
+            '胸"狠狠"贴在靠垫上。调座椅让把手跟肩同高，不是胸高。',
+            '中立握或正握（拇指朝上能减少一点二头借力）。',
+            '把把手向外打开 — 用"肘"带动，不是手。',
+            '完全外旋时狠挤压。2 秒离心控制回放 — 不要让配重砸下来。',
+          ],
+          tips: [
+            '70–80% 的重量对后束就像 100%。忍住加重的冲动。',
+            '每次开始时停一下（手臂伸直位）— 杜绝斜方肌和摆动借力。',
+          ],
+          commonMistakes: [
+            '胸离开靠垫去拉重量 — 变成了划船动作。后束没受刺激反而被绑住了。',
+            '太重 — 斜方和菱形接管，你练的就是那些不是后束。',
+            '没到位就停 — 飞鸟后半程（手臂超过身体线）才是后束顶峰。',
+          ],
+        },
+      },
+    },
+  ],
+  'pull-5': [
+    { key: 'dumbbell', slug: 'One-Arm_Dumbbell_Row' },
+    {
+      key: 'bestpick',
+      label: 'Best for Mid Back',
+      labelZh: '中背最佳',
+      isBestPick: true,
+      slug: 'One-Arm_Dumbbell_Row',
+      youtubeId: '4v59ShSjX2w', // DeltaBolic — BIGGER Back Workout (single-arm row featured)
+      tempo: '2-1-3',
+      tempoCues: {
+        lift: '2 sec row dumbbell to hip — elbows tucked',
+        hold: '1 sec squeeze lat hard',
+        lower: '3 sec lower to full lat stretch',
+      },
+      content: {
+        en: {
+          name: 'Single-Arm Row (Elbows-Tucked)',
+          primaryMuscles: ['Lats', 'Teres Major'],
+          secondaryMuscles: ['Mid Traps', 'Biceps'],
+          whyItMatters:
+            'The cleanest unilateral lat builder. Elbows tucked tight + pulling straight back (instead of out) shifts the line of pull to the LAT and teres major specifically — no upper-trap takeover. The same row done with flared elbows hits the upper back instead, which is why most people\'s rows don\'t grow their lats.',
+          howTo: [
+            'One hand + same-side knee on bench. Flat back, slight arch in lower back.',
+            'Hand directly under the shoulder. Dumbbell hangs straight down to start.',
+            'Row the dumbbell back along the body — elbow tucked tight, brushing the ribs.',
+            'Squeeze lat for 1 sec at the top (dumbbell near hip). 3-sec eccentric back to dead hang.',
+          ],
+          tips: [
+            'Lead with the elbow — if the hand leads, the bicep takes over.',
+            'Let the dumbbell pull the shoulder forward into a real stretch at the bottom — that\'s where the lat grows.',
+          ],
+          commonMistakes: [
+            'Elbow flaring outward — turns it into an upper-back row instead of a lat row.',
+            'Rotating the torso to swing — kills the unilateral isolation.',
+            'Rounding the lower back at the bottom — back hurts, lat doesn\'t get worked.',
+          ],
+        },
+        zh: {
+          name: '单臂划船（肘部紧贴）',
+          primaryMuscles: ['背阔肌', '大圆肌'],
+          secondaryMuscles: ['中斜方肌', '肱二头肌'],
+          whyItMatters:
+            '最干净的单边背阔训练动作。肘部紧贴 + 沿身体方向往后划（不是向外）— 阻力线精准打到背阔和大圆肌，没有上斜方肌接管。同样的划船肘部外展就变成练上背了，这就是为什么大多数人划船练不出背阔的原因。',
+          howTo: [
+            '同侧手 + 膝盖撑凳。背挺直，腰部微微有自然曲线。',
+            '手在肩正下方。哑铃自然下垂作为起始位。',
+            '哑铃沿身体往后划 — 肘部紧贴肋骨刷过。',
+            '顶部（哑铃到髋部）背阔挤压 1 秒。3 秒离心回到完全悬挂。',
+          ],
+          tips: [
+            '用肘部带动 — 用手带动二头就接管了。',
+            '底部让哑铃把肩部往前带，给背阔真正的拉伸 — 这才是背阔生长的地方。',
+          ],
+          commonMistakes: [
+            '肘部外展 — 变成了上背划船，不是背阔划船。',
+            '躯干旋转借力 — 单侧孤立的意义没了。',
+            '底部腰椎弯曲 — 腰会疼，背阔反而没受刺激。',
+          ],
+        },
+      },
+    },
+  ],
   'pull-6': [
     { key: 'dumbbell', slug: 'Dumbbell_Bicep_Curl' },
     {
@@ -604,19 +1114,128 @@ export const DEMO_VARIANTS = {
       labelZh: '弯举机',
       slug: 'Machine_Bicep_Curl',
     },
+    {
+      key: 'bestpick',
+      label: 'Best for Long Head',
+      labelZh: '二头长头最佳',
+      isBestPick: true,
+      slug: 'Incline_Hammer_Curls',
+      youtubeId: 'W3dEbUba9Ck', // DeltaBolic — Build BIGGER Bicep Peaks!
+      tempo: '2-1-3',
+      tempoCues: {
+        lift: '2 sec curl with arm BEHIND the body',
+        hold: '1 sec squeeze + slight supination at top',
+        lower: '3 sec controlled eccentric to full stretch',
+      },
+      content: {
+        en: {
+          name: 'Incline Dumbbell Curl',
+          primaryMuscles: ['Biceps (Long Head)'],
+          secondaryMuscles: ['Biceps (Short Head)', 'Brachialis'],
+          whyItMatters:
+            'The bicep PEAK comes from the LONG HEAD, which only grows when the elbow is BEHIND the body — that\'s the position the incline curl puts you in. Standing curls don\'t reach this stretched position, which is why most people\'s biceps look round but not peaked.',
+          howTo: [
+            'Incline bench at 45–60°. Sit all the way back so the shoulder blades touch the pad.',
+            'Arms hang straight down behind the body. Dumbbells start fully extended.',
+            'Curl WITHOUT moving the elbow forward — the upper arm stays locked behind the torso.',
+            'Squeeze + slight supination at the top. 3-sec eccentric to a deep stretch.',
+          ],
+          tips: [
+            'Lighter than standing curls. Long-head training is about the stretched position, not the load.',
+            'If shoulders bother you, set the bench more upright (60°+) — still better than 0° standing curls.',
+          ],
+          commonMistakes: [
+            'Elbows drifting forward as fatigue sets in — defeats the whole point. Stop the set when the elbow can\'t stay locked.',
+            'Going too heavy — turns into a half-rep that doesn\'t reach the stretched position.',
+            'Cutting the eccentric short — the bottom stretch is the entire purpose. 3 seconds, minimum.',
+          ],
+        },
+        zh: {
+          name: '上斜哑铃弯举',
+          primaryMuscles: ['肱二头肌（长头）'],
+          secondaryMuscles: ['肱二头肌（短头）', '肱肌'],
+          whyItMatters:
+            '二头的"峰"来自"长头"，而长头只有在肘部"在身体后方"时才生长 — 这正是上斜弯举把你放进的位置。站姿弯举到不了这个拉伸位，这就是为什么大多数人的二头是圆的但没有峰。',
+          howTo: [
+            '凳子调到 45–60°。完全坐进去让肩胛骨贴上靠垫。',
+            '双臂在身体后方自然下垂。哑铃从完全伸展位开始。',
+            '弯举时"不要"让肘部前移 — 上臂锁在躯干后方。',
+            '顶部挤压 + 略微旋后。3 秒离心到深度拉伸位。',
+          ],
+          tips: [
+            '比站姿弯举要轻。长头训练靠的是拉伸位，不是大重量。',
+            '如果肩部不舒服，凳子调更直（60°以上）— 也比 0° 站姿强。',
+          ],
+          commonMistakes: [
+            '疲劳上来肘部往前移 — 整个动作的意义就没了。肘部锁不住就停组。',
+            '太重 — 变成半程，根本到不了拉伸位。',
+            '离心做太快 — 底部拉伸是整个动作的全部目的。3 秒最少。',
+          ],
+        },
+      },
+    },
   ],
   'pull-7': [
     { key: 'abwheel', slug: 'Ab_Roller' },
     {
       key: 'cablecrunch',
+      label: 'Best for Abs',
+      labelZh: '腹肌最佳',
+      isBestPick: true,
       slug: 'Cable_Crunch',
       tempo: '2-1-3',
       tempoCues: {
-        lift: '2 sec crunch downward',
-        hold: '1 sec squeeze abs',
-        lower: '3 sec return upward',
+        lift: '2 sec crunch downward — round the spine',
+        hold: '1 sec hard ab squeeze',
+        lower: '3 sec return upward with control',
       },
       youtubeId: 'K2m0jj6RfYg', // STOP Making This Cable Crunch MISTAKE
+      content: {
+        en: {
+          name: 'Cable Crunch',
+          primaryMuscles: ['Abs (Rectus Abdominis)'],
+          secondaryMuscles: ['Obliques'],
+          whyItMatters:
+            'The only ab movement you can progressively overload like a real muscle. Ab Wheel taps out at bodyweight after a few weeks; the cable crunch lets you add 5 lb every couple sessions until your abs are as developed as any other body part.',
+          howTo: [
+            'Cable high with the rope attachment.',
+            'Kneel a step in front of the stack. Rope sits at the temples — not behind the head.',
+            'Crunch DOWN by rounding the spine — chin to belly button.',
+            'Hips stay completely still. Pause 1 sec. 3-sec eccentric back up.',
+          ],
+          tips: [
+            'Pull elbows toward thighs as you crunch — that visual cue forces the spinal flexion.',
+            'Imagine the rope is glued to your forehead.',
+          ],
+          commonMistakes: [
+            'Hinging at the hips — lats + glutes do all the work, abs barely move.',
+            'Pulling the rope down to the face — turns it into a lat pulldown.',
+            'Tossing the weight at the top of the return — kills the eccentric, which is the growth phase.',
+          ],
+        },
+        zh: {
+          name: '绳索卷腹',
+          primaryMuscles: ['腹肌（腹直肌）'],
+          secondaryMuscles: ['腹斜肌'],
+          whyItMatters:
+            '唯一能像其他肌肉一样渐进超负荷的腹肌动作。腹轮几周后就到顶（体重不变），绳索卷腹能每隔几次训练加 5 lb，直到腹肌发达程度跟其他肌群一样。',
+          howTo: [
+            '绳索调到最高，挂绳索把手。',
+            '在配重片前一步跪下。绳索放在太阳穴两侧 — 不是脑后。',
+            '通过卷起脊柱往下卷 — 下巴往肚脐方向。',
+            '髋部完全不动。停 1 秒。3 秒离心回起。',
+          ],
+          tips: [
+            '卷腹时想象肘部往大腿压 — 这个视觉提示强制脊柱屈曲。',
+            '想象绳索粘在额头上。',
+          ],
+          commonMistakes: [
+            '从髋部弯下 — 背阔和臀肌全包了，腹肌几乎没动。',
+            '把绳索拉到脸前 — 变成了背阔下拉。',
+            '回到顶部时放下重量太快 — 跳过离心，而那才是增肌阶段。',
+          ],
+        },
+      },
     },
   ],
 
@@ -637,6 +1256,66 @@ export const DEMO_VARIANTS = {
         hold: '1 sec brief hold at top, knees soft (not locked)',
       },
       suggestedWeight: 'Leg Press 55 lb · 3 × 12',
+    },
+    {
+      key: 'bestpick',
+      label: 'Best for Quads',
+      labelZh: '股四头最佳',
+      isBestPick: true,
+      slug: 'Leg_Extensions',
+      youtubeId: 'S5S0Eus4mDo', // DeltaBolic — When You Realize the Leg Extension Isn't Just for Quads
+      tempo: '2-1-3',
+      tempoCues: {
+        lift: '2 sec extend legs fully — hard squeeze',
+        hold: '1 sec hold at lockout',
+        lower: '3 sec lower to full quad stretch',
+      },
+      content: {
+        en: {
+          name: 'Leg Extension',
+          primaryMuscles: ['Quads (Rectus Femoris)'],
+          secondaryMuscles: ['Quads (Vastus Lateralis / Medialis)'],
+          whyItMatters:
+            'The only quad exercise that fully lengthens the RECTUS FEMORIS — the long head that crosses the hip joint and gives the quad its visible "tear-drop" peak. Squats train it, but only in shortened range. Add this once a week and your quad development goes up a level.',
+          howTo: [
+            'Feet hip-width — wider stance reduces quad activation.',
+            'Grip the side handles, NOT your lap — handles let you produce maximum force.',
+            'Align the knee with the machine\'s pivot point. Misalignment = knee pain.',
+            'FULLY extend the legs with control. Save partials for once you\'ve already failed full reps.',
+          ],
+          tips: [
+            'Point toes slightly OUT to bias the rectus femoris (the visible long head).',
+            'Pause hard at lockout — 1 second of full squeeze is more growth stimulus than two sloppy reps.',
+          ],
+          commonMistakes: [
+            'Cutting reps short — partial reps in the middle of a set undertrain the lengthened position.',
+            'Feet too wide — distributes load and reduces the quad-specific stimulus.',
+            'Slamming the weight stack on the eccentric — 3-sec lower or you skip the growth phase.',
+          ],
+        },
+        zh: {
+          name: '坐姿腿屈伸',
+          primaryMuscles: ['股四头肌（股直肌）'],
+          secondaryMuscles: ['股四头肌（股外侧/股内侧肌）'],
+          whyItMatters:
+            '唯一能让"股直肌"充分拉长的动作 — 股直肌是跨过髋关节的那个长头，给股四头视觉上的"水滴"形状。深蹲也练它，但只在缩短范围。每周加一次，你的股四头会跳一个层级。',
+          howTo: [
+            '双脚与髋同宽 — 站宽减少股四头激活。',
+            '抓住"侧边握把"，不是放在腿上 — 握把让你能输出最大力量。',
+            '膝关节对齐器械的支点。错位 = 膝痛。',
+            '腿"完全"伸直再控制下放。半程要留到完整次数已经力竭后再做。',
+          ],
+          tips: [
+            '脚尖略微"外"开偏向股直肌（视觉上的长头）。',
+            '锁定位狠狠停一下 — 1 秒满收缩比 2 次糊弄的次数刺激更大。',
+          ],
+          commonMistakes: [
+            '半程次数 — 中间半程没充分训练拉长位。',
+            '双脚太宽 — 力量分散，股四头特定刺激减少。',
+            '离心阶段砸下来 — 3 秒下放，否则跳过生长阶段。',
+          ],
+        },
+      },
     },
   ],
   'leg-2': [
@@ -670,6 +1349,66 @@ export const DEMO_VARIANTS = {
       },
       suggestedWeight: 'Glute Kickback 15 lb each side',
     },
+    {
+      key: 'bestpick',
+      label: 'Best for Glutes',
+      labelZh: '臀部最佳',
+      isBestPick: true,
+      slug: 'Barbell_Hip_Thrust',
+      youtubeId: '0xfdeCBwoYw', // Booty Builder — Hip Thrust Machine
+      tempo: '2-2-3',
+      tempoCues: {
+        lift: '2 sec thrust hips upward',
+        hold: '2 sec squeeze glutes hard at top',
+        lower: '3 sec lower with control',
+      },
+      content: {
+        en: {
+          name: 'Hip Thrust',
+          primaryMuscles: ['Glutes'],
+          secondaryMuscles: ['Hamstrings', 'Core'],
+          whyItMatters:
+            'Bulgarian Split Squat is great for unilateral strength + glute shape, but the hip thrust LOADS the glutes with way more weight at peak contraction. For pure glute size, this beats split squats by a wide margin. You\'re already doing it on this program — adding it to leg-3 as the "if you can only pick one" answer for glutes.',
+          howTo: [
+            'Upper back on bench, feet flat ~shoulder-width.',
+            'Chin tucked, ribs down — neutral spine throughout.',
+            'Drive through HEELS, squeeze glutes HARD at the top.',
+            'Pause 2 sec at the top, control 3-sec descent.',
+          ],
+          tips: [
+            'Posteriorly tilt pelvis at the top — locks out the glutes, prevents lumbar arch.',
+            'Pause at the top — quality over weight.',
+          ],
+          commonMistakes: [
+            'Over-arching at the top — that\'s the lower back, NOT the glutes.',
+            'Heels too far forward — turns into a leg curl.',
+            'Not squeezing glutes — pushing with quads.',
+          ],
+        },
+        zh: {
+          name: '臀推',
+          primaryMuscles: ['臀部'],
+          secondaryMuscles: ['腘绳肌', '核心'],
+          whyItMatters:
+            '保加利亚分腿蹲对单边力量和臀型很好，但臀推能在收缩峰值给臀部"远远更大"的负荷。纯臀部围度上，这个动作大幅胜过分腿蹲。你已经在做臀推了 — 在 leg-3 加上它作为"只能选一个"练臀的答案。',
+          howTo: [
+            '上背贴凳子，双脚约肩宽。',
+            '下巴微收，肋骨下压 — 全程脊柱中立。',
+            '用"脚跟"发力，顶部臀部"狠"挤压。',
+            '顶部停 2 秒，3 秒控制下放。',
+          ],
+          tips: [
+            '顶部骨盆后倾 — 锁住臀部发力，防止腰椎反弓。',
+            '顶部停顿 — 质量胜过重量。',
+          ],
+          commonMistakes: [
+            '顶部腰椎过度反弓 — 那是下背在发力，不是臀。',
+            '脚跟离得太远 — 变成腿弯举。',
+            '不主动挤臀 — 股四头在推。',
+          ],
+        },
+      },
+    },
   ],
   'leg-4': [
     { key: 'dumbbell', slug: 'Barbell_Hip_Thrust' },
@@ -682,6 +1421,66 @@ export const DEMO_VARIANTS = {
     },
     { key: 'barbell', slug: 'Barbell_Hip_Thrust' },
     { key: 'smith', slug: 'Smith_Machine_Hip_Raise' },
+    {
+      key: 'bestpick',
+      label: 'Best for Glute Isolation',
+      labelZh: '臀部孤立最佳',
+      isBestPick: true,
+      slug: 'Glute_Kickback',
+      youtubeId: 'UbOcViik3hk', // DeltaBolic — Glute Kickback Variations
+      tempo: '2-1-3',
+      tempoCues: {
+        lift: '2 sec drive leg back + up',
+        hold: '1 sec squeeze glute at the top',
+        lower: '3 sec return with control',
+      },
+      content: {
+        en: {
+          name: 'Cable Glute Kickback',
+          primaryMuscles: ['Glutes (Gluteus Maximus)'],
+          secondaryMuscles: ['Hamstrings'],
+          whyItMatters:
+            'Hip thrusts get the glute under high load, but they always share the work with the hamstrings + lower back. Cable kickback is the cleanest GLUTE-ONLY isolation — perfect to pair with hip thrust at the end of the session to fully exhaust the glutes.',
+          howTo: [
+            'Cable at the lowest setting, ankle strap attachment.',
+            'Hold a stable post for support. Slight forward lean.',
+            'Drive the working leg STRAIGHT BACK + slightly up — knee can bend a little, but the action is at the HIP.',
+            'Hard squeeze at the top for 1 sec. 3-sec return WITHOUT letting the cable yank.',
+          ],
+          tips: [
+            'Slight lean forward shifts emphasis to the UPPER glute (the part that\'s "rounded" at the top of the cheek).',
+            'Pause every rep at the top — momentum kills this exercise.',
+          ],
+          commonMistakes: [
+            'Kicking with a bent leg using the hamstring — flex the glute, not the hamstring.',
+            'Going too heavy — turns into a lower-back swing.',
+            'Letting the cable rip the leg back to start — that\'s eccentric overload your hip flexor doesn\'t want.',
+          ],
+        },
+        zh: {
+          name: '绳索臀部后踢',
+          primaryMuscles: ['臀大肌'],
+          secondaryMuscles: ['腘绳肌'],
+          whyItMatters:
+            '臀推能给臀部很大负荷，但总是会分享给腘绳肌和下背。绳索后踢是最干净的"只练臀部"孤立动作 — 完美搭配臀推放在训练末尾把臀部彻底榨干。',
+          howTo: [
+            '绳索调到最低，挂踝部绑带。',
+            '抓住一个稳定的柱子保持平衡。身体略微前倾。',
+            '工作腿向"正后方" + 略向上踢 — 膝部可以微弯，但动作来自髋部。',
+            '顶部狠狠挤臀 1 秒。3 秒控制回放，不要让绳索把腿扯回来。',
+          ],
+          tips: [
+            '略微前倾把重点转移到"上臀"（也就是臀部上方圆润的那部分）。',
+            '每次顶部停一下 — 借惯性会毁掉这个动作。',
+          ],
+          commonMistakes: [
+            '弯腿用腘绳肌踢 — 用臀部收缩，不是腘绳肌。',
+            '太重 — 变成腰椎甩动。',
+            '让绳索把腿扯回起始位 — 那是髂腰肌不想要的离心负荷。',
+          ],
+        },
+      },
+    },
   ],
   'leg-5': [
     { key: 'dumbbell', slug: 'Side_Lateral_Raise' },
@@ -691,6 +1490,66 @@ export const DEMO_VARIANTS = {
       labelZh: '绳索 / 器械',
       slug: 'Side_Lateral_Raise',
       youtubeId: 'JlT2xB92lY8', // DeltaBolic — Cable Lateral Raise Complete Guide
+    },
+    {
+      key: 'bestpick',
+      label: 'Best for Side Delts',
+      labelZh: '中束最佳',
+      isBestPick: true,
+      slug: 'Side_Lateral_Raise',
+      youtubeId: 'Kl3LEzQ5Zqs', // DeltaBolic — The Perfect Lateral Raise (lean-forward)
+      tempo: '2-1-3',
+      tempoCues: {
+        lift: '2 sec raise out to the side',
+        hold: '1 sec hold at shoulder height',
+        lower: '3 sec eccentric — fight the descent',
+      },
+      content: {
+        en: {
+          name: 'Lean-Forward Lateral Raise',
+          primaryMuscles: ['Side Delts'],
+          secondaryMuscles: ['Rear Delts'],
+          whyItMatters:
+            'Hinging the torso ~15–20° forward shifts the line of resistance behind the shoulder pivot, putting peak tension on the side delt exactly where it grows — the bottom half of the lift. With Push Day already loading the shoulder up, this leg-day extra set is best done in this most-efficient form.',
+          howTo: [
+            'Grab a post or wall with the off hand for support.',
+            'Hinge ~15–20° forward — chest stays up, hips back.',
+            'Soft elbows, lead with the elbow (not the hand).',
+            'Raise to shoulder height. 3-sec eccentric.',
+          ],
+          tips: [
+            'Thumbless grip — kills forearm tension so you feel the delt.',
+            'Pinkies slightly higher than thumbs (pour-the-water cue).',
+          ],
+          commonMistakes: [
+            'Standing up out of the hinge to swing the weight.',
+            'Shrugging traps to finish the lift.',
+            'Going above shoulder — trap takeover.',
+          ],
+        },
+        zh: {
+          name: '前倾侧平举',
+          primaryMuscles: ['中束'],
+          secondaryMuscles: ['后束'],
+          whyItMatters:
+            '上身前倾约 15–20°，阻力方向就从肩关节支点后方拉过来，张力峰值刚好落在中束最关键的位置 — 动作下半程。推日已经给肩部上量了，腿日这一组用最高效的形式来做。',
+          howTo: [
+            '空手扶墙或柱子稳定身体。',
+            '上身前倾 15–20° — 挺胸，髋后推。',
+            '肘部微屈，用肘部带动（不是手）。',
+            '抬到肩高。3 秒离心。',
+          ],
+          tips: [
+            '不要握紧大拇指 — 前臂不发力，三角肌感受更强。',
+            '小指略高于拇指（倒水的姿势）。',
+          ],
+          commonMistakes: [
+            '抬重量时身体回直 — 前倾才是动作的本质。',
+            '顶部耸肩借力。',
+            '抬过肩高 — 斜方肌接管。',
+          ],
+        },
+      },
     },
     { key: 'band', slug: 'Lateral_Raise_-_With_Bands' },
   ],
@@ -724,6 +1583,66 @@ export const DEMO_VARIANTS = {
         lower: '3 sec return upward with control',
       },
       suggestedWeight: 'Ab Crunch Machine — moderate',
+    },
+    {
+      key: 'bestpick',
+      label: 'Best for Abs',
+      labelZh: '腹肌最佳',
+      isBestPick: true,
+      slug: 'Cable_Crunch',
+      youtubeId: 'K2m0jj6RfYg', // STOP Making This Cable Crunch MISTAKE
+      tempo: '2-1-3',
+      tempoCues: {
+        lift: '2 sec crunch downward — round the spine',
+        hold: '1 sec hard ab squeeze',
+        lower: '3 sec return upward with control',
+      },
+      content: {
+        en: {
+          name: 'Cable Crunch',
+          primaryMuscles: ['Abs (Rectus Abdominis)'],
+          secondaryMuscles: ['Obliques'],
+          whyItMatters:
+            'Deadbug is great for ANTI-extension core control (the muscles that protect the spine), but it does not grow visible abs. The cable crunch is the missing piece — pure spinal flexion under progressive load. Pair them: deadbug for protection, cable crunch for size.',
+          howTo: [
+            'Cable high with the rope attachment.',
+            'Kneel a step in front of the stack. Rope sits at the temples — not behind the head.',
+            'Crunch DOWN by rounding the spine — chin to belly button.',
+            'Hips stay completely still. Pause 1 sec. 3-sec eccentric back up.',
+          ],
+          tips: [
+            'Pull elbows toward thighs as you crunch.',
+            'Imagine the rope is glued to your forehead.',
+          ],
+          commonMistakes: [
+            'Hinging at the hips — lats + glutes do all the work, abs barely move.',
+            'Pulling the rope down to the face — turns it into a lat pulldown.',
+            'Tossing the weight at the top of the return.',
+          ],
+        },
+        zh: {
+          name: '绳索卷腹',
+          primaryMuscles: ['腹肌（腹直肌）'],
+          secondaryMuscles: ['腹斜肌'],
+          whyItMatters:
+            '死虫式很适合"抗伸展"的核心控制（保护脊柱的那些肌肉），但它"不会"练出看得见的腹肌。绳索卷腹是缺失的那块 — 纯粹的脊柱屈曲 + 渐进负荷。两个一起做：死虫式保护，绳索卷腹长肌肉。',
+          howTo: [
+            '绳索调到最高，挂绳索把手。',
+            '在配重片前一步跪下。绳索放在太阳穴两侧 — 不是脑后。',
+            '通过卷起脊柱往下卷 — 下巴往肚脐方向。',
+            '髋部完全不动。停 1 秒。3 秒离心回起。',
+          ],
+          tips: [
+            '卷腹时想象肘部往大腿压。',
+            '想象绳索粘在额头上。',
+          ],
+          commonMistakes: [
+            '从髋部弯下 — 背阔和臀肌全包了。',
+            '把绳索拉到脸前 — 变成了背阔下拉。',
+            '回到顶部时放下重量太快。',
+          ],
+        },
+      },
     },
   ],
 };
