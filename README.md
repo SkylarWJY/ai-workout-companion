@@ -60,12 +60,12 @@ Every exercise card in the **Full Session** list carries the **primary muscle** 
 
 <img src="docs/screenshots/03-body-map.png" alt="Body Map" width="320" align="right" />
 
-**EN.** Real 1899 anatomical plates (Bouglé, public domain) painted with today's training intensity. Each muscle is bucketed into 4 levels by exercise priority × primary/secondary contribution:
+**EN.** A clean human silhouette (front + back) painted with today's training intensity — every muscle region is its own SVG path, hand-calibrated against anatomical landmarks. Each muscle is bucketed into 4 levels by exercise priority × primary/secondary contribution:
 - 🟡 **Light** · 🟠 **Moderate** · 🔴 **Heavy** · ⛔ **Peak**
 
 Below the figures is a grouped list — at a glance you know "today peaks side delts, hits abs + upper back heavy, light on lower back."
 
-**中文.** 1899 年 Bouglé 真实解剖图作为底图（公共领域）。当日训练的每块肌肉按优先级 × 主肌群/次肌群算分，分 4 级强度叠加红橙黄色块：
+**中文.** 干净的人形剪影（正面 + 背面）叠加当日训练强度 — 每块肌肉是一个独立的 SVG 路径，按真实解剖标志手工标定。每块肌肉按优先级 × 主肌群/次肌群算分，分 4 级强度叠加红橙黄色块：
 - 🟡 **轻** · 🟠 **中** · 🔴 **重** · ⛔ **极重**
 
 下方按强度分组列出所有训练部位，一眼看清"今天极重打中束、重练腹肌和上背、轻碰下背"。
@@ -206,7 +206,7 @@ That last column is the unlock. After a few weeks every set you've ever done is 
 | State | **localStorage + React Context** | No backend · works offline · zero infra |
 | i18n | **Custom** | `STRINGS` dict + `useT()` hook, 200+ keys |
 | Hosting | **Vercel** | Static SPA · edge CDN · HTTPS · free |
-| Anatomy | **Bouglé 1899 plates** (PD) | Real anatomical illustrations |
+| Anatomy | **Custom SVG silhouette** | Inline path, no images — dark-mode aware, MuscleWiki-style accent fills |
 
 **Bundle size:** 148 KB gzip total (JS + CSS + HTML). Loads in under 1 second on 4G.
 
@@ -278,12 +278,12 @@ Vercel 免费版完全够：100 GB 月流量 + HTTPS + 自定义域名都 $0。
 
 ## 🙏 Credits / 致谢
 
-- **Anatomical plates** — Julien Bouglé, *Le corps humain en grandeur naturelle* (1899). Public domain via Wikimedia Commons.
+- **Body map silhouette** — custom inline SVG (this repo, MIT). Anatomical landmarks calibrated by hand.
 - **Exercise fallback images** — [yuhonas/free-exercise-db](https://github.com/yuhonas/free-exercise-db), CC0.
 - **YouTube tutorials** — embedded from the original creators (DeltaBolic / Andrew Kwong, ArielYu_Fit, Jeremy Ethier, Nuffield Health, Colossus Fitness, Booty Builder, Gerardi Performance, and others). Credit displayed on each thumbnail.
 - **Cool-down stretches** — Verywell Fit (shoulder/crescent moon/chest opener); @fitzyelifts (leg recovery series).
 
-**解剖图** — Julien Bouglé《等身人体图》（1899）公共领域，来自 Wikimedia Commons
+**人体剪影** — 本仓库手画 inline SVG（MIT 协议），解剖标志手工标定
 **动作教学视频** — 嵌入自原作者频道，每个缩略图上有创作者名
 **拉伸图** — Verywell Fit · @fitzyelifts
 
