@@ -44,7 +44,11 @@ npm run dev
 
 **EN.** Every training day starts with an embedded warm-up video (10-15 reps per move × 2 rounds for Push / Pull, 10 reps for Leg). Below it lives the **Today's Hits** anatomical body map. Tap **Mark warm-up done** when finished — the green check persists across the session.
 
+Every exercise card in the **Full Session** list carries the **primary muscle** as a chip in the top-right (e.g. *Front Delts*, *Lat Width*, *Mid Back*, *Side Delts*) — so you can scan the day's targets without opening anything. The **REORDER** chip in the section header flips the list into edit mode where each row gets ↑ / ↓ tap buttons; the *Up Next* focus card recomputes off the new order, so dragging an exercise to the top makes it the next set to log. Persistence is per-workout and survives reloads.
+
 **中文.** 每个训练日的最上方就是嵌入式暖身视频（推日 / 拉日：每个动作 10–15 次 × 2 轮；腿日：每个动作 10 次）。下方是**今日训练部位**人体解剖图。暖身做完后点 **MARK WARM-UP DONE**，状态会一直保留到训练结束。
+
+**Full Session** 里每张动作卡片右上角都有一个**主练部位胶囊**（前束 · 背宽 · 中背 · 中束 等具体标签），不打开详情也能扫到今天每个动作主要练哪里。Section header 上的 **REORDER** 按钮把列表切换到编辑模式 — 每行右边变成 ↑ / ↓ 点按按钮；上方"当前"卡片会跟着新顺序刷新，把动作拖到最上面它就变成下一组要做的。顺序按训练日分别保存，重新打开也在。
 
 <br clear="right"/>
 
@@ -64,13 +68,28 @@ Below the figures is a grouped list — at a glance you know "today peaks side d
 
 <br clear="right"/>
 
-### ④ Exercise Detail — tap any move
+### ④ Exercise Detail — every variant is a different lift
 
-<img src="docs/screenshots/04-exercise-modal.png" alt="Exercise Modal" width="320" align="right" />
+<table>
+<tr>
+<td width="50%"><img src="docs/screenshots/04-exercise-modal.png" alt="Default — Dumbbell tab" />
+<sub><b>Default tab</b> — Overhead Press · Dumbbell guide</sub></td>
+<td width="50%"><img src="docs/screenshots/04b-bestpick.png" alt="Best Pick — Cable Front Raise" />
+<sub><b>★ Best Pick</b> — swaps title + guide to Cable Front Raise</sub></td>
+</tr>
+</table>
 
-**EN.** Every exercise card opens to a detail sheet. Top: priority chip + edit pencil + Done. Then a **9:16 YouTube Shorts tutorial** (lazy-loaded — tap to play). Above it: variant chips (DUMBBELL / MACHINE / BARBELL / CABLE / BAND etc.) — switch the chip and the video swaps too. Below summary: sets × reps · rest time · tempo · suggested weight.
+**EN.** Every exercise card opens to a detail sheet. Top: priority chip + edit pencil + Done. Then a **9:16 YouTube Shorts tutorial** (lazy-loaded — tap to play). Above the video lives the **variant strip** — Dumbbell, Machine, Barbell, Cable, Rope, Kickback, whatever's available for this lift.
 
-**中文.** 任意动作卡片都能展开详情。顶部：优先级标签 + 编辑铅笔 + 完成。然后是 **9:16 YouTube Shorts 教学短视频**（懒加载，点了才播放）。上方有变体切换（哑铃 / 器械 / 杠铃 / 绳索 / 弹力带等）— 点变体视频跟着换。下方一行汇总组数 × 次数 · 休息 · 节奏 · 推荐重量。
+Tapping a chip swaps **the entire guide**, not just the video: title, primary muscles, *Why it matters*, the 4-step *How to perform*, *Form tips*, and *Common mistakes* all change. A barbell overhead press has a different setup than a machine press, so the modal reflects that — false-grip + head-through-the-window cues on the barbell tab, seat-height + thumbless-grip cues on the machine tab, no shared content fudging.
+
+The **last chip in every list is the ★ Best Pick** (orange, `priority-veryhigh`) — an editorial "if you can only do one thing for this muscle" alternative. Front delts → Cable Front Raise. Side delts → Lean-Forward Lateral. Upper chest → Low-to-High Cable Fly. Triceps → Overhead Cable Extension. Abs → Cable Crunch. Lats → Pull-Up progression. Every Best Pick is sourced from the channels credited at the bottom and verified via YouTube oembed — no random TikTok fitness influencers, no slop.
+
+**中文.** 任意动作卡片都能展开详情。顶部：优先级标签 + 编辑铅笔 + 完成。然后是 **9:16 YouTube Shorts 教学短视频**（懒加载，点了才播放）。视频上方是**变体切换条** — 哑铃、器械、杠铃、绳索、绳索 V 把、后踢，凡是这个动作有的都列出来。
+
+点变体 tab 时**整套指南都换** — 不只是视频：标题、目标肌群、*为什么重要*、4 步*动作要领*、*技巧*、*常见错误*全部跟着切。杠铃过头推举和器械推举的发力本来就不一样，详情页直接体现：杠铃那一栏是假握 + 头穿过窗口的提示，器械那一栏是座椅高度 + 不握紧大拇指的提示，没有偷懒共用内容。
+
+每个动作的**最后一个 tab 是橙色 ★ Best Pick**（`priority-veryhigh` 强调色）— 编辑精选"练这块肌肉如果只能选一个"的最优替代。前束 → 绳索前平举。中束 → 前倾侧平举。上胸 → 低位上斜绳索飞鸟。三头 → 头后绳索屈伸。腹肌 → 绳索卷腹。背阔 → 引体向上目标态。每个 Best Pick 都来自下方致谢的频道（DeltaBolic / Andrew Kwong、Jeremy Ethier、Booty Builder 等），全部通过 YouTube oembed 验证作者本人 — 不是随便搬运短视频，没有水货。
 
 <br clear="right"/>
 
