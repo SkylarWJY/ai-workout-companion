@@ -1,16 +1,18 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-// Real anatomical body map using Julien Bouglé's 1899 plates as the base.
-// Each muscle shape below was calibrated against the actual pixel
-// silhouette of /public/anatomy/{front,back}.png (202×600 / 199×600).
+// Modern fitness-app body map — clean inline SVG silhouette (Hevy /
+// MuscleWiki style) with the same muscle-region overlays as the previous
+// Bouglé version. The viewBox stays at 200×600 so the existing
+// hand-calibrated region paths (FRONT_REGIONS / BACK_REGIONS) work
+// unchanged on top of the new silhouette.
 //
 // Verified anatomical landmarks (image y-coordinate, both views):
-//   head crown ............  0
-//   chin / neck ........... 90
+//   head crown ............  10
+//   chin / neck ........... 92
 //   clavicle .............. 115
 //   nipple line ........... 160
-//   sternum bottom ........ 195
+//   sternum bottom ........ 200
 //   navel ................. 245
 //   pubic crest ........... 305
 //   hip widest ............ 320
@@ -18,35 +20,115 @@ import { motion } from 'framer-motion';
 //   patella (knee) ........ 470
 //   ankle ................. 580
 
-const FRONT_IMG = '/anatomy/front.png';
-const BACK_IMG = '/anatomy/back.png';
+// Single-path human silhouettes — front and back differ only at the
+// neck/spine (back doesn't show a clear clavicle notch). Drawn clockwise
+// from the top of the skull.
+const FRONT_SILHOUETTE =
+  // Head
+  'M 100 12 ' +
+  'Q 130 12 130 42 ' +
+  'Q 130 70 116 80 ' +
+  // Right neck
+  'L 116 100 ' +
+  // Right clavicle slope into shoulder
+  'Q 128 104 144 108 ' +
+  'Q 170 112 188 134 ' +
+  // Right delt outer to upper arm
+  'Q 196 158 192 188 ' +
+  // Right arm (outer) down to wrist
+  'L 184 256 ' +
+  'L 182 304 ' +
+  // Right wrist + hand
+  'Q 180 314 170 312 ' +
+  'Q 162 312 162 304 ' +
+  // Right arm (inner) back up
+  'L 162 256 ' +
+  'L 158 200 ' +
+  // Right armpit notch into pec
+  'Q 152 168 144 162 ' +
+  // Right torso side (taper to waist)
+  'L 142 218 ' +
+  'L 138 268 ' +
+  // Right hip widest
+  'Q 144 296 156 318 ' +
+  // Right outer thigh
+  'Q 162 386 156 462 ' +
+  // Right calf
+  'L 150 540 ' +
+  'L 144 580 ' +
+  // Right foot
+  'Q 144 590 134 590 ' +
+  'L 116 590 ' +
+  'Q 110 588 110 580 ' +
+  // Right inner calf going up
+  'L 112 510 ' +
+  // Right inner thigh
+  'L 114 410 ' +
+  'L 110 364 ' +
+  // Crotch
+  'L 100 360 ' +
+  'L 90 364 ' +
+  // Left inner thigh going down
+  'L 86 410 ' +
+  'L 88 510 ' +
+  // Left inner calf
+  'L 90 580 ' +
+  'Q 90 588 84 590 ' +
+  // Left foot
+  'L 66 590 ' +
+  'Q 56 590 56 580 ' +
+  // Left calf outer
+  'L 50 540 ' +
+  'L 44 462 ' +
+  // Left outer thigh
+  'Q 38 386 44 318 ' +
+  // Left hip widest
+  'Q 56 296 62 268 ' +
+  // Left torso side
+  'L 58 218 ' +
+  'L 56 162 ' +
+  // Left armpit
+  'Q 48 168 42 200 ' +
+  // Left arm inner going down
+  'L 38 256 ' +
+  'L 38 304 ' +
+  'Q 38 312 30 312 ' +
+  'Q 20 314 18 304 ' +
+  // Left arm outer back up
+  'L 16 256 ' +
+  'L 8 188 ' +
+  // Left delt back to shoulder
+  'Q 4 158 12 134 ' +
+  'Q 30 112 56 108 ' +
+  // Left clavicle into neck
+  'Q 72 104 84 100 ' +
+  'L 84 80 ' +
+  // Left head side
+  'Q 70 70 70 42 ' +
+  'Q 70 12 100 12 Z';
+
+// Back view uses essentially the same silhouette but with a softer neck
+// line (no clavicle notch from the front).
+const BACK_SILHOUETTE = FRONT_SILHOUETTE;
 
 const LEVEL_FILL = {
-  1: '#FBBF24',
-  2: '#F97316',
-  3: '#EF4444',
-  4: '#B91C1C',
-};
-const LEVEL_STROKE = {
-  1: '#92400E',
-  2: '#9A3412',
-  3: '#7F1D1D',
-  4: '#450A0A',
+  1: '#F59E0B', // amber 500 — light intensity
+  2: '#F97316', // orange 500 — moderate
+  3: '#EF4444', // red 500 — heavy
+  4: '#B91C1C', // red 700 — peak
 };
 const LEVEL_OPACITY = {
-  1: 0.6,
-  2: 0.72,
-  3: 0.82,
-  4: 0.9,
+  1: 0.78,
+  2: 0.85,
+  3: 0.93,
+  4: 1.0,
 };
 
 const FRONT_REGIONS = {
-  // Upper trapezius — narrow band visible between neck (x=82-118) and clavicles
-  traps: [
-    { d: 'M82 100 Q100 96 118 100 L114 116 Q100 114 86 116 Z' },
-  ],
+  // Upper trapezius — narrow band visible between neck and clavicles
+  traps: [{ d: 'M82 100 Q100 96 118 100 L114 116 Q100 114 86 116 Z' }],
 
-  // Anterior deltoid — front cap of shoulder, at the inner-upper corner of arms
+  // Anterior deltoid — front cap of shoulder
   'delts-front': [
     {
       d:
@@ -60,7 +142,7 @@ const FRONT_REGIONS = {
     },
   ],
 
-  // Lateral / middle deltoid — outermost top of shoulder, "cap" shape
+  // Lateral / middle deltoid — outermost top of shoulder
   'delts-side': [
     {
       d: 'M24 122 Q34 114 50 124 Q56 138 54 152 Q44 158 30 152 Q18 138 24 122 Z',
@@ -70,8 +152,7 @@ const FRONT_REGIONS = {
     },
   ],
 
-  // Pectoralis major — fan sweeping from sternum/clavicle to upper arm
-  // Calibrated to nipple line at y=160, lower border at y=200 (sternum end)
+  // Pectoralis major — fan sweeping from sternum to upper arm
   pecs: [
     {
       d:
@@ -91,7 +172,7 @@ const FRONT_REGIONS = {
     },
   ],
 
-  // Biceps brachii — vertical bulge on front of upper arm, between delt & elbow
+  // Biceps brachii — front of upper arm
   biceps: [
     {
       d:
@@ -105,7 +186,7 @@ const FRONT_REGIONS = {
     },
   ],
 
-  // Forearms — taper from elbow to wrist (wrist at y ~300)
+  // Forearms — front view
   forearms: [
     {
       d:
@@ -119,8 +200,7 @@ const FRONT_REGIONS = {
     },
   ],
 
-  // Rectus abdominis — six-pack block from sternum (y=200) down to navel/pubis area
-  // Stops at y=288 (just above the pubic crest at 295) to avoid overflowing
+  // Rectus abdominis — six-pack block
   abs: [
     {
       d:
@@ -129,7 +209,7 @@ const FRONT_REGIONS = {
     },
   ],
 
-  // External obliques + iliopsoas peek — flanks of torso between ribs and hip
+  // External obliques — flanks of torso between ribs and hip
   obliques: [
     {
       d:
@@ -143,7 +223,7 @@ const FRONT_REGIONS = {
     },
   ],
 
-  // Quadriceps — broad block from hip (y=320) to knee (y=465)
+  // Quadriceps
   quads: [
     {
       d:
@@ -159,13 +239,13 @@ const FRONT_REGIONS = {
     },
   ],
 
-  // Adductors — narrow inner thigh strip
+  // Adductors — inner thigh strip
   adductors: [
     { d: 'M84 332 L98 332 L96 442 L84 442 Z' },
     { d: 'M102 332 L116 332 L116 442 L104 442 Z' },
   ],
 
-  // Tibialis anterior — shin muscle on front of lower leg (knee y=470, ankle y=580)
+  // Tibialis anterior — shin
   calves: [
     {
       d:
@@ -183,7 +263,7 @@ const FRONT_REGIONS = {
 };
 
 const BACK_REGIONS = {
-  // Trapezius — large kite from base of skull spreading to shoulders + down to mid-back
+  // Trapezius — large kite from base of skull to mid-back
   traps: [
     {
       d:
@@ -199,7 +279,7 @@ const BACK_REGIONS = {
     },
   ],
 
-  // Posterior deltoid — back of shoulder cap
+  // Posterior deltoid
   'delts-rear': [
     {
       d:
@@ -215,7 +295,7 @@ const BACK_REGIONS = {
     },
   ],
 
-  // Lateral deltoid (also visible from back, edge of shoulder)
+  // Lateral delt edge visible from back
   'delts-side': [
     { d: 'M26 128 Q40 122 50 134 L 50 160 Q 38 164 24 154 Q 20 142 26 128 Z' },
     { d: 'M174 128 Q160 122 150 134 L 150 160 Q 162 164 176 154 Q 180 142 174 128 Z' },
@@ -253,7 +333,7 @@ const BACK_REGIONS = {
     },
   ],
 
-  // Triceps brachii — horseshoe on back of upper arm
+  // Triceps brachii
   triceps: [
     {
       d:
@@ -269,7 +349,7 @@ const BACK_REGIONS = {
     },
   ],
 
-  // Forearms (back of lower arm)
+  // Forearms (back)
   forearms: [
     {
       d:
@@ -283,13 +363,13 @@ const BACK_REGIONS = {
     },
   ],
 
-  // Erector spinae — two thick vertical columns next to the spine
+  // Erector spinae — two vertical columns
   erectors: [
     { d: 'M85 218 Q94 216 98 220 L 98 302 Q 90 304 84 302 Z' },
     { d: 'M102 220 Q106 216 115 218 L 116 302 Q 110 304 102 302 Z' },
   ],
 
-  // Gluteus maximus — buttocks (sit between y=305 and y=388)
+  // Gluteus maximus — buttocks
   glutes: [
     {
       d:
@@ -305,7 +385,7 @@ const BACK_REGIONS = {
     },
   ],
 
-  // Hamstrings — back of thigh (gluteal fold y=388 → knee y=478)
+  // Hamstrings — back of thigh
   hamstrings: [
     {
       d:
@@ -321,7 +401,7 @@ const BACK_REGIONS = {
     },
   ],
 
-  // Gastrocnemius — bulky calf muscle (knee y=478 → ankle y=580)
+  // Gastrocnemius — bulky calf
   calves: [
     {
       d:
@@ -338,21 +418,45 @@ const BACK_REGIONS = {
   ],
 };
 
-function Overlay({ regions, levels, viewLabel, imgSrc }) {
+// A "subtle base layer" of every region drawn at very low opacity so the
+// silhouette doesn't look hollow when only a few muscles are active.
+// Gives the body a faint anatomical texture without yelling.
+function MuscleBaseLayer({ regions }) {
+  return (
+    <g aria-hidden="true">
+      {Object.entries(regions).map(([id, shapes]) =>
+        shapes.map((s, i) => (
+          <path
+            key={`${id}-${i}`}
+            d={s.d}
+            className="fill-bone-300/40 dark:fill-ink-500/40"
+          />
+        )),
+      )}
+    </g>
+  );
+}
+
+function Overlay({ silhouette, regions, levels, viewLabel }) {
   return (
     <div className="relative w-full">
-      <img
-        src={imgSrc}
-        alt={viewLabel}
-        className="block w-full h-auto select-none pointer-events-none"
-        draggable={false}
-      />
       <svg
         viewBox="0 0 200 600"
         preserveAspectRatio="xMidYMid meet"
-        className="absolute inset-0 w-full h-full"
+        className="block w-full h-auto"
         aria-hidden="true"
       >
+        {/* Silhouette fill — a single rounded human shape that the
+            muscle regions then sit on top of. Bone color in light mode,
+            inkstone color in dark mode. */}
+        <path
+          d={silhouette}
+          className="fill-bone-200 dark:fill-ink-700"
+        />
+        {/* Faint muscle-region base layer so the body has anatomical
+            grain even when no muscles are active. */}
+        <MuscleBaseLayer regions={regions} />
+        {/* Active muscle overlay — animated when intensity changes. */}
         {Object.entries(regions).map(([id, shapes]) => {
           const level = levels[id] || 0;
           if (level === 0) return null;
@@ -365,17 +469,21 @@ function Overlay({ regions, levels, viewLabel, imgSrc }) {
                   initial={false}
                   animate={{
                     fill: LEVEL_FILL[level],
-                    stroke: LEVEL_STROKE[level],
                     opacity: LEVEL_OPACITY[level],
                   }}
                   transition={{ duration: 0.4 }}
-                  strokeWidth="1.1"
-                  strokeLinejoin="round"
                 />
               ))}
             </g>
           );
         })}
+        {/* Silhouette outline on top — sharp edge defines the body
+            without overpowering the muscle colors. */}
+        <path
+          d={silhouette}
+          className="fill-none stroke-ink-900/15 dark:stroke-bone-50/15"
+          strokeWidth="1.5"
+        />
       </svg>
       <div className="mt-1 text-center text-[10px] uppercase tracking-[0.2em] text-ink-300">
         {viewLabel}
@@ -406,16 +514,16 @@ export default function BodyMap({ levels = {}, viewLabels }) {
   return (
     <div className="grid grid-cols-2 gap-3">
       <Overlay
+        silhouette={FRONT_SILHOUETTE}
         regions={FRONT_REGIONS}
         levels={levels}
         viewLabel={viewLabels?.front || 'FRONT'}
-        imgSrc={FRONT_IMG}
       />
       <Overlay
+        silhouette={BACK_SILHOUETTE}
         regions={BACK_REGIONS}
         levels={levels}
         viewLabel={viewLabels?.back || 'BACK'}
-        imgSrc={BACK_IMG}
       />
     </div>
   );
