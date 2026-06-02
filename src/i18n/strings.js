@@ -81,7 +81,7 @@ export const STRINGS = {
     'workout.reorder': 'Reorder',
     'workout.doneReorder': 'Done',
     'workout.resetOrder': 'Reset order',
-    'workout.dragHint': 'Press and drag the ≡ handle on the left to reorder. The active card up top updates automatically.',
+    'workout.dragHint': 'Tap ↑ or ↓ on each row to move it. The active card up top updates automatically.',
 
     // Exercise Card
     'card.done': 'Done',
@@ -366,7 +366,7 @@ export const STRINGS = {
     'workout.reorder': '调整顺序',
     'workout.doneReorder': '完成',
     'workout.resetOrder': '还原默认',
-    'workout.dragHint': '长按左侧 ≡ 把手往上下拖动 — 上方"当前"卡片会自动更新。',
+    'workout.dragHint': '点击每行右边的 ↑ 或 ↓ 调整位置 — 上方"当前"卡片会自动更新。',
 
     // Exercise Card
     'card.done': '完成',

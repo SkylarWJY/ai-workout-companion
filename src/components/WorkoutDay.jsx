@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence, Reorder, useDragControls } from 'framer-motion';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import ExerciseCard from './ExerciseCard.jsx';
 import ExerciseModal from './ExerciseModal.jsx';
 import RestTimer from './RestTimer.jsx';
@@ -218,20 +218,32 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
             <div className="text-[11px] text-ink-400 dark:text-ink-200 mb-2.5">
               {t('workout.dragHint')}
             </div>
-            <Reorder.Group
-              axis="y"
-              values={localOrder || []}
-              onReorder={setLocalOrder}
-              className="space-y-2"
-            >
-              {(localOrder || []).map((id) => {
-                const ex = workout.exercises.find((e) => e.id === id);
-                if (!ex) return null;
-                return (
-                  <ReorderRow key={id} id={id} exercise={ex} lang={lang} />
-                );
-              })}
-            </Reorder.Group>
+            <LayoutGroup>
+              <div className="space-y-2">
+                {(localOrder || []).map((id, i) => {
+                  const ex = workout.exercises.find((e) => e.id === id);
+                  if (!ex) return null;
+                  const swap = (from, to) => {
+                    if (!localOrder) return;
+                    if (to < 0 || to >= localOrder.length) return;
+                    const next = [...localOrder];
+                    [next[from], next[to]] = [next[to], next[from]];
+                    setLocalOrder(next);
+                  };
+                  return (
+                    <ReorderRow
+                      key={id}
+                      exercise={ex}
+                      lang={lang}
+                      isFirst={i === 0}
+                      isLast={i === (localOrder?.length || 0) - 1}
+                      onMoveUp={() => swap(i, i - 1)}
+                      onMoveDown={() => swap(i, i + 1)}
+                    />
+                  );
+                })}
+              </div>
+            </LayoutGroup>
           </>
         ) : (
           <div className="space-y-2.5">
@@ -417,33 +429,20 @@ function ActiveFocus({ exercise, setNumber, onLog, onOpen, restRunning }) {
   );
 }
 
-// One row in the reorder list. Drag is initiated ONLY from the left-side
-// handle — see the dragControls + dragListener={false} pair. The rest of
-// the card stays scrollable, which is what fixes iOS Safari: Framer Motion
-// auto-sets `touch-action: pan-x` on Reorder.Item for axis="y", which on
-// touch devices made the whole card register vertical touches as page
-// scrolls instead of drags. Putting `touch-action: none` on just the
-// handle scopes the touch-suppression to the grab area only.
-function ReorderRow({ id, exercise, lang }) {
-  const controls = useDragControls();
+// One row in the reorder list. Uses plain ↑/↓ tap buttons instead of
+// drag-and-drop — Framer Motion's Reorder relies on `touch-action: pan-x`
+// which iOS Safari interprets as "let me keep scrolling vertically",
+// breaking the drag. Buttons are universally reliable on touch and
+// also a clearer affordance. The `motion.div` with `layout` gives us
+// the smooth slide animation when items swap places.
+function ReorderRow({ exercise, lang, isFirst, isLast, onMoveUp, onMoveDown }) {
   const muscles = locEx(exercise, 'primaryMuscles', lang);
   return (
-    <Reorder.Item
-      value={id}
-      dragListener={false}
-      dragControls={controls}
-      className="rounded-2xl bg-white dark:bg-ink-800 border border-black/5 dark:border-white/5 shadow-card dark:shadow-cardDark px-3 py-3 flex items-center gap-2 select-none"
+    <motion.div
+      layout
+      transition={{ type: 'spring', stiffness: 520, damping: 38 }}
+      className="rounded-2xl bg-white dark:bg-ink-800 border border-black/5 dark:border-white/5 shadow-card dark:shadow-cardDark px-3 py-2.5 flex items-center gap-3"
     >
-      <div
-        onPointerDown={(e) => controls.start(e)}
-        style={{ touchAction: 'none' }}
-        className="cursor-grab active:cursor-grabbing px-2 py-2 -my-2 text-ink-300 dark:text-ink-200 shrink-0 flex flex-col gap-[3px]"
-        aria-label="Drag to reorder"
-      >
-        <span className="block w-4 h-[2px] bg-current rounded-full" />
-        <span className="block w-4 h-[2px] bg-current rounded-full" />
-        <span className="block w-4 h-[2px] bg-current rounded-full" />
-      </div>
       <div className="min-w-0 flex-1">
         <div className="text-[10px] uppercase tracking-[0.16em] text-ink-300 truncate">
           {muscles[0]}
@@ -451,11 +450,57 @@ function ReorderRow({ id, exercise, lang }) {
         <div className="text-[14px] font-semibold text-ink-900 dark:text-bone-100 leading-tight truncate">
           {locEx(exercise, 'name', lang)}
         </div>
+        <div className="text-[10px] tabular text-ink-400 dark:text-ink-200 mt-0.5">
+          {exercise.sets} × {exercise.repRange}
+        </div>
       </div>
-      <div className="text-[11px] tabular text-ink-400 dark:text-ink-200 shrink-0">
-        {exercise.sets} × {exercise.repRange}
+      <div className="flex flex-col gap-1 shrink-0">
+        <button
+          type="button"
+          onClick={onMoveUp}
+          disabled={isFirst}
+          aria-label="Move up"
+          className={`w-9 h-9 rounded-xl flex items-center justify-center border transition active:scale-95
+            ${
+              isFirst
+                ? 'border-black/5 dark:border-white/5 text-ink-300/40 dark:text-ink-200/30 cursor-not-allowed'
+                : 'border-black/10 dark:border-white/10 text-ink-700 dark:text-bone-100 bg-bone-50 dark:bg-ink-700'
+            }`}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M6 15l6-6 6 6"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+        <button
+          type="button"
+          onClick={onMoveDown}
+          disabled={isLast}
+          aria-label="Move down"
+          className={`w-9 h-9 rounded-xl flex items-center justify-center border transition active:scale-95
+            ${
+              isLast
+                ? 'border-black/5 dark:border-white/5 text-ink-300/40 dark:text-ink-200/30 cursor-not-allowed'
+                : 'border-black/10 dark:border-white/10 text-ink-700 dark:text-bone-100 bg-bone-50 dark:bg-ink-700'
+            }`}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M6 9l6 6 6-6"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
       </div>
-    </Reorder.Item>
+    </motion.div>
   );
 }
 
