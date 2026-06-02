@@ -3,10 +3,14 @@
 > **Live:** [ai-workout-companion.vercel.app](https://ai-workout-companion.vercel.app) · **Free · PWA · No login**
 
 A mobile-first fitness app that actually knows what you're training.
-Real anatomical body map, YouTube Shorts tutorials per variant, tempo coaching,
-warm-up / cool-down videos, and full session history — all offline-first.
+Real 1899 anatomical body map painted with today's intensity, a separate
+*Why-it-matters / How-to / Common-mistakes* guide for **every variant** of
+every lift (machine ≠ dumbbell ≠ barbell — the modal swaps the whole text,
+not just the video), an editorial **★ Best Pick** per primary muscle,
+tempo coaching, warm-up & cool-down sequences, and per-set logging that
+feeds a real history. All offline-first, no login.
 
-一个真正懂你训练的移动健身 App。真实解剖图人体地图、每个变体对应的 YouTube 教学短视频、节奏指导、暖身 / 拉伸视频、完整训练历史 — 全部本地优先，无需登录。
+一个真正懂你训练的移动健身 App。1899 年真实解剖图叠加当日训练强度；**每个变体都有独立的"为什么重要 / 动作要领 / 常见错误"指南**（器械、哑铃、杠铃发力本来就不一样，详情页里整套文字跟着 tab 换，不只是视频）；每块肌肉一个**橙色 ★ Best Pick** 编辑精选；节奏指导、暖身 / 拉伸视频、每组数据记录追溯历史 —— 全部本地优先，无需登录。
 
 ---
 
@@ -196,7 +200,7 @@ That last column is the unlock. After a few weeks every set you've ever done is 
 
 | Layer / 层 | Choice / 选型 | Why / 为什么 |
 |---|---|---|
-| Framework | **React 18 + Vite** | Tiny bundle (~108 KB gzip) · HMR ~50ms |
+| Framework | **React 18 + Vite** | Tiny bundle (~148 KB gzip) · HMR ~50ms |
 | Styling | **Tailwind CSS** | Custom palette (bone/ink/priority colors) |
 | Animations | **Framer Motion** | Sheet transitions · ring countdowns · cross-fades |
 | State | **localStorage + React Context** | No backend · works offline · zero infra |
@@ -204,9 +208,9 @@ That last column is the unlock. After a few weeks every set you've ever done is 
 | Hosting | **Vercel** | Static SPA · edge CDN · HTTPS · free |
 | Anatomy | **Bouglé 1899 plates** (PD) | Real anatomical illustrations |
 
-**Bundle size:** 108 KB gzip total (JS + CSS + HTML). Loads in under 1 second on 4G.
+**Bundle size:** 148 KB gzip total (JS + CSS + HTML). Loads in under 1 second on 4G.
 
-**包大小：** 总 108 KB gzip（JS + CSS + HTML）。4G 网络 1 秒内打开。
+**包大小：** 总 148 KB gzip（JS + CSS + HTML）。4G 网络 1 秒内打开。
 
 ---
 
