@@ -1467,8 +1467,6 @@ export const DEMO_VARIANTS = {
       slug: 'Barbell_Hip_Thrust',
       youtubeId: '0xfdeCBwoYw', // Booty Builder — Hip Thrust Machine Correct vs Incorrect
     },
-    { key: 'barbell', slug: 'Barbell_Hip_Thrust' },
-    { key: 'smith', slug: 'Smith_Machine_Hip_Raise' },
     {
       key: 'bestpick',
       label: 'Best for Glute Isolation',
