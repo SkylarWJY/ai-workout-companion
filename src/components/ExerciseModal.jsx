@@ -6,7 +6,7 @@ import TempoBlock from './TempoBlock.jsx';
 import ExerciseEditor from './ExerciseEditor.jsx';
 import { useLang, locEx } from '../i18n/index.jsx';
 import { fmtRest } from '../utils/format.js';
-import { demoVariants } from '../data/demoMap.js';
+import { demoVariants, resolveVariantContent } from '../data/demoMap.js';
 import { resolveMeta } from '../data/exerciseMeta.js';
 import { useOverrides } from '../hooks/useOverrides.jsx';
 
@@ -36,6 +36,12 @@ export default function ExerciseModal({ open, exercise, onClose }) {
     youtubeId: exOverrides?.youtubeId ?? baseMeta.youtubeId,
   };
   const suggestedWeight = exOverrides?.suggestedWeight ?? exercise?.suggestedWeight;
+
+  // Resolve which content to render — variant-specific (if present) wins.
+  // The function falls back to the base exercise's fields per-language.
+  const content = exercise
+    ? resolveVariantContent(exercise, variant, lang, locEx)
+    : null;
 
   return (
     <AnimatePresence>
@@ -84,8 +90,15 @@ export default function ExerciseModal({ open, exercise, onClose }) {
             <div className="px-5 pt-4 pb-10 space-y-6">
               <div>
                 <h2 className="text-2xl font-semibold tracking-tight text-ink-900 dark:text-bone-100">
-                  {locEx(exercise, 'name', lang)}
+                  {content.name}
                 </h2>
+                {content.isVariantContent && (
+                  <div className="mt-1 text-[11px] uppercase tracking-[0.16em] text-priority-veryhigh">
+                    {variant?.isBestPick
+                      ? t('modal.bestPickTag')
+                      : t('modal.variantContentTag')}
+                  </div>
+                )}
                 <div className="mt-1 text-sm text-ink-400 dark:text-ink-200 tabular">
                   {exercise.sets} × {exercise.repRange} · {t('workout.rest').toLowerCase()} {fmtRest(exercise.restSeconds)} · {suggestedWeight}
                 </div>
@@ -98,7 +111,7 @@ export default function ExerciseModal({ open, exercise, onClose }) {
 
               <ExerciseDemo
                 exerciseId={exercise.id}
-                name={locEx(exercise, 'name', lang)}
+                name={content.name}
                 variantIdx={variantIdx}
                 onVariantChange={setVariantIdx}
                 overrideYoutubeId={exOverrides?.youtubeId}
@@ -116,18 +129,18 @@ export default function ExerciseModal({ open, exercise, onClose }) {
 
               <Section title={t('modal.whyMatters')}>
                 <p className="text-[14px] leading-relaxed text-ink-700 dark:text-bone-100">
-                  {locEx(exercise, 'whyItMatters', lang)}
+                  {content.whyItMatters}
                 </p>
               </Section>
 
               <Section title={t('modal.targetMuscles')}>
                 <div className="flex flex-wrap gap-1.5">
-                  {locEx(exercise, 'primaryMuscles', lang).map((m) => (
+                  {content.primaryMuscles.map((m) => (
                     <Pill key={m} primary>
                       {m}
                     </Pill>
                   ))}
-                  {locEx(exercise, 'secondaryMuscles', lang).map((m) => (
+                  {content.secondaryMuscles.map((m) => (
                     <Pill key={m}>{m}</Pill>
                   ))}
                 </div>
@@ -135,7 +148,7 @@ export default function ExerciseModal({ open, exercise, onClose }) {
 
               <Section title={t('modal.howToPerform')}>
                 <ol className="space-y-2.5">
-                  {locEx(exercise, 'howTo', lang).map((step, i) => (
+                  {content.howTo.map((step, i) => (
                     <li
                       key={i}
                       className="flex gap-3 text-[14px] leading-relaxed text-ink-700 dark:text-bone-100"
@@ -151,7 +164,7 @@ export default function ExerciseModal({ open, exercise, onClose }) {
 
               <Section title={t('modal.formTips')}>
                 <ul className="space-y-2">
-                  {locEx(exercise, 'tips', lang).map((tt, i) => (
+                  {content.tips.map((tt, i) => (
                     <li
                       key={i}
                       className="flex gap-2 text-[14px] leading-relaxed text-ink-700 dark:text-bone-100"
@@ -165,7 +178,7 @@ export default function ExerciseModal({ open, exercise, onClose }) {
 
               <Section title={t('modal.commonMistakes')}>
                 <ul className="space-y-2">
-                  {locEx(exercise, 'commonMistakes', lang).map((tt, i) => (
+                  {content.commonMistakes.map((tt, i) => (
                     <li
                       key={i}
                       className="flex gap-2 text-[14px] leading-relaxed text-ink-700 dark:text-bone-100"

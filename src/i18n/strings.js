@@ -96,6 +96,8 @@ export const STRINGS = {
     'modal.jointNotes': 'Joint-friendly notes',
     'modal.knee': 'Knee',
     'modal.lowerBack': 'Lower back',
+    'modal.bestPickTag': '★ Editor\'s pick · variant-specific guide',
+    'modal.variantContentTag': 'Variant-specific guide',
 
     // Priority
     'priority.extreme': 'Extreme Priority',
@@ -284,6 +286,7 @@ export const STRINGS = {
     'variant.abwheel': 'Ab Wheel',
     'variant.cablecrunch': 'Cable Crunch',
     'variant.kickback': 'Kickback',
+    'variant.bestpick': 'Best Pick',
   },
 
   zh: {
@@ -381,6 +384,8 @@ export const STRINGS = {
     'modal.jointNotes': '关节友好提示',
     'modal.knee': '膝盖',
     'modal.lowerBack': '下背',
+    'modal.bestPickTag': '★ 编辑精选 · 变体专属指南',
+    'modal.variantContentTag': '变体专属指南',
 
     // Priority
     'priority.extreme': '最高优先级',
@@ -569,5 +574,6 @@ export const STRINGS = {
     'variant.abwheel': '腹轮',
     'variant.cablecrunch': '绳索卷腹',
     'variant.kickback': '后踢',
+    'variant.bestpick': '最佳推荐',
   },
 };

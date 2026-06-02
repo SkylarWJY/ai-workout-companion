@@ -44,7 +44,7 @@ export default function ExerciseCard({
               active ? 'opacity-60' : 'text-ink-300 dark:text-ink-300'
             }`}
           >
-            {String(index).padStart(2, '0')} · {muscles[0]}
+            {String(index).padStart(2, '0')}
           </div>
           <h3 className="mt-1 text-lg font-semibold leading-tight">{name}</h3>
           <div className="mt-1.5">
@@ -58,7 +58,19 @@ export default function ExerciseCard({
             {exercise.sets} × {exercise.repRange} · {fmtRest(exercise.restSeconds)} {t('workout.rest').toLowerCase()}
           </div>
         </div>
-        <div className={`flex flex-col items-end gap-1.5 ${active ? 'text-bone-50 dark:text-ink-900' : ''}`}>
+        <div className={`flex flex-col items-end gap-1.5 shrink-0 ${active ? 'text-bone-50 dark:text-ink-900' : ''}`}>
+          {/* Primary muscle pill — what this exercise actually trains, */}
+          {/* prominent so you can scan the day's targets at a glance. */}
+          <span
+            className={`text-[10px] font-semibold uppercase tracking-[0.14em] rounded-full px-2.5 py-1 max-w-[140px] truncate ${
+              active
+                ? 'bg-bone-50/15 text-bone-50 dark:bg-ink-900/15 dark:text-ink-900'
+                : 'bg-ink-900 text-bone-50 dark:bg-bone-100 dark:text-ink-900'
+            }`}
+            title={muscles.join(' · ')}
+          >
+            {muscles[0]}
+          </span>
           {!active && <PriorityChip priority={exercise.priority} compact />}
           {done && (
             <span className="text-[10px] uppercase tracking-wider flex items-center gap-1 text-priority-moderate">

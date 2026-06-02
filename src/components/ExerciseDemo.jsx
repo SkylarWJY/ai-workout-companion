@@ -56,20 +56,30 @@ export default function ExerciseDemo({
     <div className="space-y-2">
       {distinctVariants.length > 0 && (
         <div className="flex items-center gap-1 overflow-x-auto scroll-clean -mx-1 px-1 pb-1">
-          {variants.map((v, i) => (
-            <button
-              key={v.key + i}
-              onClick={() => setVariantIdx(i)}
-              className={`shrink-0 text-[11px] font-medium uppercase tracking-wider rounded-full px-3 py-1.5 border transition active:scale-[0.97]
-                ${
-                  i === variantIdx
-                    ? 'bg-ink-900 dark:bg-bone-100 text-bone-50 dark:text-ink-900 border-transparent'
-                    : 'bg-transparent text-ink-500 dark:text-ink-100 border-black/10 dark:border-white/10'
-                }`}
-            >
-              {variantLabel(v, t, lang)}
-            </button>
-          ))}
+          {variants.map((v, i) => {
+            const isBest = v.isBestPick;
+            const isSelected = i === variantIdx;
+            // Best-pick tabs use the orange `priority-veryhigh` accent
+            // (selected = solid orange, unselected = orange outline + text)
+            // so the user can spot the editorial recommendation at a glance.
+            const palette = isBest
+              ? isSelected
+                ? 'bg-priority-veryhigh text-bone-50 border-transparent'
+                : 'bg-transparent text-priority-veryhigh border-priority-veryhigh/40'
+              : isSelected
+                ? 'bg-ink-900 dark:bg-bone-100 text-bone-50 dark:text-ink-900 border-transparent'
+                : 'bg-transparent text-ink-500 dark:text-ink-100 border-black/10 dark:border-white/10';
+            return (
+              <button
+                key={v.key + i}
+                onClick={() => setVariantIdx(i)}
+                className={`shrink-0 inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider rounded-full px-3 py-1.5 border transition active:scale-[0.97] ${palette}`}
+              >
+                {isBest && <span aria-hidden="true">★</span>}
+                {variantLabel(v, t, lang)}
+              </button>
+            );
+          })}
         </div>
       )}
 
@@ -121,7 +131,14 @@ export default function ExerciseDemo({
             YouTube Shorts
           </span>
           {variant?.key && (
-            <span className="text-[10px] uppercase tracking-wider bg-ink-900/60 backdrop-blur-md text-bone-50 rounded-full px-2 py-0.5">
+            <span
+              className={`text-[10px] uppercase tracking-wider backdrop-blur-md text-bone-50 rounded-full px-2 py-0.5 inline-flex items-center gap-1 ${
+                variant.isBestPick
+                  ? 'bg-priority-veryhigh/80'
+                  : 'bg-ink-900/60'
+              }`}
+            >
+              {variant.isBestPick && <span aria-hidden="true">★</span>}
               {variantLabel(variant, t, lang)}
             </span>
           )}

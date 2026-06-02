@@ -4,14 +4,16 @@
 export const EXERCISE_META = {
   // ── PUSH ──
   'push-1': {
-    // Overhead Press
+    // Overhead Press — base meta covers the default Dumbbell variant.
+    // The Machine variant in demoMap.js overrides this with its own video
+    // (6v4nrRVySj0 = The PERFECT Machine Shoulder Press).
     tempo: '2-1-3',
     tempoCues: {
-      lift: '2 sec press weight overhead',
+      lift: '2 sec press dumbbells overhead',
       hold: '1 sec hold at the top',
-      lower: '3 sec lower weight back down',
+      lower: '3 sec lower under control',
     },
-    youtubeId: '6v4nrRVySj0', // The PERFECT Machine Shoulder Press
+    youtubeId: 'k6tzKisR3NY', // DeltaBolic — The PERFECT Dumbbell Shoulder Press
   },
   'push-2': {
     // Lateral Raises
