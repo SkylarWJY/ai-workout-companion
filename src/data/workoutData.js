@@ -339,7 +339,7 @@ export const PULL_DAY = {
       currentWeight: '',
       goalWeight: '',
       priority: 'extreme',
-      primaryMuscles: ['Lats', 'Back Width'],
+      primaryMuscles: ['Lat Width', 'Lats'],
       secondaryMuscles: ['Biceps', 'Rear Delts'],
       whyItMatters:
         'Direct lat width work. Progressive overload here is the key milestone for the v-taper.',
@@ -406,7 +406,7 @@ export const PULL_DAY = {
       currentWeight: '',
       goalWeight: '',
       priority: 'high',
-      primaryMuscles: ['Lats', 'Mid Back'],
+      primaryMuscles: ['Mid Back', 'Lats'],
       secondaryMuscles: ['Core', 'Biceps', 'Forearms'],
       whyItMatters:
         'Unilateral row corrects imbalances and trains anti-rotation core stability.',

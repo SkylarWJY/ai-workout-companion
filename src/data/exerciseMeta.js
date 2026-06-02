@@ -98,14 +98,16 @@ export const EXERCISE_META = {
     youtubeId: 'bNmvKpJSWKM', // The PERFECT Lat Pulldown
   },
   'pull-4': {
-    // Rear Delt Flyes
+    // Rear Delt Flyes — base meta covers the default Dumbbell variant.
+    // The Best Pick variant in demoMap.js overrides with the machine
+    // (Reverse Pec Deck) video.
     tempo: '2-1-2',
     tempoCues: {
-      lift: '2 sec raise arms outward',
+      lift: '2 sec raise arms outward — lead with elbows',
       hold: '1 sec squeeze rear delts',
       lower: '2 sec lower weights back down',
     },
-    youtubeId: '7tgx6QHB0-A', // Rear Delt Machine Flyes mistakes
+    youtubeId: 'LsT-bR_zxLo', // DeltaBolic — The PERFECT Dumbbell Rear Delt Fly (DO THIS!)
   },
   'pull-5': {
     // Single-Arm Dumbbell Row

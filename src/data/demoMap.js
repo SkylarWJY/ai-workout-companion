@@ -792,7 +792,6 @@ export const DEMO_VARIANTS = {
   // ── PULL ──
   'pull-1': [
     { key: 'pullup', slug: 'Pullups' },
-    { key: 'latpulldown', slug: 'Wide-Grip_Lat_Pulldown' },
     {
       key: 'bestpick',
       label: 'Best for Lats',
@@ -1110,9 +1109,58 @@ export const DEMO_VARIANTS = {
     { key: 'dumbbell', slug: 'Dumbbell_Bicep_Curl' },
     {
       key: 'machine',
-      label: 'Curl Machine',
-      labelZh: '弯举机',
+      label: 'Machine Preacher Curl',
+      labelZh: '坐姿弯举机',
       slug: 'Machine_Bicep_Curl',
+      youtubeId: 'S4dDLfp3e8w', // DeltaBolic — The PERFECT Machine Preacher Curl
+      tempo: '2-1-3',
+      tempoCues: {
+        lift: '2 sec curl up — wrists neutral',
+        hold: '1 sec hard squeeze at peak',
+        lower: '3 sec eccentric to full stretch',
+      },
+      content: {
+        en: {
+          name: 'Machine Preacher Curl',
+          whyItMatters:
+            'Preacher position locks the upper arm against the pad so the BICEP does all the work — no swing, no cheat, no shoulder involvement. The arc of the machine also gives constant tension where free-weight preachers lose it at the top.',
+          howTo: [
+            'Adjust the seat so the armpits sit on top of the pad — upper arms flat, not pinched.',
+            'Thumbless grip on the handles. Wrists stay neutral the whole rep.',
+            'Curl up to a hard 1-sec squeeze. Stop just short of where the cam unloads.',
+            '3-sec eccentric — do NOT let the arms snap straight at the bottom.',
+          ],
+          tips: [
+            'Keep wrists neutral (not curled in) — wrist curl shifts the load off the biceps.',
+            'Tuck the elbows slightly INWARD on the pad — wider elbows = forearm dominance.',
+          ],
+          commonMistakes: [
+            'Letting the arms snap straight at the bottom — bicep tendon takes the load instead of the muscle. Eccentric injuries happen here.',
+            'Pinching wrists toward the body to crank the weight up — that\'s a wrist curl + cheat.',
+            'Standing up out of the seat for the last reps — defeats the entire purpose of the preacher pad.',
+          ],
+        },
+        zh: {
+          name: '坐姿牧师凳弯举机',
+          whyItMatters:
+            '牧师凳位置把上臂锁在垫子上，让"二头"做全部的工作 — 没有摆动、没有借力、没有肩部参与。器械的轨迹给的张力也比自由重量牧师凳更恒定（自由重量在顶部张力会丢）。',
+          howTo: [
+            '调座椅让腋窝刚好压在垫子顶端 — 上臂平贴，不要被夹。',
+            '不握死大拇指。手腕全程保持中立位。',
+            '弯举到顶部狠挤压 1 秒。停在凸轮卸力之前。',
+            '3 秒离心 — 底部绝对不能让手臂"啪"地伸直。',
+          ],
+          tips: [
+            '手腕保持中立（不要往内卷）— 卷腕等于把负荷从二头转走。',
+            '肘部在垫子上略微"内收"一点 — 肘部太宽前臂会主导。',
+          ],
+          commonMistakes: [
+            '底部让手臂弹直 — 二头肌腱承受负荷，而不是肌肉。离心损伤就发生在这里。',
+            '把手腕往身体方向卷起拉重量 — 那是卷腕 + 借力。',
+            '最后几次从座椅上站起来 — 整个牧师垫的意义就没了。',
+          ],
+        },
+      },
     },
     {
       key: 'bestpick',
@@ -1551,7 +1599,6 @@ export const DEMO_VARIANTS = {
         },
       },
     },
-    { key: 'band', slug: 'Lateral_Raise_-_With_Bands' },
   ],
   'leg-6': [
     { key: 'bodyweight', slug: 'Standing_Calf_Raises' },

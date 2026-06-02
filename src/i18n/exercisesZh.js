@@ -151,7 +151,7 @@ export const EXERCISES_ZH = {
   },
   'pull-3': {
     name: '宽握高位下拉',
-    primaryMuscles: ['背阔肌', '背宽'],
+    primaryMuscles: ['背宽', '背阔肌'],
     secondaryMuscles: ['肱二头肌', '后束'],
     whyItMatters:
       '直接训练背阔宽度。渐进超负荷是打造 V 形身材的关键。',
@@ -186,7 +186,7 @@ export const EXERCISES_ZH = {
   },
   'pull-5': {
     name: '单臂哑铃划船',
-    primaryMuscles: ['背阔肌', '中背'],
+    primaryMuscles: ['中背', '背阔肌'],
     secondaryMuscles: ['核心', '肱二头肌', '前臂'],
     whyItMatters:
       '单侧划船纠正不平衡 + 训练抗旋转核心稳定。',
