@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence, Reorder } from 'framer-motion';
+import { motion, AnimatePresence, Reorder, useDragControls } from 'framer-motion';
 import ExerciseCard from './ExerciseCard.jsx';
 import ExerciseModal from './ExerciseModal.jsx';
 import RestTimer from './RestTimer.jsx';
@@ -227,30 +227,8 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
               {(localOrder || []).map((id) => {
                 const ex = workout.exercises.find((e) => e.id === id);
                 if (!ex) return null;
-                const muscles = locEx(ex, 'primaryMuscles', lang);
                 return (
-                  <Reorder.Item
-                    key={id}
-                    value={id}
-                    className="rounded-2xl bg-white dark:bg-ink-800 border border-black/5 dark:border-white/5 shadow-card dark:shadow-cardDark px-4 py-3 flex items-center gap-3 cursor-grab active:cursor-grabbing touch-none select-none"
-                  >
-                    <div className="flex flex-col gap-[3px] text-ink-300 shrink-0">
-                      <span className="block w-4 h-[2px] bg-current rounded-full" />
-                      <span className="block w-4 h-[2px] bg-current rounded-full" />
-                      <span className="block w-4 h-[2px] bg-current rounded-full" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-[10px] uppercase tracking-[0.16em] text-ink-300 truncate">
-                        {muscles[0]}
-                      </div>
-                      <div className="text-[14px] font-semibold text-ink-900 dark:text-bone-100 leading-tight truncate">
-                        {locEx(ex, 'name', lang)}
-                      </div>
-                    </div>
-                    <div className="text-[11px] tabular text-ink-400 dark:text-ink-200 shrink-0">
-                      {ex.sets} × {ex.repRange}
-                    </div>
-                  </Reorder.Item>
+                  <ReorderRow key={id} id={id} exercise={ex} lang={lang} />
                 );
               })}
             </Reorder.Group>
@@ -436,6 +414,48 @@ function ActiveFocus({ exercise, setNumber, onLog, onOpen, restRunning }) {
         {restRunning ? t('workout.resting') : t('workout.completeSet')}
       </button>
     </motion.div>
+  );
+}
+
+// One row in the reorder list. Drag is initiated ONLY from the left-side
+// handle — see the dragControls + dragListener={false} pair. The rest of
+// the card stays scrollable, which is what fixes iOS Safari: Framer Motion
+// auto-sets `touch-action: pan-x` on Reorder.Item for axis="y", which on
+// touch devices made the whole card register vertical touches as page
+// scrolls instead of drags. Putting `touch-action: none` on just the
+// handle scopes the touch-suppression to the grab area only.
+function ReorderRow({ id, exercise, lang }) {
+  const controls = useDragControls();
+  const muscles = locEx(exercise, 'primaryMuscles', lang);
+  return (
+    <Reorder.Item
+      value={id}
+      dragListener={false}
+      dragControls={controls}
+      className="rounded-2xl bg-white dark:bg-ink-800 border border-black/5 dark:border-white/5 shadow-card dark:shadow-cardDark px-3 py-3 flex items-center gap-2 select-none"
+    >
+      <div
+        onPointerDown={(e) => controls.start(e)}
+        style={{ touchAction: 'none' }}
+        className="cursor-grab active:cursor-grabbing px-2 py-2 -my-2 text-ink-300 dark:text-ink-200 shrink-0 flex flex-col gap-[3px]"
+        aria-label="Drag to reorder"
+      >
+        <span className="block w-4 h-[2px] bg-current rounded-full" />
+        <span className="block w-4 h-[2px] bg-current rounded-full" />
+        <span className="block w-4 h-[2px] bg-current rounded-full" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="text-[10px] uppercase tracking-[0.16em] text-ink-300 truncate">
+          {muscles[0]}
+        </div>
+        <div className="text-[14px] font-semibold text-ink-900 dark:text-bone-100 leading-tight truncate">
+          {locEx(exercise, 'name', lang)}
+        </div>
+      </div>
+      <div className="text-[11px] tabular text-ink-400 dark:text-ink-200 shrink-0">
+        {exercise.sets} × {exercise.repRange}
+      </div>
+    </Reorder.Item>
   );
 }
 
