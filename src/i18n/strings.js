@@ -78,6 +78,10 @@ export const STRINGS = {
     'workout.sessionComplete': 'Session complete',
     'workout.viewSummary': 'View summary',
     'workout.details': 'Details',
+    'workout.reorder': 'Reorder',
+    'workout.doneReorder': 'Done',
+    'workout.resetOrder': 'Reset order',
+    'workout.dragHint': 'Drag the handles to change the order — the active card up top will update.',
 
     // Exercise Card
     'card.done': 'Done',
@@ -359,6 +363,10 @@ export const STRINGS = {
     'workout.sessionComplete': '训练完成',
     'workout.viewSummary': '查看总结',
     'workout.details': '详情',
+    'workout.reorder': '调整顺序',
+    'workout.doneReorder': '完成',
+    'workout.resetOrder': '还原默认',
+    'workout.dragHint': '拖动手柄调整顺序 — 上方"当前"卡片会跟着更新。',
 
     // Exercise Card
     'card.done': '完成',

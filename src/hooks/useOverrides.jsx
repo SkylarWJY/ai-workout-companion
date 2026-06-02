@@ -6,6 +6,7 @@ import { useLocalStorage } from './useLocalStorage.js';
 //   overrides.profile = { bf, targetBf, goals: [], pullUpProgression: {...} }
 //   overrides.exercise.{id} = { suggestedWeight, currentWeight, goalWeight, youtubeId }
 //   overrides.warmup.{day} = { altYoutubeId }
+//   overrides.order.{workoutId} = [exerciseId, exerciseId, ...]
 //   overrides.weightUnit = 'lb' | 'kg'
 
 const OverridesContext = createContext({

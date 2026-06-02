@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import ExerciseCard from './ExerciseCard.jsx';
 import ExerciseModal from './ExerciseModal.jsx';
 import RestTimer from './RestTimer.jsx';
@@ -20,33 +20,75 @@ import { useOverrides } from '../hooks/useOverrides.jsx';
 
 export default function WorkoutDay({ workout, session, setSession, onBack, onComplete }) {
   const { t, lang } = useLang();
+  const { overrides, setOverride, clearOverride } = useOverrides();
   const [openExerciseId, setOpenExerciseId] = useState(null);
   const [loggerOpen, setLoggerOpen] = useState(false);
   const [hintFor, setHintFor] = useState(null);
   const [showSummary, setShowSummary] = useState(false);
+  const [editingOrder, setEditingOrder] = useState(false);
+  const [localOrder, setLocalOrder] = useState(null);
   const timer = useRestTimer();
 
+  // Resolve the active exercise order: user-customized (from overrides) or
+  // the default from workoutData.js. Any new exercises added to the program
+  // after a custom order was saved get appended at the end so nothing is lost.
+  const customOrderIds = overrides.order?.[workout.id];
+  const orderedExercises = useMemo(() => {
+    if (!customOrderIds || !Array.isArray(customOrderIds)) {
+      return workout.exercises;
+    }
+    const byId = new Map(workout.exercises.map((e) => [e.id, e]));
+    const result = [];
+    for (const id of customOrderIds) {
+      const ex = byId.get(id);
+      if (ex) {
+        result.push(ex);
+        byId.delete(id);
+      }
+    }
+    for (const ex of byId.values()) result.push(ex);
+    return result;
+  }, [workout.exercises, customOrderIds]);
+
   const activeIndex = useMemo(() => {
-    return workout.exercises.findIndex(
+    return orderedExercises.findIndex(
       (e) => (session.completedSets[e.id]?.length || 0) < e.sets,
     );
-  }, [workout, session]);
+  }, [orderedExercises, session]);
 
   const activeExercise =
-    activeIndex >= 0 ? workout.exercises[activeIndex] : null;
+    activeIndex >= 0 ? orderedExercises[activeIndex] : null;
   const setNumber =
     activeExercise
       ? (session.completedSets[activeExercise.id]?.length || 0) + 1
       : 0;
 
-  const completedCount = workout.exercises.reduce(
+  const completedCount = orderedExercises.reduce(
     (acc, e) => acc + Math.min(e.sets, session.completedSets[e.id]?.length || 0),
     0,
   );
-  const totalCount = workout.exercises.reduce((acc, e) => acc + e.sets, 0);
+  const totalCount = orderedExercises.reduce((acc, e) => acc + e.sets, 0);
   const allDone = completedCount >= totalCount;
 
-  const openExercise = workout.exercises.find((e) => e.id === openExerciseId);
+  const openExercise = orderedExercises.find((e) => e.id === openExerciseId);
+
+  const startEditOrder = () => {
+    setLocalOrder(orderedExercises.map((e) => e.id));
+    setEditingOrder(true);
+  };
+  const finishEditOrder = () => {
+    if (localOrder) {
+      setOverride('order', null, workout.id, localOrder);
+    }
+    setEditingOrder(false);
+    setLocalOrder(null);
+  };
+  const resetOrder = () => {
+    clearOverride('order', null, workout.id);
+    if (editingOrder) {
+      setLocalOrder(workout.exercises.map((e) => e.id));
+    }
+  };
 
   const handleStartLog = () => {
     if (!activeExercise) return;
@@ -67,7 +109,7 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
 
     const setsDone = (next[ex.id] || []).length;
     const isLastExerciseSet =
-      setsDone >= ex.sets && activeIndex === workout.exercises.length - 1;
+      setsDone >= ex.sets && activeIndex === orderedExercises.length - 1;
     if (!isLastExerciseSet) timer.start(ex.restSeconds);
   };
 
@@ -148,25 +190,90 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
         </div>
       )}
 
-      <div className="px-5 pt-5 space-y-2.5">
-        <div className="text-[11px] uppercase tracking-[0.18em] text-ink-300 mb-1">
-          {t('workout.fullSession')}
+      <div className="px-5 pt-5">
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-[11px] uppercase tracking-[0.18em] text-ink-300">
+            {t('workout.fullSession')}
+          </div>
+          <div className="flex items-center gap-3">
+            {customOrderIds && !editingOrder && (
+              <button
+                onClick={resetOrder}
+                className="text-[10px] uppercase tracking-wider text-ink-300 hover:text-ink-700 dark:hover:text-bone-100"
+              >
+                {t('workout.resetOrder')}
+              </button>
+            )}
+            <button
+              onClick={editingOrder ? finishEditOrder : startEditOrder}
+              className="text-[10px] uppercase tracking-wider font-medium text-ink-700 dark:text-bone-100 px-2.5 py-1 rounded-full border border-black/10 dark:border-white/10 active:scale-[0.97] transition"
+            >
+              {editingOrder ? t('workout.doneReorder') : t('workout.reorder')}
+            </button>
+          </div>
         </div>
-        {workout.exercises.map((ex, i) => {
-          const completed = session.completedSets[ex.id]?.length || 0;
-          return (
-            <ExerciseCard
-              key={ex.id}
-              index={i + 1}
-              exercise={ex}
-              totalSets={ex.sets}
-              completedSets={completed}
-              active={i === activeIndex && !allDone}
-              done={completed >= ex.sets}
-              onOpen={() => setOpenExerciseId(ex.id)}
-            />
-          );
-        })}
+
+        {editingOrder ? (
+          <>
+            <div className="text-[11px] text-ink-400 dark:text-ink-200 mb-2.5">
+              {t('workout.dragHint')}
+            </div>
+            <Reorder.Group
+              axis="y"
+              values={localOrder || []}
+              onReorder={setLocalOrder}
+              className="space-y-2"
+            >
+              {(localOrder || []).map((id) => {
+                const ex = workout.exercises.find((e) => e.id === id);
+                if (!ex) return null;
+                const muscles = locEx(ex, 'primaryMuscles', lang);
+                return (
+                  <Reorder.Item
+                    key={id}
+                    value={id}
+                    className="rounded-2xl bg-white dark:bg-ink-800 border border-black/5 dark:border-white/5 shadow-card dark:shadow-cardDark px-4 py-3 flex items-center gap-3 cursor-grab active:cursor-grabbing touch-none select-none"
+                  >
+                    <div className="flex flex-col gap-[3px] text-ink-300 shrink-0">
+                      <span className="block w-4 h-[2px] bg-current rounded-full" />
+                      <span className="block w-4 h-[2px] bg-current rounded-full" />
+                      <span className="block w-4 h-[2px] bg-current rounded-full" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[10px] uppercase tracking-[0.16em] text-ink-300 truncate">
+                        {muscles[0]}
+                      </div>
+                      <div className="text-[14px] font-semibold text-ink-900 dark:text-bone-100 leading-tight truncate">
+                        {locEx(ex, 'name', lang)}
+                      </div>
+                    </div>
+                    <div className="text-[11px] tabular text-ink-400 dark:text-ink-200 shrink-0">
+                      {ex.sets} × {ex.repRange}
+                    </div>
+                  </Reorder.Item>
+                );
+              })}
+            </Reorder.Group>
+          </>
+        ) : (
+          <div className="space-y-2.5">
+            {orderedExercises.map((ex, i) => {
+              const completed = session.completedSets[ex.id]?.length || 0;
+              return (
+                <ExerciseCard
+                  key={ex.id}
+                  index={i + 1}
+                  exercise={ex}
+                  totalSets={ex.sets}
+                  completedSets={completed}
+                  active={i === activeIndex && !allDone}
+                  done={completed >= ex.sets}
+                  onOpen={() => setOpenExerciseId(ex.id)}
+                />
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {COOLDOWNS[workout.id] && (
