@@ -206,11 +206,11 @@ That last column is the unlock. After a few weeks every set you've ever done is 
 | State | **localStorage + React Context** | No backend · works offline · zero infra |
 | i18n | **Custom** | `STRINGS` dict + `useT()` hook, 200+ keys |
 | Hosting | **Vercel** | Static SPA · edge CDN · HTTPS · free |
-| Anatomy | **Custom SVG silhouette** | Inline path, no images — dark-mode aware, MuscleWiki-style accent fills |
+| Anatomy | **`body-muscles`** (Apache 2.0) | 70+ region SVG body map, front + back views, yellow → red intensity gradient |
 
-**Bundle size:** 148 KB gzip total (JS + CSS + HTML). Loads in under 1 second on 4G.
+**Bundle size:** 157 KB gzip total (JS + CSS + HTML). Loads in under 1 second on 4G.
 
-**包大小：** 总 148 KB gzip（JS + CSS + HTML）。4G 网络 1 秒内打开。
+**包大小：** 总 157 KB gzip（JS + CSS + HTML）。4G 网络 1 秒内打开。
 
 ---
 
@@ -278,12 +278,12 @@ Vercel 免费版完全够：100 GB 月流量 + HTTPS + 自定义域名都 $0。
 
 ## 🙏 Credits / 致谢
 
-- **Body map silhouette** — custom inline SVG (this repo, MIT). Anatomical landmarks calibrated by hand.
+- **Body map silhouette** — [`body-muscles`](https://github.com/vulovix/body-muscles) by Ivan Vulović (Apache 2.0). 70+ anatomical regions across front + back views, mapped to ATLAS's 18 region keys.
 - **Exercise fallback images** — [yuhonas/free-exercise-db](https://github.com/yuhonas/free-exercise-db), CC0.
 - **YouTube tutorials** — embedded from the original creators (DeltaBolic / Andrew Kwong, ArielYu_Fit, Jeremy Ethier, Nuffield Health, Colossus Fitness, Booty Builder, Gerardi Performance, and others). Credit displayed on each thumbnail.
 - **Cool-down stretches** — Verywell Fit (shoulder/crescent moon/chest opener); @fitzyelifts (leg recovery series).
 
-**人体剪影** — 本仓库手画 inline SVG（MIT 协议），解剖标志手工标定
+**人体剪影** — [`body-muscles`](https://github.com/vulovix/body-muscles)，作者 Ivan Vulović（Apache 2.0），70+ 解剖区域，映射到 ATLAS 的 18 个区域 key
 **动作教学视频** — 嵌入自原作者频道，每个缩略图上有创作者名
 **拉伸图** — Verywell Fit · @fitzyelifts
 

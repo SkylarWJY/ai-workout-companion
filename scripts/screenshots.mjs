@@ -82,9 +82,11 @@ await shot('02-workout-day');
 
 // -------- 3. Body Map close-up --------
 await page.evaluate(() => {
-  // Body map is rendered as inline SVG (modern silhouette) — find by
-  // viewBox attribute since there's no longer an anatomy <img>.
-  document.querySelector('svg[viewBox="0 0 200 600"]')?.scrollIntoView({
+  // Body map is rendered by the body-muscles library — find by the
+  // library's wrapper class. Scroll the parent grid into view so both
+  // front + back charts land centered.
+  (document.querySelector('.body-map-root') ||
+    document.querySelector('.body-chart-container'))?.scrollIntoView({
     block: 'center',
   });
 });
@@ -223,9 +225,11 @@ await page.evaluate(() => {
 });
 await sleep(1200);
 await page.evaluate(() => {
-  // Body map is rendered as inline SVG (modern silhouette) — find by
-  // viewBox attribute since there's no longer an anatomy <img>.
-  document.querySelector('svg[viewBox="0 0 200 600"]')?.scrollIntoView({
+  // Body map is rendered by the body-muscles library — find by the
+  // library's wrapper class. Scroll the parent grid into view so both
+  // front + back charts land centered.
+  (document.querySelector('.body-map-root') ||
+    document.querySelector('.body-chart-container'))?.scrollIntoView({
     block: 'center',
   });
 });
