@@ -17,10 +17,17 @@ import { useLang, locEx, locWorkout } from '../i18n/index.jsx';
 import { WARMUPS, COOLDOWNS } from '../data/warmCoolData.js';
 import { exerciseMeta } from '../data/exerciseMeta.js';
 import { useOverrides, applyExerciseOverrides } from '../hooks/useOverrides.jsx';
+import { useLocalStorage } from '../hooks/useLocalStorage.js';
+import { demoVariants } from '../data/demoMap.js';
+import { lastLogsByVariant } from '../utils/historyLookup.js';
 
 export default function WorkoutDay({ workout, session, setSession, onBack, onComplete }) {
   const { t, lang } = useLang();
   const { overrides, setOverride, clearOverride } = useOverrides();
+  // Cross-session history feeds the Logger's pre-fill + the modal's
+  // per-variant "last actual" display. Same localStorage key App.jsx
+  // writes to on workout completion — we're a read-only consumer here.
+  const [history] = useLocalStorage('atlas.history', {});
   const [openExerciseId, setOpenExerciseId] = useState(null);
   const [loggerOpen, setLoggerOpen] = useState(false);
   const [hintFor, setHintFor] = useState(null);
@@ -108,6 +115,12 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
     next[ex.id] = [...(next[ex.id] || []), log];
     setSession({ ...session, completedSets: next });
     setLoggerOpen(false);
+    // Remember the user's variant choice so the next Logger open
+    // defaults to the same one — typically you stick to one variant
+    // through a whole training block.
+    if (log.variant) {
+      setOverride('lastVariant', null, ex.id, log.variant);
+    }
 
     const { high } = parseRepRange(ex.repRange);
     if (high && log.reps && log.reps >= high && log.difficulty !== 'failure') {
@@ -328,10 +341,16 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
                   exercise={activeExercise}
                   setNumber={setNumber}
                   totalSets={activeExercise.sets}
-                  defaultWeight={lastWeight(session, activeExercise) ?? ''}
-                  defaultReps={
-                    parseRepRange(activeExercise.repRange).high ?? ''
+                  variants={demoVariants(activeExercise.id)}
+                  defaultVariantKey={
+                    overrides.lastVariant?.[activeExercise.id] ||
+                    demoVariants(activeExercise.id)[0]?.key ||
+                    null
                   }
+                  lastLogsByVariant={lastLogsByVariant(
+                    history,
+                    activeExercise.id,
+                  )}
                   onCancel={() => setLoggerOpen(false)}
                   onSave={handleSaveSet}
                 />

@@ -98,6 +98,9 @@ export const STRINGS = {
     'modal.lowerBack': 'Lower back',
     'modal.bestPickTag': '★ Editor\'s pick · variant-specific guide',
     'modal.variantContentTag': 'Variant-specific guide',
+    'modal.yourLast': 'Your last',
+    'log.variant': 'Variant',
+    'log.lastTime': 'Last time',
 
     // Priority
     'priority.extreme': 'Extreme Priority',
@@ -404,6 +407,9 @@ export const STRINGS = {
     'modal.lowerBack': '下背',
     'modal.bestPickTag': '★ 编辑精选 · 变体专属指南',
     'modal.variantContentTag': '变体专属指南',
+    'modal.yourLast': '你上次',
+    'log.variant': '变体',
+    'log.lastTime': '上次',
 
     // Priority
     'priority.extreme': '最高优先级',

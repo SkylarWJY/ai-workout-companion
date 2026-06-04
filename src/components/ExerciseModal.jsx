@@ -9,11 +9,21 @@ import { fmtRest } from '../utils/format.js';
 import { demoVariants, resolveVariantContent } from '../data/demoMap.js';
 import { resolveMeta } from '../data/exerciseMeta.js';
 import { useOverrides } from '../hooks/useOverrides.jsx';
+import { useLocalStorage } from '../hooks/useLocalStorage.js';
+import { lastLogsByVariant, formatLogShort } from '../utils/historyLookup.js';
 
 export default function ExerciseModal({ open, exercise, onClose }) {
   const { t, lang } = useLang();
   const { overrides } = useOverrides();
   const [editorOpen, setEditorOpen] = useState(false);
+  const [history] = useLocalStorage('atlas.history', {});
+
+  // Per-variant "what did I do last time" map for this exercise.
+  // Memoized so we only re-scan history when the exercise changes.
+  const lastByVariant = useMemo(
+    () => (exercise ? lastLogsByVariant(history, exercise.id) : {}),
+    [history, exercise?.id],
+  );
 
   const variants = useMemo(
     () => (exercise ? demoVariants(exercise.id) : []),
@@ -102,6 +112,26 @@ export default function ExerciseModal({ open, exercise, onClose }) {
                 <div className="mt-1 text-sm text-ink-400 dark:text-ink-200 tabular">
                   {exercise.sets} × {exercise.repRange} · {t('workout.rest').toLowerCase()} {fmtRest(exercise.restSeconds)} · {suggestedWeight}
                 </div>
+                {/* "Last actual" line — only shows when the user has
+                    completed at least one set of this variant. Pulls
+                    from cross-session history so the user sees what
+                    THEY actually hit, not just the static suggestion. */}
+                {(() => {
+                  const variantKey = variant?.key;
+                  const refLog =
+                    (variantKey && lastByVariant[variantKey]) ||
+                    lastByVariant.default ||
+                    null;
+                  if (!refLog) return null;
+                  return (
+                    <div className="mt-1 text-[12px] tabular text-priority-moderate">
+                      <span className="opacity-70 uppercase tracking-wider">
+                        {t('modal.yourLast')}:
+                      </span>{' '}
+                      {formatLogShort(refLog, t)}
+                    </div>
+                  );
+                })()}
                 {meta?.tempo && (
                   <div className="mt-1 text-[12px] tabular text-ink-500 dark:text-ink-100">
                     {t('tempo.label')} · {meta.tempo === 'Static' ? t('tempo.static') : meta.tempo}
