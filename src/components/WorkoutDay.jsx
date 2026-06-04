@@ -19,7 +19,7 @@ import { exerciseMeta } from '../data/exerciseMeta.js';
 import { useOverrides, applyExerciseOverrides } from '../hooks/useOverrides.jsx';
 import { useLocalStorage } from '../hooks/useLocalStorage.js';
 import { demoVariants } from '../data/demoMap.js';
-import { lastLogsByVariant } from '../utils/historyLookup.js';
+import { lastLogForExercise, lastLogsByVariant, formatLogShort } from '../utils/historyLookup.js';
 import CustomExerciseEditor from './CustomExerciseEditor.jsx';
 
 export default function WorkoutDay({ workout, session, setSession, onBack, onComplete }) {
@@ -218,6 +218,11 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
             setNumber={setNumber}
             onLog={handleStartLog}
             onOpen={() => setOpenExerciseId(activeExercise.id)}
+            lastLog={lastLogForExercise(
+              history,
+              activeExercise.id,
+              overrides.lastVariant?.[activeExercise.id],
+            )}
             restRunning={timer.active || timer.done}
           />
         </div>
@@ -292,6 +297,7 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
                   active={i === activeIndex && !allDone}
                   done={completed >= ex.sets}
                   onOpen={() => setOpenExerciseId(ex.id)}
+                  lastLog={lastLogForExercise(history, ex.id)}
                 />
               );
             })}
@@ -400,14 +406,18 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
   );
 }
 
-function ActiveFocus({ exercise, setNumber, onLog, onOpen, restRunning }) {
+function ActiveFocus({ exercise, setNumber, onLog, onOpen, restRunning, lastLog }) {
   const { t, lang } = useLang();
-  const { overrides } = useOverrides();
+  const { overrides, weightUnit } = useOverrides();
   const muscles = locEx(exercise, 'primaryMuscles', lang);
   const meta = exerciseMeta(exercise.id);
   const suggestedWeight =
     overrides.exercise?.[exercise.id]?.suggestedWeight ??
     exercise.suggestedWeight;
+  // Prefer the user's last actual weight (converted to current unit)
+  // over the editorial suggestion. Falls back to the static string when
+  // there's no history yet.
+  const lastShort = lastLog ? formatLogShort(lastLog, t, weightUnit) : null;
   return (
     <motion.div
       layout
@@ -440,9 +450,9 @@ function ActiveFocus({ exercise, setNumber, onLog, onOpen, restRunning }) {
 
       <div className="mt-4 grid grid-cols-4 gap-2 text-[11px] uppercase tracking-wider opacity-70">
         <div>
-          <div>{t('workout.weight')}</div>
+          <div>{lastShort ? t('modal.yourLast') : t('workout.weight')}</div>
           <div className="mt-0.5 text-sm normal-case tracking-normal opacity-100 font-medium tabular leading-tight">
-            {suggestedWeight}
+            {lastShort || suggestedWeight}
           </div>
         </div>
         <div>

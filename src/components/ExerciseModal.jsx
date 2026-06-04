@@ -11,10 +11,11 @@ import { resolveMeta } from '../data/exerciseMeta.js';
 import { useOverrides } from '../hooks/useOverrides.jsx';
 import { useLocalStorage } from '../hooks/useLocalStorage.js';
 import { lastLogsByVariant, formatLogShort } from '../utils/historyLookup.js';
+import { convertWeight } from '../utils/weight.js';
 
 export default function ExerciseModal({ open, exercise, onClose }) {
   const { t, lang } = useLang();
-  const { overrides } = useOverrides();
+  const { overrides, weightUnit } = useOverrides();
   const [editorOpen, setEditorOpen] = useState(false);
   const [history] = useLocalStorage('atlas.history', {});
 
@@ -113,27 +114,43 @@ export default function ExerciseModal({ open, exercise, onClose }) {
                       : t('modal.variantContentTag')}
                   </div>
                 )}
-                <div className="mt-1 text-sm text-ink-400 dark:text-ink-200 tabular">
-                  {exercise.sets} × {exercise.repRange} · {t('workout.rest').toLowerCase()} {fmtRest(exercise.restSeconds)} · {suggestedWeight}
-                </div>
-                {/* "Last actual" line — only shows when the user has
-                    completed at least one set of this variant. Pulls
-                    from cross-session history so the user sees what
-                    THEY actually hit, not just the static suggestion. */}
+                {/* Stats line: sets × reps · rest · WEIGHT.
+                    The weight piece prefers the user's last actual
+                    (for the currently-selected variant) over the
+                    static `suggestedWeight` string. When kg/lb toggle
+                    is set, weights convert via formatLogShort. */}
                 {(() => {
                   const variantKey = variant?.key;
                   const refLog =
                     (variantKey && lastByVariant[variantKey]) ||
                     lastByVariant.default ||
                     null;
-                  if (!refLog) return null;
+                  const weightLabel = refLog
+                    ? formatLogShort(refLog, t, weightUnit)
+                    : suggestedWeight;
                   return (
-                    <div className="mt-1 text-[12px] tabular text-priority-moderate">
-                      <span className="opacity-70 uppercase tracking-wider">
-                        {t('modal.yourLast')}:
-                      </span>{' '}
-                      {formatLogShort(refLog, t)}
-                    </div>
+                    <>
+                      <div className="mt-1 text-sm text-ink-400 dark:text-ink-200 tabular">
+                        {exercise.sets} × {exercise.repRange} ·{' '}
+                        {t('workout.rest').toLowerCase()}{' '}
+                        {fmtRest(exercise.restSeconds)} ·{' '}
+                        {/* Inline color cue: green when it's a real
+                            historical actual, default when it's the
+                            static editorial suggestion. */}
+                        <span
+                          className={
+                            refLog ? 'text-priority-moderate font-medium' : ''
+                          }
+                        >
+                          {weightLabel}
+                        </span>
+                      </div>
+                      {refLog && (
+                        <div className="mt-0.5 text-[10px] uppercase tracking-wider text-ink-300">
+                          {t('modal.yourLast')}
+                        </div>
+                      )}
+                    </>
                   );
                 })()}
                 {meta?.tempo && (

@@ -67,11 +67,21 @@ export function lastLogsByVariant(history, exerciseId) {
   return result;
 }
 
+import { convertWeight } from './weight.js';
+
 // Format a log entry as a short label: "30 lb × 8 · Hard". Used in the
 // modal stats line and the Logger's "last reference" line.
-export function formatLogShort(log, t) {
+//
+// `displayUnit` (optional) is the current `weightUnit` setting from
+// useOverrides — when provided we convert the stored weight to match,
+// so logged-in-lb data displays correctly under the kg toggle and
+// vice versa.
+export function formatLogShort(log, t, displayUnit) {
   if (!log || log.weight == null) return null;
-  const wt = `${log.weight}${log.weightUnit ? ` ${log.weightUnit}` : ''}`;
+  const storedUnit = log.weightUnit || 'lb';
+  const targetUnit = displayUnit || storedUnit;
+  const weight = convertWeight(log.weight, storedUnit, targetUnit);
+  const wt = `${weight} ${targetUnit}`;
   const reps = log.reps != null ? ` × ${log.reps}` : '';
   const diff = log.difficulty
     ? ` · ${t ? t(`log.diff.${log.difficulty}`) : log.difficulty}`

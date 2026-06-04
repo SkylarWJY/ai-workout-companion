@@ -4,6 +4,7 @@ import { useLang, locEx } from '../i18n/index.jsx';
 import { useOverrides } from '../hooks/useOverrides.jsx';
 import { variantLabel } from './VariantBadge.jsx';
 import { formatLogShort } from '../utils/historyLookup.js';
+import { convertWeight } from '../utils/weight.js';
 
 export default function WorkoutLogger({
   exercise,
@@ -39,12 +40,18 @@ export default function WorkoutLogger({
   const [difficulty, setDifficulty] = useState('moderate');
   const [notes, setNotes] = useState('');
   useEffect(() => {
-    setWeight(refLog?.weight != null ? String(refLog.weight) : '');
+    // Convert the reference log's stored weight into the currently-
+    // selected display unit. If user logged 25 lb but now wants kg,
+    // pre-fill becomes 11.5 kg — not "25" with the kg suffix slapped on.
+    const converted =
+      refLog?.weight != null
+        ? convertWeight(refLog.weight, refLog.weightUnit || 'lb', weightUnit)
+        : null;
+    setWeight(converted != null ? String(converted) : '');
     setReps(refLog?.reps != null ? String(refLog.reps) : '');
     setDifficulty(refLog?.difficulty || 'moderate');
-    // Notes don't carry over — each set's notes are session-specific
     setNotes('');
-  }, [variantKey, refLog?.ts]);
+  }, [variantKey, refLog?.ts, weightUnit]);
 
   const DIFFICULTY = [
     { id: 'easy', label: t('log.diff.easy') },
@@ -130,7 +137,9 @@ export default function WorkoutLogger({
       {refLog && (
         <div className="text-[11px] text-ink-400 dark:text-ink-200 -mt-2">
           <span className="text-ink-300">{t('log.lastTime')}: </span>
-          <span className="tabular">{formatLogShort(refLog, t)}</span>
+          <span className="tabular">
+            {formatLogShort(refLog, t, weightUnit)}
+          </span>
         </div>
       )}
 

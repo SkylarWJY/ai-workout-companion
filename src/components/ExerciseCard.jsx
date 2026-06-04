@@ -5,6 +5,7 @@ import VariantBadge from './VariantBadge.jsx';
 import { useLang, locEx } from '../i18n/index.jsx';
 import { fmtRest } from '../utils/format.js';
 import { useOverrides } from '../hooks/useOverrides.jsx';
+import { formatLogShort } from '../utils/historyLookup.js';
 
 export default function ExerciseCard({
   exercise,
@@ -14,14 +15,19 @@ export default function ExerciseCard({
   active,
   done,
   onOpen,
+  lastLog,
 }) {
   const { t, lang } = useLang();
-  const { overrides } = useOverrides();
+  const { overrides, weightUnit } = useOverrides();
   const name = locEx(exercise, 'name', lang);
   const muscles = locEx(exercise, 'primaryMuscles', lang);
   const suggestedWeight =
     overrides.exercise?.[exercise.id]?.suggestedWeight ??
     exercise.suggestedWeight;
+  // When the user has any logged history for this exercise we show
+  // their last actual weight (converted to the current unit) instead
+  // of the static editorial suggestion.
+  const lastShort = lastLog ? formatLogShort(lastLog, t, weightUnit) : null;
 
   return (
     <motion.button
@@ -99,8 +105,18 @@ export default function ExerciseCard({
       </div>
 
       <div className="mt-3 flex items-center justify-between">
-        <span className={`text-[11px] ${active ? 'opacity-70' : 'text-ink-400 dark:text-ink-200'}`}>
-          {suggestedWeight}
+        <span
+          className={`text-[11px] tabular ${
+            lastShort
+              ? active
+                ? 'text-bone-50 dark:text-ink-900 opacity-90 font-medium'
+                : 'text-priority-moderate font-medium'
+              : active
+                ? 'opacity-70'
+                : 'text-ink-400 dark:text-ink-200'
+          }`}
+        >
+          {lastShort || suggestedWeight}
         </span>
         <span className={`text-[11px] tabular ${active ? 'opacity-90' : 'text-ink-500 dark:text-ink-100'}`}>
           {completedSets}/{totalSets} {t('workout.sets')}
