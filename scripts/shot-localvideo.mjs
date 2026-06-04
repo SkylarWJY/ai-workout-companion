@@ -32,10 +32,10 @@ await page.evaluate(() => {
 await sleep(700);
 
 await page.evaluate(() => {
-  const editBtn = [...document.querySelectorAll('button')].find(
-    (b) => b.getAttribute('aria-label')?.toLowerCase().includes('edit'),
+  const editBtns = [...document.querySelectorAll("button")].filter(
+    (b) => b.getAttribute("aria-label")?.toLowerCase().includes("edit"),
   );
-  editBtn?.click();
+  editBtns[editBtns.length - 1]?.click();
 });
 await sleep(700);
 

@@ -16,7 +16,7 @@ import { parseRepRange, fmtRest } from '../utils/format.js';
 import { useLang, locEx, locWorkout } from '../i18n/index.jsx';
 import { WARMUPS, COOLDOWNS } from '../data/warmCoolData.js';
 import { exerciseMeta } from '../data/exerciseMeta.js';
-import { useOverrides } from '../hooks/useOverrides.jsx';
+import { useOverrides, applyExerciseOverrides } from '../hooks/useOverrides.jsx';
 
 export default function WorkoutDay({ workout, session, setSession, onBack, onComplete }) {
   const { t, lang } = useLang();
@@ -33,22 +33,29 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
   // the default from workoutData.js. Any new exercises added to the program
   // after a custom order was saved get appended at the end so nothing is lost.
   const customOrderIds = overrides.order?.[workout.id];
+  // 1. Reorder by user's preference (or default if no order override set)
+  // 2. Apply per-exercise overrides on top so sets/reps/rest/weight reflect
+  //    whatever the user typed in the editor — this is the value passed
+  //    to every downstream card, modal, logger, and rest-timer call.
   const orderedExercises = useMemo(() => {
+    const exOverrides = overrides.exercise || {};
+    const apply = (ex) => applyExerciseOverrides(ex, exOverrides[ex.id]);
+
     if (!customOrderIds || !Array.isArray(customOrderIds)) {
-      return workout.exercises;
+      return workout.exercises.map(apply);
     }
     const byId = new Map(workout.exercises.map((e) => [e.id, e]));
     const result = [];
     for (const id of customOrderIds) {
       const ex = byId.get(id);
       if (ex) {
-        result.push(ex);
+        result.push(apply(ex));
         byId.delete(id);
       }
     }
-    for (const ex of byId.values()) result.push(ex);
+    for (const ex of byId.values()) result.push(apply(ex));
     return result;
-  }, [workout.exercises, customOrderIds]);
+  }, [workout.exercises, customOrderIds, overrides.exercise]);
 
   const activeIndex = useMemo(() => {
     return orderedExercises.findIndex(

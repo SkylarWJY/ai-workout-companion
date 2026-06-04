@@ -5,6 +5,8 @@ import { useLocalStorage } from './useLocalStorage.js';
 // "reset everything" wipes them. Structure:
 //   overrides.profile = { bf, targetBf, goals: [], pullUpProgression: {...} }
 //   overrides.exercise.{id} = {
+//     sets, repRange, restSeconds,             // programming knobs (v0.7+) — let users
+//                                              // restructure the lift without forking the source
 //     suggestedWeight, currentWeight, goalWeight,
 //     youtubeId,                                  // LEGACY: pre-v0.6 single-video override; still respected
 //                                                 // when there is no per-variant override on the default tab
@@ -105,4 +107,33 @@ export function useOverrides() {
 export function getOverride(overrides, scope, id, field) {
   if (id == null) return overrides?.[scope]?.[field];
   return overrides?.[scope]?.[id]?.[field];
+}
+
+// Merges the per-exercise overrides on top of a base exercise object so
+// downstream readers (cards, modal, logger, rest timer) all see one
+// consistent "effective" exercise. Only fields the user can actually
+// edit are merged — content / muscles / priority / variant-specific data
+// stay editorial.
+const EDITABLE_PROGRAM_FIELDS = ['sets', 'repRange', 'restSeconds'];
+export function applyExerciseOverrides(ex, ov) {
+  if (!ov) return ex;
+  let merged = ex;
+  let mutated = false;
+  for (const field of EDITABLE_PROGRAM_FIELDS) {
+    if (ov[field] !== undefined && ov[field] !== null && ov[field] !== '') {
+      if (!mutated) {
+        merged = { ...ex };
+        mutated = true;
+      }
+      merged[field] = ov[field];
+    }
+  }
+  if (ov.suggestedWeight) {
+    if (!mutated) {
+      merged = { ...ex };
+      mutated = true;
+    }
+    merged.suggestedWeight = ov.suggestedWeight;
+  }
+  return merged;
 }

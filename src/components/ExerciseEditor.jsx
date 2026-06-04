@@ -24,6 +24,9 @@ export default function ExerciseEditor({ open, onClose, exercise, defaultYouTube
 
   const variants = exercise ? demoVariants(exercise.id) : [];
 
+  const [sets, setSets] = useState('');
+  const [repRange, setRepRange] = useState('');
+  const [restSeconds, setRestSeconds] = useState('');
   const [suggested, setSuggested] = useState('');
   const [current, setCurrent] = useState('');
   const [goal, setGoal] = useState('');
@@ -38,6 +41,9 @@ export default function ExerciseEditor({ open, onClose, exercise, defaultYouTube
 
   useEffect(() => {
     if (!open || !exercise) return;
+    setSets(String(ov.sets ?? exercise.sets ?? ''));
+    setRepRange(ov.repRange ?? exercise.repRange ?? '');
+    setRestSeconds(String(ov.restSeconds ?? exercise.restSeconds ?? ''));
     setSuggested(ov.suggestedWeight ?? exercise.suggestedWeight ?? '');
     setCurrent(ov.currentWeight ?? exercise.currentWeight ?? '');
     setGoal(ov.goalWeight ?? exercise.goalWeight ?? '');
@@ -56,6 +62,29 @@ export default function ExerciseEditor({ open, onClose, exercise, defaultYouTube
   if (!exercise) return null;
 
   const save = () => {
+    // Program structure overrides — only persist when the user typed
+    // something different from the data-side default. An empty string
+    // or a value matching the default clears the override so the
+    // exercise tracks future program updates cleanly.
+    const setsNum = parseInt(sets, 10);
+    if (Number.isFinite(setsNum) && setsNum > 0 && setsNum !== exercise.sets) {
+      setOverride('exercise', exercise.id, 'sets', setsNum);
+    } else {
+      clearOverride('exercise', exercise.id, 'sets');
+    }
+    const repTrimmed = repRange.trim();
+    if (repTrimmed && repTrimmed !== exercise.repRange) {
+      setOverride('exercise', exercise.id, 'repRange', repTrimmed);
+    } else {
+      clearOverride('exercise', exercise.id, 'repRange');
+    }
+    const restNum = parseInt(restSeconds, 10);
+    if (Number.isFinite(restNum) && restNum > 0 && restNum !== exercise.restSeconds) {
+      setOverride('exercise', exercise.id, 'restSeconds', restNum);
+    } else {
+      clearOverride('exercise', exercise.id, 'restSeconds');
+    }
+
     setOverride('exercise', exercise.id, 'suggestedWeight', suggested);
     setOverride('exercise', exercise.id, 'currentWeight', current);
     setOverride('exercise', exercise.id, 'goalWeight', goal);
@@ -207,6 +236,67 @@ export default function ExerciseEditor({ open, onClose, exercise, defaultYouTube
             <div className="px-5 pt-4 pb-10 space-y-4">
               <div className="text-base font-semibold text-ink-900 dark:text-bone-100">
                 {exercise.name}
+              </div>
+
+              {/* Program structure — sets, reps, rest. Empty / matches
+                  default → no override (the lift will track future program
+                  updates). */}
+              <div className="grid grid-cols-3 gap-2">
+                <Field
+                  label={t('edit.exercise.sets')}
+                  hasOverride={ov.sets != null}
+                  onReset={() => {
+                    clearOverride('exercise', exercise.id, 'sets');
+                    setSets(String(exercise.sets ?? ''));
+                  }}
+                  resetLabel={t('edit.reset')}
+                >
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min="1"
+                    max="20"
+                    value={sets}
+                    onChange={(e) => setSets(e.target.value)}
+                    className={inputCls}
+                  />
+                </Field>
+                <Field
+                  label={t('edit.exercise.reps')}
+                  hasOverride={ov.repRange != null}
+                  onReset={() => {
+                    clearOverride('exercise', exercise.id, 'repRange');
+                    setRepRange(exercise.repRange ?? '');
+                  }}
+                  resetLabel={t('edit.reset')}
+                >
+                  <input
+                    value={repRange}
+                    onChange={(e) => setRepRange(e.target.value)}
+                    placeholder="6–10"
+                    className={inputCls}
+                  />
+                </Field>
+                <Field
+                  label={t('edit.exercise.rest')}
+                  hasOverride={ov.restSeconds != null}
+                  onReset={() => {
+                    clearOverride('exercise', exercise.id, 'restSeconds');
+                    setRestSeconds(String(exercise.restSeconds ?? ''));
+                  }}
+                  resetLabel={t('edit.reset')}
+                >
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min="0"
+                    max="600"
+                    step="15"
+                    value={restSeconds}
+                    onChange={(e) => setRestSeconds(e.target.value)}
+                    className={inputCls}
+                  />
+                </Field>
               </div>
 
               <Field
