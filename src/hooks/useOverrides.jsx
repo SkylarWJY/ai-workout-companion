@@ -25,6 +25,10 @@ import { useLocalStorage } from './useLocalStorage.js';
 //                                             // surfaced under the player; still respected
 //   }
 //   overrides.order.{workoutId} = [exerciseId, exerciseId, ...]
+//   overrides.customExercises.{id} = {                  // v0.8+ — user-added lifts
+//     id, workoutId, name, primaryMuscles[], secondaryMuscles[],
+//     sets, repRange, restSeconds, suggestedWeight, priority, youtubeId,
+//   }
 //   overrides.weightUnit = 'lb' | 'kg'
 
 const OverridesContext = createContext({

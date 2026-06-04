@@ -20,6 +20,7 @@ import { useOverrides, applyExerciseOverrides } from '../hooks/useOverrides.jsx'
 import { useLocalStorage } from '../hooks/useLocalStorage.js';
 import { demoVariants } from '../data/demoMap.js';
 import { lastLogsByVariant } from '../utils/historyLookup.js';
+import CustomExerciseEditor from './CustomExerciseEditor.jsx';
 
 export default function WorkoutDay({ workout, session, setSession, onBack, onComplete }) {
   const { t, lang } = useLang();
@@ -34,24 +35,36 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
   const [showSummary, setShowSummary] = useState(false);
   const [editingOrder, setEditingOrder] = useState(false);
   const [localOrder, setLocalOrder] = useState(null);
+  const [customEditorOpen, setCustomEditorOpen] = useState(false);
   const timer = useRestTimer();
 
   // Resolve the active exercise order: user-customized (from overrides) or
   // the default from workoutData.js. Any new exercises added to the program
   // after a custom order was saved get appended at the end so nothing is lost.
   const customOrderIds = overrides.order?.[workout.id];
-  // 1. Reorder by user's preference (or default if no order override set)
-  // 2. Apply per-exercise overrides on top so sets/reps/rest/weight reflect
+
+  // Custom exercises the user added to THIS workout day. They merge in
+  // after the base list so they sit at the bottom by default; the
+  // Reorder feature can move them anywhere in the lineup.
+  const customForDay = useMemo(() => {
+    const all = overrides.customExercises || {};
+    return Object.values(all).filter((e) => e.workoutId === workout.id);
+  }, [overrides.customExercises, workout.id]);
+
+  // 1. Combine base exercises + user-added custom exercises for this day
+  // 2. Reorder by user's preference (or default if no order override set)
+  // 3. Apply per-exercise overrides on top so sets/reps/rest/weight reflect
   //    whatever the user typed in the editor — this is the value passed
   //    to every downstream card, modal, logger, and rest-timer call.
   const orderedExercises = useMemo(() => {
     const exOverrides = overrides.exercise || {};
     const apply = (ex) => applyExerciseOverrides(ex, exOverrides[ex.id]);
+    const fullList = [...workout.exercises, ...customForDay];
 
     if (!customOrderIds || !Array.isArray(customOrderIds)) {
-      return workout.exercises.map(apply);
+      return fullList.map(apply);
     }
-    const byId = new Map(workout.exercises.map((e) => [e.id, e]));
+    const byId = new Map(fullList.map((e) => [e.id, e]));
     const result = [];
     for (const id of customOrderIds) {
       const ex = byId.get(id);
@@ -62,7 +75,7 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
     }
     for (const ex of byId.values()) result.push(apply(ex));
     return result;
-  }, [workout.exercises, customOrderIds, overrides.exercise]);
+  }, [workout.exercises, customForDay, customOrderIds, overrides.exercise]);
 
   const activeIndex = useMemo(() => {
     return orderedExercises.findIndex(
@@ -282,6 +295,15 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
                 />
               );
             })}
+            {/* + Add custom exercise button — sits at the bottom of the
+                list. Tapping opens the editor sheet pre-scoped to this
+                workout day. */}
+            <button
+              onClick={() => setCustomEditorOpen(true)}
+              className="w-full rounded-3xl p-5 border-2 border-dashed border-ink-200 dark:border-ink-600 text-ink-400 dark:text-ink-200 text-[13px] font-medium uppercase tracking-wider active:scale-[0.98] transition"
+            >
+              + {t('custom.add')}
+            </button>
           </div>
         )}
       </div>
@@ -359,6 +381,12 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
           </>
         )}
       </AnimatePresence>
+
+      <CustomExerciseEditor
+        open={customEditorOpen}
+        onClose={() => setCustomEditorOpen(false)}
+        workoutId={workout.id}
+      />
 
       <RestTimer
         timer={timer}
