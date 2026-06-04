@@ -14,6 +14,7 @@ export default function ExerciseDemo({
   variantIdx: controlledIdx,
   onVariantChange,
   overrideYoutubeId,
+  overrideYoutubeIdByVariant,
 }) {
   const { t, lang } = useLang();
   const variants = useMemo(() => demoVariants(exerciseId), [exerciseId]);
@@ -26,8 +27,19 @@ export default function ExerciseDemo({
 
   const variant = variants[variantIdx];
   const meta = resolveMeta(exerciseId, variant);
-  // User-provided override wins over the variant/base youtubeId
-  const videoId = overrideYoutubeId || meta?.youtubeId;
+  // Resolve which video to play, in priority order:
+  //   1. Per-variant user override                        (`youtubeIdByVariant[key]`)
+  //   2. Legacy exercise-level override                   (`youtubeId`, pre-v0.6)
+  //      — only applies to the FIRST variant so it doesn't
+  //        clobber distinct machine / barbell tutorials
+  //   3. Variant-specific YouTube from demoMap.js
+  //   4. Base meta YouTube from exerciseMeta.js
+  const variantKey = variant?.key;
+  const perVariantOverride = variantKey
+    ? overrideYoutubeIdByVariant?.[variantKey]
+    : null;
+  const legacyOverride = variantIdx === 0 ? overrideYoutubeId : null;
+  const videoId = perVariantOverride || legacyOverride || meta?.youtubeId;
 
   // de-dupe: only show variant tabs if at least one variant has its own
   // distinct video (otherwise switching does nothing visible).

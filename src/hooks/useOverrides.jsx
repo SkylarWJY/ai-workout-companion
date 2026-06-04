@@ -4,7 +4,13 @@ import { useLocalStorage } from './useLocalStorage.js';
 // All user overrides live in a single localStorage doc so a single
 // "reset everything" wipes them. Structure:
 //   overrides.profile = { bf, targetBf, goals: [], pullUpProgression: {...} }
-//   overrides.exercise.{id} = { suggestedWeight, currentWeight, goalWeight, youtubeId }
+//   overrides.exercise.{id} = {
+//     suggestedWeight, currentWeight, goalWeight,
+//     youtubeId,                                  // LEGACY: pre-v0.6 single-video override; still respected
+//                                                 // when there is no per-variant override on the default tab
+//     youtubeIdByVariant: { [variantKey]: 'ID' }, // NEW: per-variant video override map. Best Pick variants
+//                                                 // are intentionally excluded (editorial lock).
+//   }
 //   overrides.warmup.{day} = { altYoutubeId }
 //   overrides.order.{workoutId} = [exerciseId, exerciseId, ...]
 //   overrides.weightUnit = 'lb' | 'kg'

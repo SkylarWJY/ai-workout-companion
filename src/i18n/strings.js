@@ -237,6 +237,12 @@ export const STRINGS = {
     'edit.exercise.goal': 'Goal weight',
     'edit.exercise.youtube': 'YouTube video ID or URL',
     'edit.exercise.youtubeHelp': 'Paste a YouTube Shorts link or just the 11-char ID',
+    'edit.exercise.videos': 'Tutorial videos · one per variant',
+    'edit.exercise.videosHelp':
+      'Paste a YouTube link to replace any variant\'s tutorial. Leave empty to keep the default. ★ Best Pick stays locked.',
+    'edit.exercise.youtubePlaceholder': 'https://youtube.com/shorts/…',
+    'edit.exercise.youtubeInvalid': 'Not a valid YouTube link or ID',
+    'edit.exercise.bestPickLocked': 'Editorial · locked',
 
     // Sides (for unilateral exercises)
     'side.label': 'Side',
@@ -525,6 +531,12 @@ export const STRINGS = {
     'edit.exercise.goal': '目标重量',
     'edit.exercise.youtube': 'YouTube 视频 ID 或链接',
     'edit.exercise.youtubeHelp': '粘贴 YouTube Shorts 链接或 11 位 ID',
+    'edit.exercise.videos': '教学视频 · 每个变体一个',
+    'edit.exercise.videosHelp':
+      '粘贴 YouTube 链接替换任意变体的教学视频。留空保持默认。★ Best Pick 锁死不可改。',
+    'edit.exercise.youtubePlaceholder': 'https://youtube.com/shorts/…',
+    'edit.exercise.youtubeInvalid': '不是有效的 YouTube 链接或 ID',
+    'edit.exercise.bestPickLocked': '编辑精选 · 锁定',
 
     // Sides (for unilateral exercises)
     'side.label': '侧',

@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useT } from '../i18n/index.jsx';
+import { useLang } from '../i18n/index.jsx';
 import { useOverrides } from '../hooks/useOverrides.jsx';
+import { demoVariants } from '../data/demoMap.js';
+import { resolveMeta } from '../data/exerciseMeta.js';
+import { variantLabel } from './VariantBadge.jsx';
 
 // Extract a YouTube video ID from a raw URL or short ID string.
 function parseYouTubeId(input) {
   if (!input) return null;
   const s = input.trim();
   if (/^[A-Za-z0-9_-]{11}$/.test(s)) return s;
-  // try common URL patterns
   const patterns = [
     /youtube\.com\/shorts\/([A-Za-z0-9_-]{11})/,
     /youtube\.com\/watch\?v=([A-Za-z0-9_-]{11})/,
@@ -22,25 +24,51 @@ function parseYouTubeId(input) {
   return null;
 }
 
+// Fetch the YouTube oembed info (title + author) for a video ID. Used as
+// a soft verification step so the user can confirm they pasted the right
+// link. oembed supports CORS so it works from the browser.
+async function fetchOembed(videoId) {
+  if (!videoId) return null;
+  try {
+    const url = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
+    const r = await fetch(url);
+    if (!r.ok) return null;
+    return await r.json();
+  } catch {
+    return null;
+  }
+}
+
 export default function ExerciseEditor({ open, onClose, exercise, defaultYouTubeId }) {
-  const t = useT();
+  const { t, lang } = useLang();
   const { overrides, setOverride, clearOverride } = useOverrides();
   const ov = overrides.exercise?.[exercise?.id] || {};
+
+  const variants = exercise ? demoVariants(exercise.id) : [];
 
   const [suggested, setSuggested] = useState('');
   const [current, setCurrent] = useState('');
   const [goal, setGoal] = useState('');
-  const [yt, setYt] = useState('');
-  const [ytError, setYtError] = useState('');
+  // Per-variant YouTube inputs — keyed by variant.key. Empty string means
+  // "no override, use the default video for this variant".
+  const [videoByVariant, setVideoByVariant] = useState({});
+  const [videoErrors, setVideoErrors] = useState({});
 
   useEffect(() => {
     if (!open || !exercise) return;
     setSuggested(ov.suggestedWeight ?? exercise.suggestedWeight ?? '');
     setCurrent(ov.currentWeight ?? exercise.currentWeight ?? '');
     setGoal(ov.goalWeight ?? exercise.goalWeight ?? '');
-    setYt(ov.youtubeId ?? defaultYouTubeId ?? '');
-    setYtError('');
-  }, [open, exercise?.id]); // eslint-disable-line
+    // Seed each variant's input with whatever override the user already set.
+    const stored = ov.youtubeIdByVariant || {};
+    const seeded = {};
+    for (const v of variants) {
+      seeded[v.key] = stored[v.key] || '';
+    }
+    setVideoByVariant(seeded);
+    setVideoErrors({});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, exercise?.id]);
 
   if (!exercise) return null;
 
@@ -48,15 +76,29 @@ export default function ExerciseEditor({ open, onClose, exercise, defaultYouTube
     setOverride('exercise', exercise.id, 'suggestedWeight', suggested);
     setOverride('exercise', exercise.id, 'currentWeight', current);
     setOverride('exercise', exercise.id, 'goalWeight', goal);
-    if (yt) {
-      const id = parseYouTubeId(yt);
+
+    // Validate every variant input, then commit the map atomically.
+    const errors = {};
+    const next = {};
+    for (const v of variants) {
+      if (v.isBestPick) continue; // editorial lock
+      const raw = (videoByVariant[v.key] || '').trim();
+      if (!raw) continue; // empty = no override
+      const id = parseYouTubeId(raw);
       if (!id) {
-        setYtError('Invalid YouTube ID/URL');
-        return;
+        errors[v.key] = t('edit.exercise.youtubeInvalid');
+        continue;
       }
-      setOverride('exercise', exercise.id, 'youtubeId', id);
+      next[v.key] = id;
+    }
+    if (Object.keys(errors).length > 0) {
+      setVideoErrors(errors);
+      return;
+    }
+    if (Object.keys(next).length > 0) {
+      setOverride('exercise', exercise.id, 'youtubeIdByVariant', next);
     } else {
-      clearOverride('exercise', exercise.id, 'youtubeId');
+      clearOverride('exercise', exercise.id, 'youtubeIdByVariant');
     }
     onClose();
   };
@@ -64,6 +106,15 @@ export default function ExerciseEditor({ open, onClose, exercise, defaultYouTube
   const resetField = (field, setter) => {
     clearOverride('exercise', exercise.id, field);
     setter('');
+  };
+
+  const resetVariantVideo = (variantKey) => {
+    setVideoByVariant((prev) => ({ ...prev, [variantKey]: '' }));
+    setVideoErrors((prev) => {
+      const copy = { ...prev };
+      delete copy[variantKey];
+      return copy;
+    });
   };
 
   return (
@@ -104,7 +155,7 @@ export default function ExerciseEditor({ open, onClose, exercise, defaultYouTube
               </button>
             </div>
 
-            <div className="px-5 pt-4 pb-10 space-y-3">
+            <div className="px-5 pt-4 pb-10 space-y-4">
               <div className="text-base font-semibold text-ink-900 dark:text-bone-100">
                 {exercise.name}
               </div>
@@ -115,7 +166,11 @@ export default function ExerciseEditor({ open, onClose, exercise, defaultYouTube
                 onReset={() => resetField('suggestedWeight', setSuggested)}
                 resetLabel={t('edit.reset')}
               >
-                <input value={suggested} onChange={(e) => setSuggested(e.target.value)} className={inputCls} />
+                <input
+                  value={suggested}
+                  onChange={(e) => setSuggested(e.target.value)}
+                  className={inputCls}
+                />
               </Field>
               <Field
                 label={t('edit.exercise.current')}
@@ -123,7 +178,11 @@ export default function ExerciseEditor({ open, onClose, exercise, defaultYouTube
                 onReset={() => resetField('currentWeight', setCurrent)}
                 resetLabel={t('edit.reset')}
               >
-                <input value={current} onChange={(e) => setCurrent(e.target.value)} className={inputCls} />
+                <input
+                  value={current}
+                  onChange={(e) => setCurrent(e.target.value)}
+                  className={inputCls}
+                />
               </Field>
               <Field
                 label={t('edit.exercise.goal')}
@@ -131,28 +190,62 @@ export default function ExerciseEditor({ open, onClose, exercise, defaultYouTube
                 onReset={() => resetField('goalWeight', setGoal)}
                 resetLabel={t('edit.reset')}
               >
-                <input value={goal} onChange={(e) => setGoal(e.target.value)} className={inputCls} />
-              </Field>
-
-              <Field
-                label={t('edit.exercise.youtube')}
-                hasOverride={ov.youtubeId != null}
-                onReset={() => resetField('youtubeId', setYt)}
-                resetLabel={t('edit.reset')}
-              >
                 <input
-                  value={yt}
-                  onChange={(e) => { setYt(e.target.value); setYtError(''); }}
-                  placeholder="https://youtube.com/shorts/…"
+                  value={goal}
+                  onChange={(e) => setGoal(e.target.value)}
                   className={inputCls}
                 />
-                <div className="text-[10px] text-ink-300 mt-1">
-                  {t('edit.exercise.youtubeHelp')}
-                </div>
-                {ytError && (
-                  <div className="text-[11px] text-priority-extreme mt-1">{ytError}</div>
-                )}
               </Field>
+
+              {/* Per-variant video section — one input per non-bestpick variant. */}
+              <div className="pt-2 border-t border-black/5 dark:border-white/5">
+                <div className="text-[11px] uppercase tracking-wider text-ink-300 mb-1 mt-3">
+                  {t('edit.exercise.videos')}
+                </div>
+                <div className="text-[11px] text-ink-400 dark:text-ink-200 mb-3 leading-relaxed">
+                  {t('edit.exercise.videosHelp')}
+                </div>
+
+                <div className="space-y-3">
+                  {variants.map((v) => {
+                    if (v.isBestPick) {
+                      return (
+                        <BestPickRow
+                          key={v.key}
+                          label={variantLabel(v, t, lang)}
+                          lockedLabel={t('edit.exercise.bestPickLocked')}
+                        />
+                      );
+                    }
+                    const inputValue = videoByVariant[v.key] || '';
+                    const storedOverride = ov.youtubeIdByVariant?.[v.key];
+                    const defaultId = resolveMeta(exercise.id, v).youtubeId;
+                    const effectiveId =
+                      parseYouTubeId(inputValue) || storedOverride || defaultId;
+                    return (
+                      <VariantVideoRow
+                        key={v.key}
+                        label={variantLabel(v, t, lang)}
+                        value={inputValue}
+                        onChange={(val) => {
+                          setVideoByVariant((p) => ({ ...p, [v.key]: val }));
+                          setVideoErrors((p) => {
+                            const copy = { ...p };
+                            delete copy[v.key];
+                            return copy;
+                          });
+                        }}
+                        hasOverride={storedOverride != null}
+                        onReset={() => resetVariantVideo(v.key)}
+                        resetLabel={t('edit.reset')}
+                        error={videoErrors[v.key]}
+                        effectiveVideoId={effectiveId}
+                        placeholder={t('edit.exercise.youtubePlaceholder')}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </motion.div>
         </>
@@ -179,6 +272,94 @@ function Field({ label, children, hasOverride, onReset, resetLabel }) {
         )}
       </div>
       {children}
+    </div>
+  );
+}
+
+// Row for one editable variant: label + input + oembed verify line.
+function VariantVideoRow({
+  label,
+  value,
+  onChange,
+  hasOverride,
+  onReset,
+  resetLabel,
+  error,
+  effectiveVideoId,
+  placeholder,
+}) {
+  const [oembed, setOembed] = useState(null);
+  const [loadingOembed, setLoadingOembed] = useState(false);
+
+  // Soft-verify the effective video ID via oembed whenever it changes so
+  // the user sees "Found: Title — Author" confirmation under the input.
+  useEffect(() => {
+    let cancelled = false;
+    setOembed(null);
+    if (!effectiveVideoId) return;
+    setLoadingOembed(true);
+    fetchOembed(effectiveVideoId).then((data) => {
+      if (cancelled) return;
+      setLoadingOembed(false);
+      setOembed(data);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [effectiveVideoId]);
+
+  return (
+    <div className="rounded-2xl bg-bone-100 dark:bg-ink-800 border border-black/5 dark:border-white/5 p-3">
+      <div className="text-[11px] uppercase tracking-wider mb-1.5 flex justify-between items-center">
+        <span className="text-ink-500 dark:text-ink-100 font-medium">{label}</span>
+        {hasOverride && (
+          <button
+            onClick={onReset}
+            className="text-[10px] text-priority-extreme normal-case tracking-normal"
+          >
+            ↺ {resetLabel}
+          </button>
+        )}
+      </div>
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full bg-white dark:bg-ink-700 rounded-xl px-3 py-2 text-[13px] text-ink-900 dark:text-bone-100 placeholder:text-ink-300 outline-none border border-transparent focus:border-ink-900 dark:focus:border-bone-100"
+      />
+      {error && (
+        <div className="text-[11px] text-priority-extreme mt-1.5">{error}</div>
+      )}
+      {!error && oembed && (
+        <div className="text-[10px] text-ink-400 dark:text-ink-200 mt-1.5 leading-snug">
+          <span className="text-priority-moderate">✓</span>{' '}
+          <span className="line-clamp-1">{oembed.title}</span>
+          <span className="opacity-60"> · {oembed.author_name}</span>
+        </div>
+      )}
+      {!error && !oembed && loadingOembed && (
+        <div className="text-[10px] text-ink-300 mt-1.5">…</div>
+      )}
+      {!error && !oembed && !loadingOembed && effectiveVideoId && (
+        <div className="text-[10px] text-ink-300 mt-1.5">
+          (could not verify — video may be private or unavailable)
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Read-only row for the ★ Best Pick variant — editorial lock.
+function BestPickRow({ label, lockedLabel }) {
+  return (
+    <div className="rounded-2xl border border-priority-veryhigh/30 bg-priority-veryhigh/5 p-3 flex items-center justify-between">
+      <div className="text-[11px] uppercase tracking-wider text-priority-veryhigh font-medium inline-flex items-center gap-1">
+        <span aria-hidden="true">★</span>
+        {label}
+      </div>
+      <div className="text-[10px] uppercase tracking-wider text-priority-veryhigh/70">
+        🔒 {lockedLabel}
+      </div>
     </div>
   );
 }

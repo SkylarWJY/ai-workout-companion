@@ -115,6 +115,7 @@ export default function ExerciseModal({ open, exercise, onClose }) {
                 variantIdx={variantIdx}
                 onVariantChange={setVariantIdx}
                 overrideYoutubeId={exOverrides?.youtubeId}
+                overrideYoutubeIdByVariant={exOverrides?.youtubeIdByVariant}
               />
 
               {meta?.tempo && (
