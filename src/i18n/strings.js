@@ -243,6 +243,11 @@ export const STRINGS = {
     'edit.exercise.youtubePlaceholder': 'https://youtube.com/shorts/…',
     'edit.exercise.youtubeInvalid': 'Not a valid YouTube link or ID',
     'edit.exercise.bestPickLocked': 'Editorial · locked',
+    'edit.exercise.uploadLocal': 'Upload from device',
+    'edit.exercise.localActive': 'Local video active',
+    'edit.exercise.localWarning':
+      'Saved on this device only. iOS may evict storage after 7 days of inactivity; if you want it to stick, use a YouTube link instead.',
+    'demo.localLoading': 'Loading local video…',
 
     // Sides (for unilateral exercises)
     'side.label': 'Side',
@@ -537,6 +542,11 @@ export const STRINGS = {
     'edit.exercise.youtubePlaceholder': 'https://youtube.com/shorts/…',
     'edit.exercise.youtubeInvalid': '不是有效的 YouTube 链接或 ID',
     'edit.exercise.bestPickLocked': '编辑精选 · 锁定',
+    'edit.exercise.uploadLocal': '从设备上传',
+    'edit.exercise.localActive': '本地视频已生效',
+    'edit.exercise.localWarning':
+      '只存在这台设备上。iOS 系统可能在 7 天无使用后清除本地数据；想永久保留请改用 YouTube 链接。',
+    'demo.localLoading': '加载本地视频…',
 
     // Sides (for unilateral exercises)
     'side.label': '侧',

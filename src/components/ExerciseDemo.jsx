@@ -4,6 +4,7 @@ import { demoVariants } from '../data/demoMap.js';
 import { resolveMeta } from '../data/exerciseMeta.js';
 import { useLang } from '../i18n/index.jsx';
 import { variantLabel } from './VariantBadge.jsx';
+import { videoKey, getVideoObjectUrl } from '../utils/videoStorage.js';
 
 // YouTube-only demo (start/end image animation removed in v0.4).
 // If multiple variants exist with different youtubeIds, shows a segmented
@@ -15,6 +16,7 @@ export default function ExerciseDemo({
   onVariantChange,
   overrideYoutubeId,
   overrideYoutubeIdByVariant,
+  overrideLocalVideoByVariant,
 }) {
   const { t, lang } = useLang();
   const variants = useMemo(() => demoVariants(exerciseId), [exerciseId]);
@@ -28,18 +30,48 @@ export default function ExerciseDemo({
   const variant = variants[variantIdx];
   const meta = resolveMeta(exerciseId, variant);
   // Resolve which video to play, in priority order:
-  //   1. Per-variant user override                        (`youtubeIdByVariant[key]`)
-  //   2. Legacy exercise-level override                   (`youtubeId`, pre-v0.6)
+  //   0. Per-variant LOCAL upload                         (`localVideoByVariant[key]`) — wins over everything
+  //   1. Per-variant YouTube override                     (`youtubeIdByVariant[key]`)
+  //   2. Legacy exercise-level YouTube override           (`youtubeId`, pre-v0.6)
   //      — only applies to the FIRST variant so it doesn't
   //        clobber distinct machine / barbell tutorials
   //   3. Variant-specific YouTube from demoMap.js
   //   4. Base meta YouTube from exerciseMeta.js
   const variantKey = variant?.key;
+  const hasLocalUpload = variantKey
+    ? !!overrideLocalVideoByVariant?.[variantKey]
+    : false;
   const perVariantOverride = variantKey
     ? overrideYoutubeIdByVariant?.[variantKey]
     : null;
   const legacyOverride = variantIdx === 0 ? overrideYoutubeId : null;
   const videoId = perVariantOverride || legacyOverride || meta?.youtubeId;
+
+  // For locally-uploaded videos, fetch the IndexedDB Blob and convert to
+  // an object URL. Re-runs when the variant changes; revokes the previous
+  // URL on cleanup so we don't leak blob memory across tab switches.
+  const [localVideoUrl, setLocalVideoUrl] = useState(null);
+  useEffect(() => {
+    if (!hasLocalUpload) {
+      setLocalVideoUrl(null);
+      return;
+    }
+    let cancelled = false;
+    let createdUrl = null;
+    getVideoObjectUrl(videoKey('exercise', exerciseId, variantKey)).then((url) => {
+      if (cancelled) {
+        if (url) URL.revokeObjectURL(url);
+        return;
+      }
+      createdUrl = url;
+      setLocalVideoUrl(url);
+    });
+    return () => {
+      cancelled = true;
+      if (createdUrl) URL.revokeObjectURL(createdUrl);
+      setLocalVideoUrl(null);
+    };
+  }, [hasLocalUpload, exerciseId, variantKey]);
 
   // de-dupe: only show variant tabs if at least one variant has its own
   // distinct video (otherwise switching does nothing visible).
@@ -58,11 +90,26 @@ export default function ExerciseDemo({
     setLoaded(false);
   }, [videoId]);
 
-  if (!videoId) return <FallbackDemo name={name} label={t('demo.unavailable')} />;
+  // If the active variant has a local upload but the blob URL hasn't
+  // resolved yet, show a soft loading state instead of falling through.
+  if (hasLocalUpload && !localVideoUrl) {
+    return (
+      <FallbackDemo name={name} label={t('demo.localLoading') || 'Loading local video…'} />
+    );
+  }
+  if (!hasLocalUpload && !videoId) {
+    return <FallbackDemo name={name} label={t('demo.unavailable')} />;
+  }
 
-  const thumb = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
-  const embedSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0&modestbranding=1`;
-  const watchUrl = `https://www.youtube.com/shorts/${videoId}`;
+  const thumb = videoId
+    ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`
+    : null;
+  const embedSrc = videoId
+    ? `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0&modestbranding=1`
+    : null;
+  const watchUrl = videoId
+    ? `https://www.youtube.com/shorts/${videoId}`
+    : null;
 
   return (
     <div className="space-y-2">
@@ -98,14 +145,22 @@ export default function ExerciseDemo({
       <div className="relative aspect-[9/16] max-h-[520px] mx-auto rounded-3xl overflow-hidden bg-ink-900 border border-black/5 dark:border-white/5">
         <AnimatePresence initial={false}>
           <motion.div
-            key={videoId}
+            key={localVideoUrl || videoId}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
             className="absolute inset-0"
           >
-            {loaded ? (
+            {localVideoUrl ? (
+              <video
+                src={localVideoUrl}
+                controls
+                playsInline
+                preload="metadata"
+                className="absolute inset-0 w-full h-full object-cover bg-ink-900"
+              />
+            ) : loaded ? (
               <iframe
                 src={embedSrc}
                 title={name}
@@ -139,8 +194,14 @@ export default function ExerciseDemo({
         </AnimatePresence>
 
         <div className="absolute top-2 left-2 right-2 flex items-center justify-between pointer-events-none z-10">
-          <span className="text-[10px] uppercase tracking-wider bg-priority-extreme/90 text-bone-50 backdrop-blur-md rounded-full px-2 py-0.5">
-            YouTube Shorts
+          <span
+            className={`text-[10px] uppercase tracking-wider text-bone-50 backdrop-blur-md rounded-full px-2 py-0.5 ${
+              localVideoUrl
+                ? 'bg-priority-moderate/90'
+                : 'bg-priority-extreme/90'
+            }`}
+          >
+            {localVideoUrl ? 'My Video' : 'YouTube Shorts'}
           </span>
           {variant?.key && (
             <span
@@ -156,14 +217,16 @@ export default function ExerciseDemo({
           )}
         </div>
 
-        <a
-          href={watchUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="absolute bottom-2 right-2 text-[10px] uppercase tracking-wider bg-white/85 dark:bg-ink-900/85 backdrop-blur-md rounded-full px-2 py-0.5 text-ink-700 dark:text-bone-100 z-10"
-        >
-          {t('tutorial.openYouTube')} ↗
-        </a>
+        {watchUrl && !localVideoUrl && (
+          <a
+            href={watchUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute bottom-2 right-2 text-[10px] uppercase tracking-wider bg-white/85 dark:bg-ink-900/85 backdrop-blur-md rounded-full px-2 py-0.5 text-ink-700 dark:text-bone-100 z-10"
+          >
+            {t('tutorial.openYouTube')} ↗
+          </a>
+        )}
       </div>
     </div>
   );

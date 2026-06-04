@@ -8,8 +8,12 @@ import { useLocalStorage } from './useLocalStorage.js';
 //     suggestedWeight, currentWeight, goalWeight,
 //     youtubeId,                                  // LEGACY: pre-v0.6 single-video override; still respected
 //                                                 // when there is no per-variant override on the default tab
-//     youtubeIdByVariant: { [variantKey]: 'ID' }, // NEW: per-variant video override map. Best Pick variants
-//                                                 // are intentionally excluded (editorial lock).
+//     youtubeIdByVariant: { [variantKey]: 'ID' }, // per-variant video override map (v0.6.1+)
+//     localVideoByVariant: {                      // per-variant LOCAL upload metadata (v0.7+)
+//       [variantKey]: { filename, size, type, mtime } // blob itself lives in IndexedDB at `exercise::{id}::{key}`
+//     },
+//     // Best Pick variants are intentionally excluded from BOTH youtubeIdByVariant
+//     // and localVideoByVariant (editorial lock).
 //   }
 //   overrides.warmup.{day} = { altYoutubeId }
 //   overrides.order.{workoutId} = [exerciseId, exerciseId, ...]
