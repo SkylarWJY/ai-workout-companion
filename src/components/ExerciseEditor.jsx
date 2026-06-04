@@ -11,43 +11,11 @@ import {
   deleteVideo,
   formatBytes,
 } from '../utils/videoStorage.js';
+import { parseYouTubeId, fetchYouTubeOembed as fetchOembed } from '../utils/youtube.js';
 
 // Files bigger than this trigger a confirmation prompt. iOS PWAs have
 // real quotas (~1 GB total) and a 100-MB video is a lot.
 const LARGE_FILE_THRESHOLD = 100 * 1024 * 1024;
-
-// Extract a YouTube video ID from a raw URL or short ID string.
-function parseYouTubeId(input) {
-  if (!input) return null;
-  const s = input.trim();
-  if (/^[A-Za-z0-9_-]{11}$/.test(s)) return s;
-  const patterns = [
-    /youtube\.com\/shorts\/([A-Za-z0-9_-]{11})/,
-    /youtube\.com\/watch\?v=([A-Za-z0-9_-]{11})/,
-    /youtu\.be\/([A-Za-z0-9_-]{11})/,
-    /youtube\.com\/embed\/([A-Za-z0-9_-]{11})/,
-  ];
-  for (const re of patterns) {
-    const m = s.match(re);
-    if (m) return m[1];
-  }
-  return null;
-}
-
-// Fetch the YouTube oembed info (title + author) for a video ID. Used as
-// a soft verification step so the user can confirm they pasted the right
-// link. oembed supports CORS so it works from the browser.
-async function fetchOembed(videoId) {
-  if (!videoId) return null;
-  try {
-    const url = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
-    const r = await fetch(url);
-    if (!r.ok) return null;
-    return await r.json();
-  } catch {
-    return null;
-  }
-}
 
 export default function ExerciseEditor({ open, onClose, exercise, defaultYouTubeId }) {
   const { t, lang } = useLang();

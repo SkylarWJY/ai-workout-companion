@@ -15,7 +15,13 @@ import { useLocalStorage } from './useLocalStorage.js';
 //     // Best Pick variants are intentionally excluded from BOTH youtubeIdByVariant
 //     // and localVideoByVariant (editorial lock).
 //   }
-//   overrides.warmup.{day} = { altYoutubeId }
+//   overrides.warmup.{day} = {
+//     youtubeId,                              // YouTube link replacement (wins over the bundled MOV)
+//     localVideo: { filename, size, type, mtime }, // local upload metadata; blob in IndexedDB
+//                                             // at `warmup::{day}::main`. Wins over youtubeId.
+//     altYoutubeId,                           // LEGACY: the "watch alternate" link that's always been
+//                                             // surfaced under the player; still respected
+//   }
 //   overrides.order.{workoutId} = [exerciseId, exerciseId, ...]
 //   overrides.weightUnit = 'lb' | 'kg'
 

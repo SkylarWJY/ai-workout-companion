@@ -248,6 +248,10 @@ export const STRINGS = {
     'edit.exercise.localWarning':
       'Saved on this device only. iOS may evict storage after 7 days of inactivity; if you want it to stick, use a YouTube link instead.',
     'demo.localLoading': 'Loading local video…',
+    'edit.warmup.title': 'Edit warm-up video',
+    'edit.warmup.video': 'Warm-up video',
+    'edit.warmup.help':
+      'Paste a YouTube link OR upload your own video file to replace today\'s warm-up. Leave empty to keep the bundled default.',
 
     // Sides (for unilateral exercises)
     'side.label': 'Side',
@@ -547,6 +551,10 @@ export const STRINGS = {
     'edit.exercise.localWarning':
       '只存在这台设备上。iOS 系统可能在 7 天无使用后清除本地数据；想永久保留请改用 YouTube 链接。',
     'demo.localLoading': '加载本地视频…',
+    'edit.warmup.title': '编辑暖身视频',
+    'edit.warmup.video': '暖身视频',
+    'edit.warmup.help':
+      '粘贴 YouTube 链接 或 从设备上传视频文件替换今天的暖身。留空保持自带默认版本。',
 
     // Sides (for unilateral exercises)
     'side.label': '侧',
