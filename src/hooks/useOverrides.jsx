@@ -114,7 +114,7 @@ export function getOverride(overrides, scope, id, field) {
 // consistent "effective" exercise. Only fields the user can actually
 // edit are merged — content / muscles / priority / variant-specific data
 // stay editorial.
-const EDITABLE_PROGRAM_FIELDS = ['sets', 'repRange', 'restSeconds'];
+const EDITABLE_PROGRAM_FIELDS = ['sets', 'repRange', 'restSeconds', 'tempo'];
 export function applyExerciseOverrides(ex, ov) {
   if (!ov) return ex;
   let merged = ex;

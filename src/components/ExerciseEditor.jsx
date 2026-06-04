@@ -27,6 +27,7 @@ export default function ExerciseEditor({ open, onClose, exercise, defaultYouTube
   const [sets, setSets] = useState('');
   const [repRange, setRepRange] = useState('');
   const [restSeconds, setRestSeconds] = useState('');
+  const [tempo, setTempo] = useState('');
   const [suggested, setSuggested] = useState('');
   const [current, setCurrent] = useState('');
   const [goal, setGoal] = useState('');
@@ -44,6 +45,7 @@ export default function ExerciseEditor({ open, onClose, exercise, defaultYouTube
     setSets(String(ov.sets ?? exercise.sets ?? ''));
     setRepRange(ov.repRange ?? exercise.repRange ?? '');
     setRestSeconds(String(ov.restSeconds ?? exercise.restSeconds ?? ''));
+    setTempo(ov.tempo ?? '');
     setSuggested(ov.suggestedWeight ?? exercise.suggestedWeight ?? '');
     setCurrent(ov.currentWeight ?? exercise.currentWeight ?? '');
     setGoal(ov.goalWeight ?? exercise.goalWeight ?? '');
@@ -83,6 +85,15 @@ export default function ExerciseEditor({ open, onClose, exercise, defaultYouTube
       setOverride('exercise', exercise.id, 'restSeconds', restNum);
     } else {
       clearOverride('exercise', exercise.id, 'restSeconds');
+    }
+    // Tempo — accept "3-1-2" or "3-1-2-1" notation. Anything else
+    // clears the override so the exercise stays on the default.
+    const tempoTrimmed = tempo.trim();
+    const validTempo = /^\d+(-\d+){2,3}$/.test(tempoTrimmed);
+    if (validTempo) {
+      setOverride('exercise', exercise.id, 'tempo', tempoTrimmed);
+    } else {
+      clearOverride('exercise', exercise.id, 'tempo');
     }
 
     setOverride('exercise', exercise.id, 'suggestedWeight', suggested);
@@ -298,6 +309,28 @@ export default function ExerciseEditor({ open, onClose, exercise, defaultYouTube
                   />
                 </Field>
               </div>
+
+              {/* Tempo notation — e.g. "3-1-2" for lift-hold-lower or
+                  "3-1-2-1" for lower-pause-lift-hold compound lifts. */}
+              <Field
+                label={t('edit.exercise.tempo')}
+                hasOverride={ov.tempo != null}
+                onReset={() => {
+                  clearOverride('exercise', exercise.id, 'tempo');
+                  setTempo('');
+                }}
+                resetLabel={t('edit.reset')}
+              >
+                <input
+                  value={tempo}
+                  onChange={(e) => setTempo(e.target.value)}
+                  placeholder={exercise.tempo || '2-1-3'}
+                  className={inputCls}
+                />
+                <div className="text-[10px] text-ink-300 mt-1">
+                  {t('edit.exercise.tempoHelp')}
+                </div>
+              </Field>
 
               <Field
                 label={t('edit.exercise.suggested')}

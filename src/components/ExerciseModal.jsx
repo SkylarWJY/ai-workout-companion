@@ -40,10 +40,14 @@ export default function ExerciseModal({ open, exercise, onClose }) {
   const baseMeta = exercise ? resolveMeta(exercise.id, variant) : null;
   const exOverrides = exercise ? overrides.exercise?.[exercise.id] : null;
 
-  // Apply user overrides over the resolved meta + exercise fields
+  // Apply user overrides over the resolved meta + exercise fields.
+  // Tempo can also be overridden at the exercise level; the variant's
+  // own tempo (e.g. Leg Press 3-1-2-1) still wins over the base, but
+  // a user override on the exercise wins over both.
   const meta = baseMeta && {
     ...baseMeta,
     youtubeId: exOverrides?.youtubeId ?? baseMeta.youtubeId,
+    tempo: exOverrides?.tempo || baseMeta.tempo,
   };
   const suggestedWeight = exOverrides?.suggestedWeight ?? exercise?.suggestedWeight;
 
