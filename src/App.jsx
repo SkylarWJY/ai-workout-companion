@@ -94,7 +94,14 @@ function Root() {
 
   const openWorkout = (type) => {
     setActiveType(type);
-    if (!activeSession || activeSession.type !== type) {
+    // Resume the live session only if it's the SAME type AND was
+    // started on the SAME calendar day. A push session left running
+    // overnight shouldn't accept tomorrow's sets under yesterday's date
+    // key — that would file new training under the wrong day.
+    const sessionIsToday =
+      activeSession?.startedAt &&
+      dateKeyFor(activeSession.startedAt) === dateKeyFor(Date.now());
+    if (!activeSession || activeSession.type !== type || !sessionIsToday) {
       setActiveSession({
         type,
         startedAt: Date.now(),
