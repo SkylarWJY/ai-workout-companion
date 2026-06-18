@@ -4,8 +4,9 @@ import { USER_PROFILE, WORKOUTS, getTodayWorkoutType } from '../data/workoutData
 import WeeklyCalendar from './WeeklyCalendar.jsx';
 import ProgressBar from './ProgressBar.jsx';
 import GoalsEditor from './GoalsEditor.jsx';
-import { useLang, locWorkout } from '../i18n/index.jsx';
+import { useLang, locWorkout, locEx } from '../i18n/index.jsx';
 import { useOverrides } from '../hooks/useOverrides.jsx';
+import { progressTrend, recommendNextWeight } from '../utils/progression.js';
 
 const StatTile = ({ label, value, sub, accent }) => (
   <div className="rounded-3xl bg-white dark:bg-ink-800 border border-black/5 dark:border-white/5 p-4 shadow-card dark:shadow-cardDark">
@@ -27,7 +28,7 @@ const StatTile = ({ label, value, sub, accent }) => (
 
 export default function Dashboard({ onOpenWorkout, history = {} }) {
   const { t, lang } = useLang();
-  const { overrides } = useOverrides();
+  const { overrides, weightUnit } = useOverrides();
   const [goalsEditorOpen, setGoalsEditorOpen] = useState(false);
   const todayType = getTodayWorkoutType();
   const isRest = todayType === 'rest';
@@ -121,6 +122,31 @@ export default function Dashboard({ onOpenWorkout, history = {} }) {
           </motion.button>
         )}
       </motion.div>
+
+      {/* Today's Plan — per-exercise recommendations + trend %. Shown
+          only on training days, and only when the user has at least
+          some history (so it's not empty noise for brand-new users).
+          For users with history this is the headline value: at a
+          glance, today's weights and how far they've progressed. */}
+      {!isRest && workout && hasAnyHistory(history) && (
+        <section>
+          <SectionLabel>{t('dash.todaysPlan')}</SectionLabel>
+          <div className="rounded-3xl bg-white dark:bg-ink-800 border border-black/5 dark:border-white/5 p-4 shadow-card dark:shadow-cardDark space-y-3">
+            {workout.exercises.map((ex, i) => (
+              <ExercisePlanRow
+                key={ex.id}
+                exercise={ex}
+                index={i + 1}
+                history={history}
+                variantKey={overrides.lastVariant?.[ex.id]}
+                weightUnit={weightUnit}
+                t={t}
+                lang={lang}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       <section>
         <SectionLabel>{t('dash.thisWeek')}</SectionLabel>
@@ -228,6 +254,98 @@ const GoalChip = ({ children }) => (
     {children}
   </span>
 );
+
+// Compact per-exercise row showing recommendation + trend. Designed for
+// the dashboard's "Today's Plan" card so the user sees their progress
+// without diving into a modal.
+function ExercisePlanRow({ exercise, index, history, variantKey, weightUnit, t, lang }) {
+  const trend = progressTrend({
+    history,
+    exerciseId: exercise.id,
+    variantKey,
+    currentUnit: weightUnit,
+  });
+  const rec = recommendNextWeight({
+    history,
+    exerciseId: exercise.id,
+    variantKey,
+    repRange: exercise.repRange,
+    currentUnit: weightUnit,
+  });
+  const hasHistory = trend.points.length > 0;
+  const hasTrend = trend.points.length >= 2;
+  const positive = hasTrend && trend.delta > 0;
+  const negative = hasTrend && trend.delta < 0;
+  const arrow = positive ? '↑' : negative ? '↓' : '→';
+  const trendColor = positive
+    ? 'text-priority-moderate'
+    : negative
+      ? 'text-priority-extreme'
+      : 'text-ink-300';
+
+  const recColor =
+    rec?.kind === 'bigBump' || rec?.kind === 'smallBump'
+      ? 'text-priority-moderate'
+      : rec?.kind === 'deload'
+        ? 'text-priority-extreme'
+        : 'text-ink-900 dark:text-bone-100';
+
+  const name = locEx(exercise, 'name', lang);
+
+  return (
+    <div className="flex items-start gap-3">
+      <span className="text-[10px] uppercase tracking-wider text-ink-300 tabular w-5 mt-1">
+        {String(index).padStart(2, '0')}
+      </span>
+      <div className="flex-1 min-w-0">
+        <div className="text-[14px] font-medium text-ink-900 dark:text-bone-100 truncate leading-tight">
+          {name}
+        </div>
+        <div className="text-[11px] text-ink-400 dark:text-ink-200 tabular mt-0.5 leading-snug">
+          {hasHistory ? (
+            <>
+              {t('dash.lastShort')} {trend.last.weight} {weightUnit} × {trend.last.reps}
+              {trend.last.difficulty &&
+                ` · ${t(`log.diff.${trend.last.difficulty}`)}`}
+            </>
+          ) : (
+            <span className="opacity-70">{t('dash.firstTime')}</span>
+          )}
+        </div>
+      </div>
+      <div className="text-right shrink-0">
+        {rec ? (
+          <>
+            <div className={`text-[15px] font-semibold tabular leading-tight ${recColor}`}>
+              {rec.weight} {weightUnit}
+            </div>
+            <div className="text-[9px] uppercase tracking-wider text-ink-300 mt-0.5">
+              {t('dash.todayTry')}
+            </div>
+          </>
+        ) : hasHistory ? (
+          <div className="text-[13px] tabular text-ink-700 dark:text-bone-100">
+            {trend.last.weight} {weightUnit}
+          </div>
+        ) : null}
+        {hasTrend && trend.percentChange != null && (
+          <div className={`text-[10px] tabular mt-0.5 ${trendColor}`}>
+            {arrow} {Math.abs(Math.round(trend.percentChange))}%
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Returns true if any completed session exists in history.
+function hasAnyHistory(history) {
+  if (!history) return false;
+  for (const s of Object.values(history)) {
+    if (s?.completedAt) return true;
+  }
+  return false;
+}
 
 function withinDays(ts, days) {
   return Date.now() - new Date(ts).getTime() <= days * 86400000;
