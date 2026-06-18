@@ -115,6 +115,15 @@ export const STRINGS = {
     'custom.errNoMuscle': 'Pick the primary muscle this trains',
     'custom.delete': 'Delete this exercise',
     'custom.deleteConfirm': 'Delete this custom exercise:',
+    'export.button': '📦 Export all data',
+    'export.title': 'Export all data',
+    'export.help':
+      'Everything ATLAS has stored on this device — sessions, settings, custom exercises, video upload metadata. Paste the JSON to support or save as a backup.',
+    'export.summary': 'Summary',
+    'export.copy': 'Copy JSON to clipboard',
+    'export.copied': 'Copied',
+    'export.download': 'Download .json',
+    'export.loading': 'Reading storage…',
 
     // Priority
     'priority.extreme': 'Extreme Priority',
@@ -440,6 +449,15 @@ export const STRINGS = {
     'custom.errNoMuscle': '选择主要训练的肌群',
     'custom.delete': '删除这个动作',
     'custom.deleteConfirm': '删除这个自定义动作：',
+    'export.button': '📦 导出全部数据',
+    'export.title': '导出全部数据',
+    'export.help':
+      'ATLAS 在这台设备上存的所有东西 — 训练记录、设置、自定义动作、视频上传元数据。把 JSON 粘给 support 或保存做备份都行。',
+    'export.summary': '汇总',
+    'export.copy': '复制 JSON 到剪贴板',
+    'export.copied': '已复制',
+    'export.download': '下载 .json',
+    'export.loading': '读取存储中…',
 
     // Priority
     'priority.extreme': '最高优先级',

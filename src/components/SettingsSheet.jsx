@@ -4,12 +4,14 @@ import { useLang } from '../i18n/index.jsx';
 import { useTheme } from '../hooks/useTheme.js';
 import { useOverrides } from '../hooks/useOverrides.jsx';
 import SessionHistorySheet from './SessionHistorySheet.jsx';
+import DataExportSheet from './DataExportSheet.jsx';
 
 export default function SettingsSheet({ open, onClose }) {
   const { t, lang, setLang } = useLang();
   const { theme, setTheme } = useTheme();
   const { weightUnit, setWeightUnit, resetAll } = useOverrides();
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
 
   const handleReset = () => {
     if (window.confirm(t('settings.resetConfirm'))) {
@@ -94,6 +96,16 @@ export default function SettingsSheet({ open, onClose }) {
               </button>
 
               <button
+                onClick={() => setExportOpen(true)}
+                className="w-full mt-2 py-3 rounded-2xl border border-black/10 dark:border-white/10 text-ink-700 dark:text-bone-100 text-[12px] uppercase tracking-wider font-medium active:scale-[0.98] flex items-center justify-center gap-2"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                {t('export.button')}
+              </button>
+
+              <button
                 onClick={handleReset}
                 className="w-full mt-2 py-3 rounded-2xl border border-priority-extreme/30 text-priority-extreme text-[12px] uppercase tracking-wider font-medium active:scale-[0.98]"
               >
@@ -106,6 +118,7 @@ export default function SettingsSheet({ open, onClose }) {
             </div>
           </motion.div>
           <SessionHistorySheet open={historyOpen} onClose={() => setHistoryOpen(false)} />
+          <DataExportSheet open={exportOpen} onClose={() => setExportOpen(false)} />
         </>
       )}
     </AnimatePresence>
