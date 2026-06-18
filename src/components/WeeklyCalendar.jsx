@@ -1,10 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { WEEKLY_SPLIT } from '../data/workoutData.js';
-import { useT } from '../i18n/index.jsx';
+import { WEEKLY_SPLIT, WORKOUTS } from '../data/workoutData.js';
+import { useLang, locWorkout } from '../i18n/index.jsx';
 
 export default function WeeklyCalendar({ history = {}, onPick, todayType }) {
-  const t = useT();
+  const { t, lang } = useLang();
   const todayIdx = (new Date().getDay() + 6) % 7; // Mon = 0
   return (
     <div className="grid grid-cols-7 gap-1.5">
@@ -18,12 +18,18 @@ export default function WeeklyCalendar({ history = {}, onPick, todayType }) {
             sameWeek(new Date(entry.completedAt)),
         );
         const isRest = d.type === 'rest';
+        // Show a tiny muscle hint under the type label so the user
+        // sees "推日 / 胸·肩·三头" instead of just "推日". Saves them
+        // having to remember which day trains what.
+        const muscleHint = !isRest && WORKOUTS[d.type]
+          ? locWorkout(WORKOUTS[d.type], 'subtitle', lang)
+          : null;
         return (
           <motion.button
             key={d.day}
             whileTap={{ scale: 0.94 }}
             onClick={() => !isRest && onPick?.(d.type)}
-            className={`group relative aspect-[3/4] rounded-2xl flex flex-col items-center justify-between py-2.5 px-1 border transition
+            className={`group relative aspect-[3/4] rounded-2xl flex flex-col items-center justify-between py-2 px-1 border transition
               ${
                 isToday
                   ? 'border-ink-900 dark:border-bone-100 bg-ink-900 dark:bg-bone-100 text-bone-50 dark:text-ink-900'
@@ -39,9 +45,20 @@ export default function WeeklyCalendar({ history = {}, onPick, todayType }) {
             >
               {t(`day.${d.day}`)}
             </span>
-            <span className="text-[11px] font-semibold tabular">
-              {t(`type.${d.type}.upper`)}
-            </span>
+            <div className="flex flex-col items-center gap-0.5 min-w-0 px-0.5">
+              <span className="text-[11px] font-semibold tabular leading-none">
+                {t(`type.${d.type}.upper`)}
+              </span>
+              {muscleHint && (
+                <span
+                  className={`text-[8px] leading-tight text-center line-clamp-2 ${
+                    isToday ? 'opacity-70' : 'text-ink-300 dark:text-ink-300'
+                  }`}
+                >
+                  {muscleHint}
+                </span>
+              )}
+            </div>
             <span
               className={`w-1.5 h-1.5 rounded-full ${
                 completed

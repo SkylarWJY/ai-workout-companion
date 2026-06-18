@@ -133,7 +133,6 @@ export default function Dashboard({ onOpenWorkout, history = {} }) {
           Always anchored on real history — brand-new users (no logged
           sessions yet) see neither card, just the streak / stats. */}
       {hasAnyHistory(history) && (() => {
-        // Pick which workout's exercises to show
         const displayWorkout = !isRest && workout
           ? workout
           : WORKOUTS[mostRecentSessionType(history)];
@@ -142,23 +141,38 @@ export default function Dashboard({ onOpenWorkout, history = {} }) {
           ? t('dash.todaysPlan')
           : t('dash.recentProgress');
         const showRecBadge = !isRest;
+        // Show WHICH workout day + which muscles it trains, so the
+        // user can connect "01 Overhead Press / 02 Lateral Raises..."
+        // to "this is Push Day · Chest · Shoulders · Triceps".
+        const wname = locWorkout(displayWorkout, 'name', lang);
+        const wsub = locWorkout(displayWorkout, 'subtitle', lang);
         return (
           <section>
             <SectionLabel>{label}</SectionLabel>
-            <div className="rounded-3xl bg-white dark:bg-ink-800 border border-black/5 dark:border-white/5 p-4 shadow-card dark:shadow-cardDark space-y-3">
-              {displayWorkout.exercises.map((ex, i) => (
-                <ExercisePlanRow
-                  key={ex.id}
-                  exercise={ex}
-                  index={i + 1}
-                  history={history}
-                  variantKey={overrides.lastVariant?.[ex.id]}
-                  weightUnit={weightUnit}
-                  t={t}
-                  lang={lang}
-                  showRecBadge={showRecBadge}
-                />
-              ))}
+            <div className="rounded-3xl bg-white dark:bg-ink-800 border border-black/5 dark:border-white/5 p-4 shadow-card dark:shadow-cardDark">
+              <div className="flex items-baseline justify-between mb-3 pb-3 border-b border-black/5 dark:border-white/5">
+                <div className="text-[14px] font-semibold text-ink-900 dark:text-bone-100">
+                  {wname}
+                </div>
+                <div className="text-[11px] text-ink-400 dark:text-ink-200 text-right">
+                  {wsub}
+                </div>
+              </div>
+              <div className="space-y-3">
+                {displayWorkout.exercises.map((ex, i) => (
+                  <ExercisePlanRow
+                    key={ex.id}
+                    exercise={ex}
+                    index={i + 1}
+                    history={history}
+                    variantKey={overrides.lastVariant?.[ex.id]}
+                    weightUnit={weightUnit}
+                    t={t}
+                    lang={lang}
+                    showRecBadge={showRecBadge}
+                  />
+                ))}
+              </div>
             </div>
           </section>
         );
