@@ -6,9 +6,25 @@ import SettingsSheet from './components/SettingsSheet.jsx';
 import { WORKOUTS } from './data/workoutData.js';
 import { useLocalStorage } from './hooks/useLocalStorage.js';
 import { useTheme } from './hooks/useTheme.js';
-import { todayKey } from './utils/format.js';
 import { LanguageProvider, useT } from './i18n/index.jsx';
 import { OverridesProvider } from './hooks/useOverrides.jsx';
+
+// Derives the `YYYY-MM-DD` key for a given Date (or now), matching the
+// pre-v0.8 todayKey() format that already lives in atlas.history.
+function dateKeyFor(ts) {
+  const d = ts ? new Date(ts) : new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+// Count total logged sets across all exercises in a session.
+function countSets(session) {
+  if (!session?.completedSets) return 0;
+  let n = 0;
+  for (const arr of Object.values(session.completedSets)) {
+    if (Array.isArray(arr)) n += arr.length;
+  }
+  return n;
+}
 
 export default function App() {
   return (
@@ -40,6 +56,42 @@ function Root() {
     }
   }, [view, activeSession, workout, setActiveSession]);
 
+  // AUTO-SAVE — every time activeSession changes with at least one logged
+  // set, mirror it into atlas.history under the date-keyed slot. This
+  // makes the data durable the moment the user records a set, so leaving
+  // the workout (or closing the tab) without tapping "Complete" no
+  // longer loses anything.
+  //
+  // Date key uses the session's startedAt so sessions that span midnight
+  // (or that get resumed on a different day) still land in the right
+  // calendar slot — using today's date here would corrupt the slot.
+  useEffect(() => {
+    if (!activeSession) return;
+    if (countSets(activeSession) === 0) return;
+    const id = `${dateKeyFor(activeSession.startedAt)}-${activeSession.type}`;
+    setHistory((prev) => {
+      const existing = prev[id];
+      // Touch completedAt on every save so the entry shows up in
+      // SessionHistorySheet (which filters by truthy completedAt).
+      // The explicit completeWorkout() still bumps it to a final
+      // timestamp on user tap, but the data is safe before then.
+      return {
+        ...prev,
+        [id]: {
+          ...activeSession,
+          completedAt: Date.now(),
+          dayIdx: existing?.dayIdx ?? (new Date().getDay() + 6) % 7,
+        },
+      };
+    });
+  }, [activeSession, setHistory]);
+
+  // RECOVERY — runs once on mount. If atlas.activeSession holds data
+  // from before v0.8 (when only "Complete Workout" wrote to history),
+  // the auto-save effect above grabs it on its first render. Nothing
+  // extra needed here; this comment documents the implicit recovery
+  // path so future maintainers don't add a separate one and double-mirror.
+
   const openWorkout = (type) => {
     setActiveType(type);
     if (!activeSession || activeSession.type !== type) {
@@ -57,16 +109,22 @@ function Root() {
   };
 
   const completeWorkout = () => {
+    // Auto-save effect already covered every logged set. This is now
+    // just the explicit "I'm done" gesture: refresh completedAt, then
+    // tear down the active-session state so the user gets a clean
+    // dashboard.
     if (activeSession && workout) {
-      const id = `${todayKey()}-${workout.id}`;
-      setHistory({
-        ...history,
+      const id = `${dateKeyFor(activeSession.startedAt)}-${workout.id}`;
+      setHistory((prev) => ({
+        ...prev,
         [id]: {
           ...activeSession,
+          ...(prev[id] || {}),
+          ...activeSession, // local session wins over the auto-saved copy
           completedAt: Date.now(),
           dayIdx: (new Date().getDay() + 6) % 7,
         },
-      });
+      }));
     }
     setActiveSession(null);
     setActiveType(null);
