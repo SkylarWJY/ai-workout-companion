@@ -5,6 +5,8 @@ import { useOverrides } from '../hooks/useOverrides.jsx';
 import { variantLabel } from './VariantBadge.jsx';
 import { formatLogShort } from '../utils/historyLookup.js';
 import { convertWeight } from '../utils/weight.js';
+import { recommendNextWeight } from '../utils/progression.js';
+import { useLocalStorage } from '../hooks/useLocalStorage.js';
 
 export default function WorkoutLogger({
   exercise,
@@ -18,6 +20,7 @@ export default function WorkoutLogger({
 }) {
   const { t, lang } = useLang();
   const { weightUnit } = useOverrides();
+  const [history] = useLocalStorage('atlas.history', {});
 
   // Variant selection — controls which historical log we pre-fill from
   // and what label gets written into the saved log entry. When the
@@ -27,31 +30,47 @@ export default function WorkoutLogger({
     defaultVariantKey || selectableVariants[0]?.key || null,
   );
 
-  // Pre-fill weight/reps/difficulty whenever the chosen variant changes —
-  // each variant has its own last-reference, so a tab switch should
-  // reload the form to reflect "last time I did THIS variant."
+  // Last-set reference (for the "Last time" line below the form).
   const refLog =
     (variantKey && lastLogsByVariant?.[variantKey]) ||
     lastLogsByVariant?.default ||
     null;
+
+  // Adaptive recommendation — what we ACTUALLY pre-fill. Reads the user's
+  // history, looks at last session's top set + difficulty, and returns
+  // the next-session weight that nudges toward the rep range:
+  //   easy at top  → big bump
+  //   moderate/hard at top → small bump
+  //   failure / under range → de-load 10%
+  //   middle of range → maintain weight, push reps
+  const recommendation = recommendNextWeight({
+    history,
+    exerciseId: exercise.id,
+    variantKey,
+    repRange: exercise.repRange,
+    currentUnit: weightUnit,
+  });
 
   const [weight, setWeight] = useState('');
   const [reps, setReps] = useState('');
   const [difficulty, setDifficulty] = useState('moderate');
   const [notes, setNotes] = useState('');
   useEffect(() => {
-    // Convert the reference log's stored weight into the currently-
-    // selected display unit. If user logged 25 lb but now wants kg,
-    // pre-fill becomes 11.5 kg — not "25" with the kg suffix slapped on.
-    const converted =
-      refLog?.weight != null
-        ? convertWeight(refLog.weight, refLog.weightUnit || 'lb', weightUnit)
-        : null;
-    setWeight(converted != null ? String(converted) : '');
+    // Priority: smart recommendation > last set's weight > empty
+    const prefillWeight =
+      recommendation?.weight != null
+        ? String(recommendation.weight)
+        : refLog?.weight != null
+          ? String(
+              convertWeight(refLog.weight, refLog.weightUnit || 'lb', weightUnit),
+            )
+          : '';
+    setWeight(prefillWeight);
     setReps(refLog?.reps != null ? String(refLog.reps) : '');
     setDifficulty(refLog?.difficulty || 'moderate');
     setNotes('');
-  }, [variantKey, refLog?.ts, weightUnit]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [variantKey, refLog?.ts, weightUnit, recommendation?.weight]);
 
   const DIFFICULTY = [
     { id: 'easy', label: t('log.diff.easy') },
@@ -109,6 +128,16 @@ export default function WorkoutLogger({
             })}
           </div>
         </div>
+      )}
+
+      {/* Adaptive recommendation banner — only shows when the algorithm
+          has enough history to offer a confident next-set weight. */}
+      {recommendation && (
+        <RecommendationBanner
+          rec={recommendation}
+          unit={weightUnit}
+          t={t}
+        />
       )}
 
       <div className="grid grid-cols-2 gap-3">
@@ -202,6 +231,40 @@ export default function WorkoutLogger({
         </button>
       </div>
     </motion.div>
+  );
+}
+
+// Small banner that explains WHY the pre-filled weight is what it is.
+// Color codes the recommendation kind so the user can read the intent
+// at a glance: green = bump up, gray = maintain, red = de-load.
+function RecommendationBanner({ rec, unit, t }) {
+  const palette =
+    rec.kind === 'bigBump' || rec.kind === 'smallBump'
+      ? 'bg-priority-moderate/10 border-priority-moderate/30 text-priority-moderate'
+      : rec.kind === 'deload'
+        ? 'bg-priority-extreme/10 border-priority-extreme/30 text-priority-extreme'
+        : 'bg-ink-200/30 border-black/10 dark:bg-ink-700/40 dark:border-white/10 text-ink-700 dark:text-bone-100';
+
+  const reasonText = t(`log.rec.${rec.reasoning}`);
+  const fromText = `${rec.from.weight} ${unit} × ${rec.from.reps} · ${t(
+    `log.diff.${rec.from.difficulty}`,
+  )}`;
+
+  return (
+    <div className={`rounded-2xl border px-3 py-2.5 ${palette}`}>
+      <div className="text-[10px] uppercase tracking-wider opacity-70">
+        {t('log.rec.label')}
+      </div>
+      <div className="text-[15px] font-semibold tabular leading-tight mt-0.5">
+        {rec.weight} {unit}
+      </div>
+      <div className="text-[11px] mt-1 opacity-80 leading-snug">
+        {reasonText}
+      </div>
+      <div className="text-[10px] mt-1 opacity-60 tabular">
+        ← {fromText}
+      </div>
+    </div>
   );
 }
 

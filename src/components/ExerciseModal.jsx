@@ -12,6 +12,7 @@ import { useOverrides } from '../hooks/useOverrides.jsx';
 import { useLocalStorage } from '../hooks/useLocalStorage.js';
 import { lastLogsByVariant, formatLogShort } from '../utils/historyLookup.js';
 import { convertWeight } from '../utils/weight.js';
+import { progressTrend } from '../utils/progression.js';
 
 export default function ExerciseModal({ open, exercise, onClose }) {
   const { t, lang } = useLang();
@@ -38,6 +39,19 @@ export default function ExerciseModal({ open, exercise, onClose }) {
   }, [exercise?.id]);
 
   const variant = variants[variantIdx];
+
+  // Cross-session trend for the currently-selected variant tab. Drives
+  // the Progress card below. Defined AFTER `variant` so the closure
+  // captures the current selection.
+  const trend = useMemo(() => {
+    if (!exercise) return null;
+    return progressTrend({
+      history,
+      exerciseId: exercise.id,
+      variantKey: variant?.key,
+      currentUnit: weightUnit,
+    });
+  }, [history, exercise?.id, variant?.key, weightUnit]);
   const baseMeta = exercise ? resolveMeta(exercise.id, variant) : null;
   const exOverrides = exercise ? overrides.exercise?.[exercise.id] : null;
 
@@ -180,6 +194,14 @@ export default function ExerciseModal({ open, exercise, onClose }) {
                 />
               )}
 
+              {/* Progress card — only shows when there's at least one
+                  logged session for this exercise + variant. Renders
+                  the top-set weight per session as a mini bar chart,
+                  plus the headline delta + percent change. */}
+              {trend && trend.points.length > 0 && (
+                <ProgressCard trend={trend} unit={weightUnit} t={t} />
+              )}
+
               <Section title={t('modal.whyMatters')}>
                 <p className="text-[14px] leading-relaxed text-ink-700 dark:text-bone-100">
                   {content.whyItMatters}
@@ -295,6 +317,92 @@ const Pill = ({ children, primary }) => (
     {children}
   </span>
 );
+
+// Mini progress chart: bar per logged session, scaled to the max weight,
+// with a headline summary on top. Lightweight pure-CSS — no chart lib.
+function ProgressCard({ trend, unit, t }) {
+  const { points, first, last, delta, percentChange } = trend;
+  const maxW = Math.max(...points.map((p) => p.weight));
+  // Truncate to last 8 sessions so the card stays readable on mobile.
+  const visible = points.slice(-8);
+
+  const fmtDate = (ts) => {
+    if (!ts) return '';
+    const d = new Date(ts);
+    return `${d.getMonth() + 1}/${d.getDate()}`;
+  };
+
+  const positive = (delta ?? 0) > 0;
+  const negative = (delta ?? 0) < 0;
+  const deltaColor = positive
+    ? 'text-priority-moderate'
+    : negative
+      ? 'text-priority-extreme'
+      : 'text-ink-400 dark:text-ink-200';
+
+  return (
+    <section>
+      <div className="flex items-baseline justify-between mb-2">
+        <div className="text-[11px] uppercase tracking-[0.18em] text-ink-300">
+          {t('modal.progress')}
+        </div>
+        <div className="text-[10px] tabular text-ink-300">
+          {points.length} {t('modal.sessions')}
+        </div>
+      </div>
+
+      <div className="rounded-2xl bg-bone-100 dark:bg-ink-800 border border-black/5 dark:border-white/5 p-4 space-y-3">
+        <div className="flex items-baseline gap-2">
+          <div className="text-2xl font-semibold tabular text-ink-900 dark:text-bone-100">
+            {last.weight} {unit}
+          </div>
+          {points.length > 1 && (
+            <div className={`text-[12px] tabular font-medium ${deltaColor}`}>
+              {positive ? '↑' : negative ? '↓' : '→'}{' '}
+              {Math.abs(delta).toFixed(1)} {unit}
+              {percentChange != null &&
+                ` (${positive ? '+' : ''}${percentChange.toFixed(0)}%)`}
+            </div>
+          )}
+        </div>
+        {points.length > 1 && (
+          <div className="text-[10px] text-ink-400 dark:text-ink-200 tabular">
+            {t('modal.firstToLatest')}: {first.weight} {unit} ({fmtDate(first.date)})
+            {' → '}
+            {last.weight} {unit} ({fmtDate(last.date)})
+          </div>
+        )}
+
+        {/* Bar chart — one bar per session in `visible`, height scales
+            to maxW. Latest is highlighted; rest fade with ink-300. */}
+        <div className="flex items-end gap-1 h-24 mt-1">
+          {visible.map((p, i) => {
+            const isLast = i === visible.length - 1;
+            const h = maxW > 0 ? (p.weight / maxW) * 100 : 0;
+            return (
+              <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                <div className="text-[9px] tabular text-ink-300 leading-none">
+                  {p.weight}
+                </div>
+                <div
+                  className={`w-full rounded-t-md transition-all ${
+                    isLast
+                      ? 'bg-ink-900 dark:bg-bone-100'
+                      : 'bg-ink-300 dark:bg-ink-600'
+                  }`}
+                  style={{ height: `${Math.max(h, 4)}%` }}
+                />
+                <div className="text-[9px] tabular text-ink-300 leading-none">
+                  {fmtDate(p.date)}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 const FriendlyNote = ({ label, text }) => (
   <div className="rounded-2xl bg-bone-100 dark:bg-ink-800 border border-black/5 dark:border-white/5 p-3 flex gap-3">
