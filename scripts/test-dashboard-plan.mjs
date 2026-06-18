@@ -13,11 +13,13 @@ const browser = await puppeteer.launch({
 const page = await browser.newPage();
 page.on('pageerror', (err) => console.log('[browser error]', err.message));
 
-// Pin today to a Monday (Push Day) so the plan card always renders for
-// this test. 2026-06-15 was a Monday — pick it as the wall clock.
-await page.evaluateOnNewDocument(() => {
+// Pin today to a specific weekday so the test is deterministic.
+// 2026-06-18 was a Thursday — REST DAY in the weekly split — matches
+// the actual user scenario from their screenshot.
+const PINNED_DATE = process.env.PIN_DATE || '2026-06-18T13:00:00'; // Thu rest day
+await page.evaluateOnNewDocument((dateStr) => {
   const RealDate = Date;
-  const fixed = new RealDate('2026-06-15T08:00:00').getTime();
+  const fixed = new RealDate(dateStr).getTime();
   const offset = fixed - RealDate.now();
   globalThis.Date = class extends RealDate {
     constructor(...args) {
@@ -33,7 +35,7 @@ await page.evaluateOnNewDocument(() => {
   };
   globalThis.Date.UTC = RealDate.UTC;
   globalThis.Date.parse = RealDate.parse;
-});
+}, PINNED_DATE);
 await page.goto(`${URL}?fresh=${Date.now()}`, { waitUntil: 'networkidle0' });
 await page.evaluate(() => {
   localStorage.clear();
@@ -88,12 +90,12 @@ await sleep(700);
 const dashboardState = await page.evaluate(() => {
   const headline =
     document.querySelector('h1')?.textContent?.trim() || null;
+  const labelRegex = /Today.?s plan|今日计划|Recent progress|最近进步/i;
   const planLabel = [...document.querySelectorAll('div')]
     .map((d) => d.textContent?.trim() || '')
-    .find((t) => /Today.?s plan|今日计划/i.test(t) && t.length < 30);
-  // Find the plan card by querying rows
+    .find((t) => labelRegex.test(t) && t.length < 30);
   const planCard = [...document.querySelectorAll('section')].find((s) =>
-    /Today.?s plan|今日计划/i.test(s.textContent),
+    labelRegex.test(s.textContent),
   );
   const rows = planCard
     ? [...planCard.querySelectorAll('.flex.items-start.gap-3')].map(
@@ -109,14 +111,17 @@ console.log('  Plan card present:', dashboardState.planCard);
 console.log('  Rows:');
 dashboardState.rows.forEach((r) => console.log(`    ${r}`));
 
-const isPushDay = /Push/i.test(dashboardState.headline || '');
-const ok = isPushDay
-  ? dashboardState.planCard &&
-    dashboardState.rows.some((r) =>
-      /Overhead Press.*kg/.test(r),
-    )
-  : // Non-push day: card shouldn't render at all (rest day or other type)
-    true;
+const isRestDay = /Recovery|Rest|休息/i.test(dashboardState.headline || '');
+const isTrainingDay = /Push|Pull|Leg|推日|拉日|腿日/i.test(dashboardState.headline || '');
+
+// Expected behaviour:
+// - Training day → "Today's plan" card with [try today] recommendation
+// - Rest day     → "Recent progress" card showing most recently
+//                  trained workout's exercises with trend %
+const ok =
+  dashboardState.planCard &&
+  dashboardState.rows.some((r) => /Overhead Press.*kg/.test(r)) &&
+  (isTrainingDay || isRestDay); // either is fine — both should render the card now
 
 console.log(ok ? '\n✓ END-TO-END PASS' : '\n✗ FAIL');
 await browser.close();

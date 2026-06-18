@@ -4,7 +4,7 @@ export const STRINGS = {
   en: {
     // Header
     appName: 'ATLAS',
-    appVersion: 'v0.1',
+    appVersion: 'v0.8',
     toggleTheme: 'Toggle theme',
     toggleLanguage: 'Switch to Chinese',
 
@@ -57,6 +57,7 @@ export const STRINGS = {
     'dash.note.4': 'Knee & lower-back friendly substitutions are flagged on each exercise.',
     'dash.exercises': 'exercises',
     'dash.todaysPlan': "Today's plan",
+    'dash.recentProgress': 'Recent progress',
     'dash.todayTry': 'try today',
     'dash.lastShort': 'Last:',
     'dash.firstTime': 'First time — set a baseline today',
@@ -351,7 +352,7 @@ export const STRINGS = {
   zh: {
     // Header
     appName: 'ATLAS',
-    appVersion: 'v0.1',
+    appVersion: 'v0.8',
     toggleTheme: '切换主题',
     toggleLanguage: 'Switch to English',
 
@@ -405,6 +406,7 @@ export const STRINGS = {
     'dash.exercises': '个动作',
     'dash.estMin': '分钟',
     'dash.todaysPlan': '今日计划',
+    'dash.recentProgress': '最近进步',
     'dash.todayTry': '今天试',
     'dash.lastShort': '上次',
     'dash.firstTime': '第一次 — 今天定个基准',

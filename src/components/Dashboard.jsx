@@ -123,30 +123,46 @@ export default function Dashboard({ onOpenWorkout, history = {} }) {
         )}
       </motion.div>
 
-      {/* Today's Plan — per-exercise recommendations + trend %. Shown
-          only on training days, and only when the user has at least
-          some history (so it's not empty noise for brand-new users).
-          For users with history this is the headline value: at a
-          glance, today's weights and how far they've progressed. */}
-      {!isRest && workout && hasAnyHistory(history) && (
-        <section>
-          <SectionLabel>{t('dash.todaysPlan')}</SectionLabel>
-          <div className="rounded-3xl bg-white dark:bg-ink-800 border border-black/5 dark:border-white/5 p-4 shadow-card dark:shadow-cardDark space-y-3">
-            {workout.exercises.map((ex, i) => (
-              <ExercisePlanRow
-                key={ex.id}
-                exercise={ex}
-                index={i + 1}
-                history={history}
-                variantKey={overrides.lastVariant?.[ex.id]}
-                weightUnit={weightUnit}
-                t={t}
-                lang={lang}
-              />
-            ))}
-          </div>
-        </section>
-      )}
+      {/* PROGRESS CARD — visible on EVERY screen, both training days
+          and rest days. The content adapts:
+          • Training day → "Today's plan" with [try today] recommendations
+            for today's lineup
+          • Rest day    → "Recent progress" showing the most-recent
+            completed session's exercises, so the user can still see
+            how they've been progressing on any given day
+          Always anchored on real history — brand-new users (no logged
+          sessions yet) see neither card, just the streak / stats. */}
+      {hasAnyHistory(history) && (() => {
+        // Pick which workout's exercises to show
+        const displayWorkout = !isRest && workout
+          ? workout
+          : WORKOUTS[mostRecentSessionType(history)];
+        if (!displayWorkout) return null;
+        const label = !isRest
+          ? t('dash.todaysPlan')
+          : t('dash.recentProgress');
+        const showRecBadge = !isRest;
+        return (
+          <section>
+            <SectionLabel>{label}</SectionLabel>
+            <div className="rounded-3xl bg-white dark:bg-ink-800 border border-black/5 dark:border-white/5 p-4 shadow-card dark:shadow-cardDark space-y-3">
+              {displayWorkout.exercises.map((ex, i) => (
+                <ExercisePlanRow
+                  key={ex.id}
+                  exercise={ex}
+                  index={i + 1}
+                  history={history}
+                  variantKey={overrides.lastVariant?.[ex.id]}
+                  weightUnit={weightUnit}
+                  t={t}
+                  lang={lang}
+                  showRecBadge={showRecBadge}
+                />
+              ))}
+            </div>
+          </section>
+        );
+      })()}
 
       <section>
         <SectionLabel>{t('dash.thisWeek')}</SectionLabel>
@@ -258,7 +274,7 @@ const GoalChip = ({ children }) => (
 // Compact per-exercise row showing recommendation + trend. Designed for
 // the dashboard's "Today's Plan" card so the user sees their progress
 // without diving into a modal.
-function ExercisePlanRow({ exercise, index, history, variantKey, weightUnit, t, lang }) {
+function ExercisePlanRow({ exercise, index, history, variantKey, weightUnit, t, lang, showRecBadge = true }) {
   const trend = progressTrend({
     history,
     exerciseId: exercise.id,
@@ -314,7 +330,11 @@ function ExercisePlanRow({ exercise, index, history, variantKey, weightUnit, t, 
         </div>
       </div>
       <div className="text-right shrink-0">
-        {rec ? (
+        {/* Right column. On training days we show the algorithm's
+            recommendation ("try today: 17.5 kg"). On rest days we
+            show the last actual weight as the headline — the user
+            is reviewing history, not planning today's lifts. */}
+        {showRecBadge && rec ? (
           <>
             <div className={`text-[15px] font-semibold tabular leading-tight ${recColor}`}>
               {rec.weight} {weightUnit}
@@ -324,7 +344,7 @@ function ExercisePlanRow({ exercise, index, history, variantKey, weightUnit, t, 
             </div>
           </>
         ) : hasHistory ? (
-          <div className="text-[13px] tabular text-ink-700 dark:text-bone-100">
+          <div className="text-[15px] font-semibold tabular leading-tight text-ink-900 dark:text-bone-100">
             {trend.last.weight} {weightUnit}
           </div>
         ) : null}
@@ -336,6 +356,23 @@ function ExercisePlanRow({ exercise, index, history, variantKey, weightUnit, t, 
       </div>
     </div>
   );
+}
+
+// On rest days we want to show progress for SOMETHING — pick the
+// workout type the user trained most recently. Falls back to null
+// when history is empty so the caller skips the card.
+function mostRecentSessionType(history) {
+  if (!history) return null;
+  let bestType = null;
+  let bestTs = 0;
+  for (const s of Object.values(history)) {
+    if (!s?.completedAt) continue;
+    if (s.completedAt > bestTs) {
+      bestTs = s.completedAt;
+      bestType = s.type;
+    }
+  }
+  return bestType;
 }
 
 // Returns true if any completed session exists in history.
