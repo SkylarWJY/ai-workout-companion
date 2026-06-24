@@ -4,7 +4,8 @@ import { LanguageProvider } from '../i18n/index.jsx';
 import { OverridesProvider } from '../hooks/useOverrides.jsx';
 import { useLocalStorage } from '../hooks/useLocalStorage.js';
 import { useTheme } from '../hooks/useTheme.js';
-import { WORKOUTS } from '../data/workoutData.js';
+import { getWorkoutsForPlan } from '../data/workoutData.js';
+import { useOverrides } from '../hooks/useOverrides.jsx';
 import Dashboard from './screens/Dashboard.jsx';
 import WorkoutDay from './screens/WorkoutDay.jsx';
 import Confetti from './components/Confetti.jsx';
@@ -49,6 +50,8 @@ function Root() {
   const [activeSession, setActiveSession] = useLocalStorage('atlas.activeSession', null);
   const [confettiActive, setConfettiActive] = useState(false);
 
+  const { overrides } = useOverrides();
+  const WORKOUTS = getWorkoutsForPlan(overrides.plan?.active);
   const workout = activeType ? WORKOUTS[activeType] : null;
 
   // Same auto-save pattern as v0.8 Root — every logged set persists into

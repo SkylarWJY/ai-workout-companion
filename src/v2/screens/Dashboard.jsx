@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import {
-  WORKOUTS,
   WEEKLY_SPLIT,
   USER_PROFILE,
   getTodayWorkoutType,
+  getWorkoutsForPlan,
 } from '../../data/workoutData.js';
 import { useLang, locWorkout, locEx } from '../../i18n/index.jsx';
 import { useOverrides } from '../../hooks/useOverrides.jsx';
@@ -143,6 +143,10 @@ export default function Dashboard({ history = {}, onOpenWorkout }) {
   // [{day, type}] array that mirrors WEEKLY_SPLIT but with any day's
   // type swapped through edit mode below.
   const weeklySplit = overrides.weeklySplit || WEEKLY_SPLIT;
+  // Plan-aware workout lookup. `overrides.activePlan` cycles through
+  // 'default' (the bundled program) and 'skylar' (coach plan tuned to
+  // her side-delt + V-taper goals). Pull this once + use everywhere.
+  const WORKOUTS = getWorkoutsForPlan(overrides.plan?.active);
   const todayIdx = (new Date().getDay() + 6) % 7;  // Mon = 0
   const todayType = weeklySplit[todayIdx]?.type || 'rest';
   const isRest = todayType === 'rest';
@@ -312,6 +316,7 @@ export default function Dashboard({ history = {}, onOpenWorkout }) {
             weeklySplit={weeklySplit}
             setDayType={setDayType}
             editing={editingCalendar}
+            workouts={WORKOUTS}
           />
           {editingCalendar && overrides.weeklySplit && (
             <button
@@ -647,7 +652,7 @@ function ExerciseRow({ ex, history, weightUnit, lang, isToday, idx }) {
 // Cycle through the four workout types when the user is in edit mode.
 const TYPE_CYCLE = ['push', 'pull', 'leg', 'rest'];
 
-function WeeklyStrip({ history, onPick, lang, t, weeklySplit, setDayType, editing, onToggleEdit }) {
+function WeeklyStrip({ history, onPick, lang, t, weeklySplit, setDayType, editing, workouts = {} }) {
   const todayIdx = (new Date().getDay() + 6) % 7;
   return (
     <>
@@ -663,7 +668,7 @@ function WeeklyStrip({ history, onPick, lang, t, weeklySplit, setDayType, editin
         const completed = Object.values(history).some(
           (h) => h?.type === d.type && h?.completedAt && withinDays(h.completedAt, 7),
         );
-        const muscleHint = !isRest && WORKOUTS[d.type] ? locWorkout(WORKOUTS[d.type], 'subtitle', lang).split(' · ')[0] : null;
+        const muscleHint = !isRest && workouts[d.type] ? locWorkout(workouts[d.type], 'subtitle', lang).split(' · ')[0] : null;
 
         const handleTap = () => {
           if (editing) {
@@ -682,7 +687,6 @@ function WeeklyStrip({ history, onPick, lang, t, weeklySplit, setDayType, editin
             transition={springs.smooth}
             whileTap={{ scale: 0.94 }}
             animate={editing ? { rotate: [-0.5, 0.5, -0.5] } : { rotate: 0 }}
-            transitionEnd={undefined}
             onClick={handleTap}
             className={[
               'relative aspect-[3/4.4] rounded-2xl flex flex-col items-center justify-between py-2 px-1.5',

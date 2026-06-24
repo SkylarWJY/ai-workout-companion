@@ -213,7 +213,20 @@ export const EXERCISE_META = {
   },
 };
 
-export const exerciseMeta = (exerciseId) => EXERCISE_META[exerciseId] || {};
+// Skylar Sculpt plan exercises (id prefix 's-') don't live in EXERCISE_META.
+// Pull their default tutorial youtubeId from coachPlans' fallback map so
+// the modal can render a video even before the user customizes it.
+import { SKYLAR_TUTORIAL_FALLBACKS } from './coachPlans.js';
+
+export const exerciseMeta = (exerciseId) => {
+  const direct = EXERCISE_META[exerciseId];
+  if (direct) return direct;
+  if (typeof exerciseId === 'string' && exerciseId.startsWith('s-')) {
+    const yt = SKYLAR_TUTORIAL_FALLBACKS[exerciseId];
+    if (yt) return { youtubeId: yt };
+  }
+  return {};
+};
 
 // Resolves effective tempo + cues + youtubeId for an exercise + selected variant.
 // Variant fields (from demoMap.js) take precedence.

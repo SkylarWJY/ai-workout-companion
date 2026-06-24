@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useLang } from '../../i18n/index.jsx';
 import { useOverrides } from '../../hooks/useOverrides.jsx';
 import { useTheme as useV2Theme } from '../useTheme.js';
-import { USER_PROFILE } from '../../data/workoutData.js';
+import { USER_PROFILE, PLANS } from '../../data/workoutData.js';
 import { springs, tints } from '../theme.js';
 import Sheet from './Sheet.jsx';
 import PrimaryButton from './PrimaryButton.jsx';
@@ -22,6 +22,8 @@ export default function SettingsSheet({ open, onClose }) {
   const targetBF  = o.targetBf ?? USER_PROFILE.targetBodyFat;
   const pullUpCurrent = o.pullUpCurrent ?? USER_PROFILE.pullUpProgression.current;
   const pullUpTarget  = o.pullUpTarget  ?? USER_PROFILE.pullUpProgression.target;
+  const activePlan = overrides.plan?.active || 'default';
+  const setActivePlan = (id) => setOverride('plan', null, 'active', id);
 
   const handleReset = () => {
     if (window.confirm(
@@ -38,6 +40,60 @@ export default function SettingsSheet({ open, onClose }) {
         height="tall"
       >
         <div className="px-5 pt-1 pb-8 space-y-6">
+
+          {/* Training plan picker — top of the list because it's the
+              most consequential setting for what the rest of the app
+              shows (Dashboard → today's plan, body map, recommendations). */}
+          <Section title={lang === 'zh' ? '训练计划' : 'TRAINING PLAN'}>
+            {Object.values(PLANS).map((p, i) => {
+              const selected = activePlan === p.id;
+              const isCoach = p.id !== 'default';
+              return (
+                <motion.button
+                  key={p.id}
+                  type="button"
+                  whileTap={{ scale: 0.99 }}
+                  transition={springs.press}
+                  onClick={() => setActivePlan(p.id)}
+                  className="w-full flex items-start gap-3 px-4 py-3.5 text-left"
+                  style={i > 0 ? { borderTop: '0.5px solid var(--hairline)' } : undefined}
+                >
+                  <span
+                    className="shrink-0 w-5 h-5 rounded-full mt-1 grid place-items-center"
+                    style={
+                      selected
+                        ? { background: isCoach ? tints.orange : tints.mint, color: '#000' }
+                        : { boxShadow: 'inset 0 0 0 1.5px var(--hairline-strong)' }
+                    }
+                  >
+                    {selected && (
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+                        <path d="M4 12l5 5 11-11" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="v2-title text-[14px] v2-t1">
+                        {lang === 'zh' && p.labelZh ? p.labelZh : p.label}
+                      </span>
+                      {isCoach && (
+                        <span
+                          className="v2-caption text-[9px] tracking-wide px-1.5 py-0.5 rounded-full"
+                          style={{ background: 'rgba(255,159,10,0.18)', color: tints.orange }}
+                        >
+                          {lang === 'zh' ? '教练' : 'COACH'}
+                        </span>
+                      )}
+                    </div>
+                    <div className="v2-body text-[12px] v2-t2 mt-0.5">
+                      {lang === 'zh' && p.summaryZh ? p.summaryZh : p.summary}
+                    </div>
+                  </div>
+                </motion.button>
+              );
+            })}
+          </Section>
 
           {/* Display preferences */}
           <Section title={lang === 'zh' ? '显示偏好' : 'DISPLAY'}>

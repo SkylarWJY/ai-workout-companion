@@ -736,6 +736,34 @@ export const WORKOUTS = {
   leg: LEG_DAY,
 };
 
+// Multi-plan registry. Lazy import avoids a cycle (coachPlans.js
+// re-exports from this file at the top level via the bestpick variant).
+import { SKYLAR_PLAN } from './coachPlans.js';
+export const PLANS = {
+  default: {
+    id: 'default',
+    label: 'Default',
+    labelZh: '默认',
+    summary: 'Balanced Push / Pull / Leg',
+    summaryZh: '均衡推 / 拉 / 腿',
+    workouts: WORKOUTS,
+  },
+  skylar: {
+    id: 'skylar',
+    label: 'Skylar Sculpt',
+    labelZh: 'Skylar 雕刻',
+    summary: 'Side+rear delts · V-taper (NO traps) · abs',
+    summaryZh: '侧+后束 · V 型背（不动斜方）· 腹肌',
+    workouts: SKYLAR_PLAN,
+  },
+};
+
+// Returns the workouts dict for a plan name. Falls back to default
+// when an unknown plan id slips through (e.g. localStorage stuck on a
+// removed plan).
+export const getWorkoutsForPlan = (planId) =>
+  PLANS[planId]?.workouts || PLANS.default.workouts;
+
 export const getTodayWorkoutType = () => {
   const today = new Date().getDay(); // 0 = Sun
   // 0 Sun rest, 1 Mon push, 2 Tue rest, 3 Wed pull, 4 Thu rest,
