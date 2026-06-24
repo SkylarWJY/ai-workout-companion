@@ -13,6 +13,10 @@ import Sheet from './Sheet.jsx';
 import Chip from './Chip.jsx';
 import VolumeChart from './VolumeChart.jsx';
 import TempoBlock from './TempoBlock.jsx';
+import VariantIcon from './VariantIcon.jsx';
+import ProgressHero from './ProgressHero.jsx';
+import ExerciseEditSheet from './ExerciseEditSheet.jsx';
+import { videoKey, getVideoObjectUrl } from '../../utils/videoStorage.js';
 
 const PRIORITY_TINT = {
   extreme:  tints.red,
@@ -23,14 +27,28 @@ const PRIORITY_TINT = {
 };
 
 export default function ExerciseModal({ open, exercise, onClose }) {
+  const [editOpen, setEditOpen] = React.useState(false);
   return (
-    <Sheet open={open && !!exercise} onClose={onClose} title="" height="tall">
-      {exercise && <ModalBody exercise={exercise} onClose={onClose} />}
-    </Sheet>
+    <>
+      <Sheet open={open && !!exercise} onClose={onClose} title="" height="tall">
+        {exercise && (
+          <ModalBody
+            exercise={exercise}
+            onClose={onClose}
+            onEdit={() => setEditOpen(true)}
+          />
+        )}
+      </Sheet>
+      <ExerciseEditSheet
+        open={editOpen}
+        exercise={exercise}
+        onClose={() => setEditOpen(false)}
+      />
+    </>
   );
 }
 
-function ModalBody({ exercise }) {
+function ModalBody({ exercise, onEdit }) {
   const { t, lang } = useLang();
   const { overrides, weightUnit } = useOverrides();
   const [history] = useLocalStorage('atlas.history', {});
@@ -50,11 +68,35 @@ function ModalBody({ exercise }) {
 
   const baseMeta = resolveMeta(exercise.id, variant);
   const exOverrides = overrides.exercise?.[exercise.id];
+  // Resolution priority for the displayed tutorial video:
+  //   1. Per-variant LOCAL upload  (overrides.exercise.X.localVideoByVariant[key])
+  //   2. Per-variant YouTube       (overrides.exercise.X.youtubeIdByVariant[key])
+  //   3. Legacy exercise-level YouTube (pre-v0.6) — only for variant index 0
+  //   4. Variant's bundled YouTube (demoMap.js)
+  //   5. Base exerciseMeta youtubeId
+  const variantKey = variant?.key;
+  const perVariantYt = variantKey ? exOverrides?.youtubeIdByVariant?.[variantKey] : null;
+  const localMeta = variantKey ? exOverrides?.localVideoByVariant?.[variantKey] : null;
+  const legacyYt = variantIdx === 0 ? exOverrides?.youtubeId : null;
   const meta = baseMeta && {
     ...baseMeta,
-    youtubeId: exOverrides?.youtubeId ?? baseMeta.youtubeId,
+    youtubeId: perVariantYt || legacyYt || baseMeta.youtubeId,
     tempo: exOverrides?.tempo || baseMeta.tempo,
   };
+
+  // Resolve the local video blob into a playable object URL.
+  const [localUrl, setLocalUrl] = React.useState(null);
+  React.useEffect(() => {
+    if (!localMeta) { setLocalUrl(null); return; }
+    let cancelled = false;
+    let created = null;
+    getVideoObjectUrl(videoKey('exercise', exercise.id, variantKey)).then((url) => {
+      if (cancelled) { if (url) URL.revokeObjectURL(url); return; }
+      created = url;
+      setLocalUrl(url);
+    });
+    return () => { cancelled = true; if (created) URL.revokeObjectURL(created); setLocalUrl(null); };
+  }, [exercise.id, variantKey, localMeta?.ts]);
 
   const content = resolveVariantContent(exercise, variant, lang, locEx);
   const name = content?.name || locEx(exercise, 'name', lang);
@@ -95,6 +137,20 @@ function ModalBody({ exercise }) {
             {exercise.restSeconds ? ` · ${exercise.restSeconds}s rest` : ''}
           </div>
         </div>
+        <motion.button
+          type="button"
+          whileTap={{ scale: 0.92 }}
+          transition={springs.press}
+          onClick={onEdit}
+          aria-label="Edit exercise"
+          className="shrink-0 w-9 h-9 rounded-full grid place-items-center"
+          style={{ background: 'var(--hairline-strong)', color: 'var(--label-1)' }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path d="M12 20h9M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </motion.button>
       </div>
 
       {/* Variant chips */}
@@ -115,6 +171,7 @@ function ModalBody({ exercise }) {
                 selected={i === variantIdx}
                 onClick={() => setVariantIdx(i)}
               >
+                <VariantIcon kind={v.key} size={12} />
                 {label}
               </Chip>
             );
@@ -122,8 +179,20 @@ function ModalBody({ exercise }) {
         </div>
       )}
 
-      {/* YouTube tutorial — tap to open in new tab */}
-      {meta?.youtubeId && (
+      {/* Tutorial player — local upload wins; otherwise YouTube thumbnail card. */}
+      {localUrl ? (
+        <div className="mt-4 rounded-3xl overflow-hidden relative" style={{ aspectRatio: '16/9' }}>
+          <video
+            src={localUrl}
+            controls
+            playsInline
+            className="w-full h-full object-cover"
+          />
+          <Chip size="sm" tint={tints.green} className="absolute top-3 left-3">
+            {lang === 'zh' ? '我的视频' : 'Your video'}
+          </Chip>
+        </div>
+      ) : meta?.youtubeId ? (
         <a
           href={`https://www.youtube.com/watch?v=${meta.youtubeId}`}
           target="_blank"
@@ -151,6 +220,11 @@ function ModalBody({ exercise }) {
               </svg>
             </motion.span>
           </div>
+          {perVariantYt && (
+            <Chip size="sm" tint={tints.blue} className="absolute top-3 left-3">
+              {lang === 'zh' ? '自定义' : 'Custom'}
+            </Chip>
+          )}
           <div
             className="absolute bottom-0 inset-x-0 px-4 py-2.5 text-white v2-caption text-[10px] tracking-[0.16em]"
             style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.75), transparent)' }}
@@ -158,43 +232,15 @@ function ModalBody({ exercise }) {
             {lang === 'zh' ? '在 YouTube 看完整教程' : 'Open YouTube tutorial'}
           </div>
         </a>
-      )}
+      ) : null}
 
-      {/* Progress chart — only when we have ≥ 1 session of history */}
-      {trend.points.length > 0 && (
-        <section className="mt-6">
-          <div className="v2-caption v2-t2 mb-2 flex items-baseline justify-between">
-            <span>{lang === 'zh' ? '进步曲线' : 'Your progress'}</span>
-            <span className="v2-t3 text-[10px]">
-              {trend.points.length} {lang === 'zh' ? '次' : 'sessions'}
-            </span>
-          </div>
-          <div className="v2-card p-5">
-            <div className="flex items-baseline justify-between mb-3">
-              <div>
-                <div className="v2-display v2-numeric text-[28px] v2-t1">
-                  {trend.last.weight} <span className="v2-body text-[14px] v2-t3">{weightUnit}</span>
-                </div>
-                <div className="v2-caption v2-t3 text-[10px] mt-1">
-                  {lang === 'zh' ? '最近一次顶组' : 'latest top set'}
-                </div>
-              </div>
-              {trend.delta != null && trend.delta !== 0 && (
-                <Chip size="sm" tint={trend.delta > 0 ? tints.green : tints.orange}>
-                  {trend.delta > 0 ? '+' : ''}{trend.delta.toFixed(1)} {weightUnit}
-                </Chip>
-              )}
-            </div>
-            {trend.points.length > 1 && (
-              <VolumeChart
-                points={trend.points.map((p) => ({ label: '', value: p.weight }))}
-                tint={tints.green}
-                height={86}
-              />
-            )}
-          </div>
-        </section>
-      )}
+      {/* Progress hero — big animated chart with count-up + tracker */}
+      <section className="mt-6">
+        <div className="v2-caption v2-t2 mb-2">
+          {lang === 'zh' ? '进步曲线' : 'Your progress'}
+        </div>
+        <ProgressHero points={trend.points} unit={weightUnit} lang={lang} />
+      </section>
 
       {/* Why it matters */}
       {why && (

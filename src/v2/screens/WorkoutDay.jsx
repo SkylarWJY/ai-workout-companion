@@ -17,7 +17,9 @@ import WarmUpCard from '../components/WarmUpCard.jsx';
 import CoolDownCard from '../components/CoolDownCard.jsx';
 import BodyMapCard from '../components/BodyMapCard.jsx';
 import ExerciseModal from '../components/ExerciseModal.jsx';
+import SessionClock from '../components/SessionClock.jsx';
 import RestTimer from '../components/RestTimer.jsx';
+import RestOverlay from '../components/RestOverlay.jsx';
 import ReorderSheet from '../components/ReorderSheet.jsx';
 import { useRestTimer } from '../../hooks/useRestTimer.js';
 import { springs, tints, tintForKind, KIND_LABEL, KIND_LABEL_ZH } from '../theme.js';
@@ -52,6 +54,7 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
   const [addExOpen, setAddExOpen] = useState(false);
   const [modalFor, setModalFor] = useState(null);            // exercise opened in detail modal
   const [reorderOpen, setReorderOpen] = useState(false);
+  const [restExerciseName, setRestExerciseName] = useState('');
   const restTimer = useRestTimer();                          // rest countdown after Save set
 
   // Same merged-and-overridden exercise list shape as v0.8.
@@ -123,7 +126,12 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
       <GlassNavBar
         title={wname}
         showGlass={showGlass}
-        leading={<IconButton ariaLabel="Back" onClick={onBack} variant="glass" icon={ICON.back} />}
+        leading={
+          <div className="flex items-center gap-2">
+            <IconButton ariaLabel="Back" onClick={onBack} variant="glass" icon={ICON.back} />
+            <SessionClock startedAt={session?.startedAt} />
+          </div>
+        }
         trailing={
           <Chip size="md" variant="solid" tint={progress >= 1 ? tints.green : null}>
             <span className="v2-num">{logged}</span>
@@ -275,6 +283,7 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
             onSave={(log) => {
               upsertLog(loggerFor.id, log);
               const restSecs = loggerFor.restSeconds || 60;
+              setRestExerciseName(locEx(loggerFor, 'name', lang));
               setLoggerFor(null);
               // Auto-fire rest countdown — caps at 5min so a stale
               // exerciseData value can't trap the timer forever.
@@ -374,9 +383,10 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
         onClose={() => setModalFor(null)}
       />
 
-      {/* REST TIMER (floating pill) ────────────────────────────────── */}
-      <RestTimer
+      {/* IMMERSIVE REST OVERLAY ────────────────────────────────── */}
+      <RestOverlay
         timer={restTimer}
+        exerciseName={restExerciseName}
         onDone={() => restTimer.stop()}
         onStop={() => restTimer.stop()}
       />
