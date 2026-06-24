@@ -124,7 +124,7 @@ function isoWeekKey(d) {
 
 export default function Dashboard({ history = {}, onOpenWorkout }) {
   const { t, lang, setLang } = useLang();
-  const { overrides, weightUnit, setWeightUnit } = useOverrides();
+  const { overrides, weightUnit, setWeightUnit, setOverride, clearOverride } = useOverrides();
   const { theme, toggle: toggleTheme } = useV2Theme();
   const toggleLang = () => setLang(lang === 'zh' ? 'en' : 'zh');
 
@@ -139,9 +139,20 @@ export default function Dashboard({ history = {}, onOpenWorkout }) {
   React.useEffect(() => motionScrollY.on('change', (v) => setScrollY(v)), [motionScrollY]);
   const showGlass = scrollY > 32;
 
-  const todayType = getTodayWorkoutType();
+  // User can customize the weekly split — overrides.weeklySplit is a
+  // [{day, type}] array that mirrors WEEKLY_SPLIT but with any day's
+  // type swapped through edit mode below.
+  const weeklySplit = overrides.weeklySplit || WEEKLY_SPLIT;
+  const todayIdx = (new Date().getDay() + 6) % 7;  // Mon = 0
+  const todayType = weeklySplit[todayIdx]?.type || 'rest';
   const isRest = todayType === 'rest';
   const workout = !isRest ? WORKOUTS[todayType] : null;
+  const [editingCalendar, setEditingCalendar] = React.useState(false);
+  const setDayType = (idx, type) => {
+    const next = weeklySplit.map((d, i) => (i === idx ? { ...d, type } : d));
+    setOverride('weeklySplit', null, null, next);
+  };
+  const resetSplit = () => clearOverride('weeklySplit', null, null);
 
   const todayDate = new Date();
   const todayDay = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][todayDate.getDay()];
@@ -266,8 +277,51 @@ export default function Dashboard({ history = {}, onOpenWorkout }) {
 
         {/* WEEKLY CALENDAR ─────────────────────────────────────────── */}
         <section className="mt-10">
-          <SectionLabel>{lang === 'zh' ? '本周节奏' : 'This week'}</SectionLabel>
-          <WeeklyStrip history={history} onPick={onOpenWorkout} lang={lang} t={t} />
+          <SectionLabel
+            trailing={
+              <button
+                type="button"
+                onClick={() => setEditingCalendar((v) => !v)}
+                className="v2-caption v2-t2 hover:v2-t1 transition inline-flex items-center gap-1"
+              >
+                {editingCalendar ? (
+                  <>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+                      <path d="M4 12l5 5 11-11" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    {lang === 'zh' ? '完成' : 'Done'}
+                  </>
+                ) : (
+                  <>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 20h9M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    {lang === 'zh' ? '编辑' : 'Edit'}
+                  </>
+                )}
+              </button>
+            }
+          >
+            {lang === 'zh' ? '本周节奏' : 'This week'}
+          </SectionLabel>
+          <WeeklyStrip
+            history={history}
+            onPick={onOpenWorkout}
+            lang={lang}
+            t={t}
+            weeklySplit={weeklySplit}
+            setDayType={setDayType}
+            editing={editingCalendar}
+          />
+          {editingCalendar && overrides.weeklySplit && (
+            <button
+              type="button"
+              onClick={resetSplit}
+              className="mt-2 v2-caption v2-t3 text-[10px] hover:v2-t1 transition mx-auto block"
+            >
+              {lang === 'zh' ? '恢复默认顺序' : 'Reset to default'}
+            </button>
+          )}
         </section>
 
         {/* MISSION ─────────────────────────────────────────────────── */}
@@ -590,16 +644,20 @@ function ExerciseRow({ ex, history, weightUnit, lang, isToday, idx }) {
   );
 }
 
-function WeeklyStrip({ history, onPick, lang, t }) {
+// Cycle through the four workout types when the user is in edit mode.
+const TYPE_CYCLE = ['push', 'pull', 'leg', 'rest'];
+
+function WeeklyStrip({ history, onPick, lang, t, weeklySplit, setDayType, editing, onToggleEdit }) {
   const todayIdx = (new Date().getDay() + 6) % 7;
   return (
+    <>
     <motion.div
       variants={{ show: { transition: stagger } }}
       initial="hidden"
       animate="show"
       className="grid grid-cols-7 gap-1.5"
     >
-      {WEEKLY_SPLIT.map((d, i) => {
+      {weeklySplit.map((d, i) => {
         const isToday = i === todayIdx;
         const isRest = d.type === 'rest';
         const completed = Object.values(history).some(
@@ -607,14 +665,25 @@ function WeeklyStrip({ history, onPick, lang, t }) {
         );
         const muscleHint = !isRest && WORKOUTS[d.type] ? locWorkout(WORKOUTS[d.type], 'subtitle', lang).split(' · ')[0] : null;
 
+        const handleTap = () => {
+          if (editing) {
+            const cur = TYPE_CYCLE.indexOf(d.type);
+            const next = TYPE_CYCLE[(cur + 1) % TYPE_CYCLE.length];
+            setDayType(i, next);
+            return;
+          }
+          if (!isRest) onPick(d.type);
+        };
+
         return (
           <motion.button
             key={d.day}
             variants={{ hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0 } }}
             transition={springs.smooth}
-            whileTap={!isRest ? { scale: 0.94 } : {}}
-            onClick={() => !isRest && onPick(d.type)}
-            disabled={isRest}
+            whileTap={{ scale: 0.94 }}
+            animate={editing ? { rotate: [-0.5, 0.5, -0.5] } : { rotate: 0 }}
+            transitionEnd={undefined}
+            onClick={handleTap}
             className={[
               'relative aspect-[3/4.4] rounded-2xl flex flex-col items-center justify-between py-2 px-1.5',
               isToday
@@ -657,6 +726,12 @@ function WeeklyStrip({ history, onPick, lang, t }) {
         );
       })}
     </motion.div>
+    {editing && (
+      <div className="mt-2 v2-caption v2-t3 text-[10px] text-center tracking-wide">
+        {lang === 'zh' ? '点击格子轮换 推 / 拉 / 腿 / 休' : 'Tap a tile to cycle Push / Pull / Leg / Rest'}
+      </div>
+    )}
+    </>
   );
 }
 

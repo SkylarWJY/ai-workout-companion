@@ -206,7 +206,7 @@ function ModalBody({ exercise, onEdit }) {
         </div>
       )}
 
-      {/* Tutorial player — local upload wins; otherwise YouTube thumbnail card. */}
+      {/* Tutorial player — local upload wins; otherwise inline YouTube embed. */}
       {localUrl ? (
         <div className="mt-4 rounded-3xl overflow-hidden relative" style={{ aspectRatio: '16/9' }}>
           <video
@@ -220,45 +220,20 @@ function ModalBody({ exercise, onEdit }) {
           </Chip>
         </div>
       ) : meta?.youtubeId ? (
-        <a
-          href={`https://www.youtube.com/watch?v=${meta.youtubeId}`}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-4 block rounded-3xl overflow-hidden relative"
-          style={{ aspectRatio: '16/9' }}
-        >
-          <img
-            src={`https://i.ytimg.com/vi/${meta.youtubeId}/hqdefault.jpg`}
-            alt=""
-            className="w-full h-full object-cover"
+        <div className="mt-4 rounded-3xl overflow-hidden relative" style={{ aspectRatio: '16/9' }}>
+          <iframe
+            src={`https://www.youtube.com/embed/${meta.youtubeId}?rel=0&modestbranding=1&playsinline=1`}
+            title="Exercise tutorial"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            className="absolute inset-0 w-full h-full"
           />
-          <div
-            className="absolute inset-0 flex items-center justify-center"
-            style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.18), rgba(0,0,0,0.5))' }}
-          >
-            <motion.span
-              whileTap={{ scale: 0.92 }}
-              transition={springs.press}
-              className="w-16 h-16 rounded-full grid place-items-center"
-              style={{ background: 'rgba(255,255,255,0.96)' }}
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="#000">
-                <path d="M8 5v14l11-7L8 5z" />
-              </svg>
-            </motion.span>
-          </div>
           {perVariantYt && (
-            <Chip size="sm" tint={tints.blue} className="absolute top-3 left-3">
+            <Chip size="sm" tint={tints.blue} className="absolute top-3 left-3 z-10">
               {lang === 'zh' ? '自定义' : 'Custom'}
             </Chip>
           )}
-          <div
-            className="absolute bottom-0 inset-x-0 px-4 py-2.5 text-white v2-caption text-[10px] tracking-[0.16em]"
-            style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.75), transparent)' }}
-          >
-            {lang === 'zh' ? '在 YouTube 看完整教程' : 'Open YouTube tutorial'}
-          </div>
-        </a>
+        </div>
       ) : null}
 
       {/* Progress hero — big animated chart with count-up + tracker */}

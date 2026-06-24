@@ -9,6 +9,8 @@ export default function VariantIcon({ kind, size = 13 }) {
     case 'dumbbell':
     case 'dumbbell-paused':
     case 'dumbbell-rdl':
+    case 'kickback':                 // tricep kickback IS a dumbbell move
+    case 'db':
       return (
         <svg width={w} height={h} viewBox="0 0 24 24" fill="none">
           <rect x="2" y="9" width="2" height="6" rx="0.6" fill="currentColor" />
@@ -37,6 +39,8 @@ export default function VariantIcon({ kind, size = 13 }) {
     case 'cable':
     case 'cable-tricep':
     case 'cable-fly':
+    case 'cable-crunch':             // hyphenated form
+    case 'cablecrunch':              // non-hyphenated form lives in demoMap
     case 'rope':
     case 'rope-pushdown':
     case 'face-pull':
@@ -79,6 +83,7 @@ export default function VariantIcon({ kind, size = 13 }) {
     case 'bodyweight':
     case 'plank':
     case 'leg-raise':
+    case 'abwheel':                  // standing roll-out is bodyweight-style
       return (
         <svg width={w} height={h} viewBox="0 0 24 24" fill="none">
           <circle cx="12" cy="6" r="2" stroke="currentColor" strokeWidth="1.7" />

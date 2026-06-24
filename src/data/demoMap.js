@@ -554,6 +554,8 @@ export const DEMO_VARIANTS = {
     },
     {
       key: 'kickback',
+      label: 'DB Kickback',
+      labelZh: '哑铃后摆',
       slug: 'Tricep_Dumbbell_Kickback',
       youtubeId: 'GZ3NzlJs_yg', // DeltaBolic — STOP THIS Tricep Kickback MISTAKE!
       tempo: '2-1-2',
@@ -854,7 +856,7 @@ export const DEMO_VARIANTS = {
     },
   ],
   'pull-2': [
-    { key: 'cable', slug: 'Seated_Cable_Rows' },
+    { key: 'cable', label: 'Seated Cable Row', labelZh: '坐姿划船（绳索）', slug: 'Seated_Cable_Rows' },
     {
       key: 'bestpick',
       label: 'Best for Upper Back',

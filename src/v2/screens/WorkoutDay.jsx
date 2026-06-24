@@ -446,116 +446,131 @@ function ExerciseCard({ idx, ex, session, history, lang, t, weightUnit, onLog, o
     [history, ex.id],
   );
 
+  const progress = planned > 0 ? Math.min(1, done / planned) : 0;
+  const cardTint = complete ? tints.green : (rec ? tintForKind(rec.kind) : tints.mint);
+
   return (
     <motion.div
       layout
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={springs.smooth}
-      className="v2-card p-4"
+      className="v2-card overflow-hidden"
     >
-      <div className="flex items-start gap-3">
-        <span className="v2-num text-[11px] tracking-wider v2-t3 mt-1.5 w-5">
-          {String(idx).padStart(2, '0')}
-        </span>
+      {/* PROGRESS BAR — visual fill across the top of the card. */}
+      <div className="h-1 v2-bg-soft relative">
+        <motion.div
+          initial={false}
+          animate={{ width: `${progress * 100}%` }}
+          transition={springs.smooth}
+          className="absolute inset-y-0 left-0 rounded-r-full"
+          style={{ background: cardTint }}
+        />
+      </div>
+
+      <div className="p-4">
+        {/* Header — number + name + chevron, all tap-to-open detail. */}
         <button
           type="button"
           onClick={onOpenDetail}
-          className="flex-1 min-w-0 text-left"
+          className="w-full flex items-start gap-3 text-left"
         >
-          <div className="v2-title text-[17px] leading-tight flex items-center gap-1.5">
-            {locEx(ex, 'name', lang)}
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="v2-t3">
-              <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-          <div className="v2-body text-[12.5px] v2-t2 mt-1">
-            {planned} × {ex.repRange}
-            {ex.restSeconds ? ` · ${ex.restSeconds}s rest` : ''}
-          </div>
-        </button>
-        {complete && (
-          <span
-            className="shrink-0 w-6 h-6 rounded-full grid place-items-center"
-            style={{ background: tints.green, color: '#000' }}
-          >
-            {ICON.check}
+          <span className="v2-num text-[11px] tracking-wider v2-t3 mt-1.5 w-5">
+            {String(idx).padStart(2, '0')}
           </span>
-        )}
-      </div>
-
-      {/* Set chips — tap to edit/delete; tap [+] to log new */}
-      <div className="mt-3 flex flex-wrap gap-1.5">
-        {logs.map((log, i) => (
-          <SetChip
-            key={i}
-            log={log}
-            displayUnit={weightUnit}
-            onClick={() => onChipTap(i, log)}
-          />
-        ))}
-        {Array.from({ length: Math.max(0, planned - done) }).map((_, i) => (
-          <span
-            key={`empty-${i}`}
-            className="h-7 px-3 rounded-full flex items-center gap-1 text-[11px] tracking-wide v2-num v2-t4"
-            style={{ boxShadow: 'inset 0 0 0 0.5px var(--hairline-strong)' }}
-          >
-            {String(done + i + 1).padStart(2, '0')}
-          </span>
-        ))}
-      </div>
-
-      {/* Recommendation row + Log button */}
-      <div className="mt-3 flex items-center gap-3">
-        <div className="flex-1 min-w-0">
-          {rec ? (
-            <div className="flex items-center gap-2">
-              <span className="v2-caption text-[10px] v2-t3">
-                {lang === 'zh' ? '建议' : 'Try'}
-              </span>
-              <Chip size="sm" tint={tintForKind(rec.kind)}>
-                {rec.weight} {weightUnit}
-              </Chip>
-              <span className="v2-caption text-[10px] v2-t3 whitespace-nowrap">
-                {(lang === 'zh' ? KIND_LABEL_ZH : KIND_LABEL)[rec.kind]}
-              </span>
+          <div className="flex-1 min-w-0">
+            <div className="v2-title text-[17px] leading-tight flex items-center gap-1.5">
+              {locEx(ex, 'name', lang)}
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="v2-t3">
+                <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </div>
-          ) : lastLog ? (
-            <span className="v2-caption text-[10px] v2-t3">
-              {lang === 'zh' ? `上次 ${lastLog.weight}${lastLog.weightUnit || weightUnit} × ${lastLog.reps}` : `Last ${lastLog.weight} ${lastLog.weightUnit || weightUnit} × ${lastLog.reps}`}
-            </span>
-          ) : (
-            <span className="v2-caption text-[10px] v2-t3">
-              {lang === 'zh' ? '首次基线' : 'First baseline'}
+            <div className="v2-body text-[12.5px] v2-t2 mt-1 flex items-center gap-2 flex-wrap">
+              <span>{planned} × {ex.repRange}</span>
+              {ex.restSeconds && (
+                <span className="v2-t3">· {ex.restSeconds}s rest</span>
+              )}
+              {rec && (
+                <span className="inline-flex items-center gap-1 ml-auto" style={{ color: tintForKind(rec.kind) }}>
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="12" r="4" />
+                  </svg>
+                  <span className="v2-num">{rec.weight} {weightUnit}</span>
+                  <span className="opacity-75">· {(lang === 'zh' ? KIND_LABEL_ZH : KIND_LABEL)[rec.kind]}</span>
+                </span>
+              )}
+              {!rec && lastLog && (
+                <span className="v2-t3 ml-auto v2-num">
+                  {lang === 'zh' ? '上次 ' : 'last '}{lastLog.weight}{lastLog.weightUnit || weightUnit}
+                </span>
+              )}
+            </div>
+          </div>
+          {complete && (
+            <span
+              className="shrink-0 w-6 h-6 rounded-full grid place-items-center"
+              style={{ background: tints.green, color: '#000' }}
+            >
+              {ICON.check}
             </span>
           )}
-        </div>
-        <div className="flex items-center gap-1.5">
-          <motion.button
-            type="button"
-            whileTap={{ scale: 0.94 }}
-            transition={springs.press}
-            onClick={onStartSet}
-            className="h-9 px-4 rounded-full font-semibold text-[13px] tracking-[-0.01em] inline-flex items-center gap-1.5"
-            style={{ background: tints.green, color: '#000' }}
-          >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M8 5v14l11-7L8 5z" />
-            </svg>
-            {complete
-              ? (lang === 'zh' ? '加一组' : 'Extra')
-              : (lang === 'zh' ? '开练' : 'Start')}
-          </motion.button>
-          <motion.button
-            type="button"
-            whileTap={{ scale: 0.94 }}
-            transition={springs.press}
-            onClick={onLog}
-            className="h-9 px-3 rounded-full font-semibold text-[12px] v2-t1"
-            style={{ background: 'var(--hairline)', boxShadow: 'inset 0 0 0 0.5px var(--hairline-strong)' }}
-          >
-            {lang === 'zh' ? '直接记' : 'Log'}
-          </motion.button>
+        </button>
+
+        {/* CHIPS — the primary interaction now lives here.
+            Filled chips: tap → edit/delete sheet.
+            Empty chips: tap → enter WORK mode (timer); Logger handles
+            the save → which fires REST overlay seamlessly. */}
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {logs.map((log, i) => (
+            <SetChip
+              key={i}
+              log={log}
+              displayUnit={weightUnit}
+              onClick={() => onChipTap(i, log)}
+            />
+          ))}
+          {Array.from({ length: Math.max(0, planned - done) }).map((_, i) => {
+            const slotN = done + i + 1;
+            const isNext = i === 0;     // brightest highlight on the next set
+            return (
+              <motion.button
+                key={`empty-${i}`}
+                type="button"
+                whileTap={{ scale: 0.92 }}
+                transition={springs.press}
+                onClick={onStartSet}
+                className="h-7 px-2.5 rounded-full flex items-center gap-1.5 text-[11px] v2-num font-semibold transition"
+                style={
+                  isNext
+                    ? { background: cardTint, color: '#000' }
+                    : {
+                        background: 'transparent',
+                        color: 'var(--label-3)',
+                        boxShadow: 'inset 0 0 0 0.5px var(--hairline-strong)',
+                      }
+                }
+              >
+                {isNext && (
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7L8 5z" />
+                  </svg>
+                )}
+                <span>{String(slotN).padStart(2, '0')}</span>
+              </motion.button>
+            );
+          })}
+          {complete && (
+            <motion.button
+              type="button"
+              whileTap={{ scale: 0.92 }}
+              transition={springs.press}
+              onClick={onStartSet}
+              className="h-7 px-3 rounded-full text-[11px] font-semibold v2-t2"
+              style={{ background: 'transparent', boxShadow: 'inset 0 0 0 0.5px var(--hairline-strong)' }}
+            >
+              + {lang === 'zh' ? '加一组' : 'Extra'}
+            </motion.button>
+          )}
         </div>
       </div>
     </motion.div>
