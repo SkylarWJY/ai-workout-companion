@@ -13,6 +13,13 @@ import Sheet from '../components/Sheet.jsx';
 import Chip from '../components/Chip.jsx';
 import PrimaryButton from '../components/PrimaryButton.jsx';
 import SectionLabel from '../components/SectionLabel.jsx';
+import WarmUpCard from '../components/WarmUpCard.jsx';
+import CoolDownCard from '../components/CoolDownCard.jsx';
+import BodyMapCard from '../components/BodyMapCard.jsx';
+import ExerciseModal from '../components/ExerciseModal.jsx';
+import RestTimer from '../components/RestTimer.jsx';
+import ReorderSheet from '../components/ReorderSheet.jsx';
+import { useRestTimer } from '../../hooks/useRestTimer.js';
 import { springs, tints, tintForKind, KIND_LABEL, KIND_LABEL_ZH } from '../theme.js';
 
 const ICON = {
@@ -43,6 +50,9 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
   const [editingSet, setEditingSet] = useState(null);        // { exId, idx, log } when editing a past set
   const [actionFor, setActionFor] = useState(null);          // { exId, idx, log } when chip tapped
   const [addExOpen, setAddExOpen] = useState(false);
+  const [modalFor, setModalFor] = useState(null);            // exercise opened in detail modal
+  const [reorderOpen, setReorderOpen] = useState(false);
+  const restTimer = useRestTimer();                          // rest countdown after Save set
 
   // Same merged-and-overridden exercise list shape as v0.8.
   const customForDay = useMemo(() => {
@@ -52,10 +62,21 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
 
   const orderedExercises = useMemo(() => {
     const exOverrides = overrides.exercise || {};
-    return [...workout.exercises, ...customForDay].map(
-      (ex) => applyExerciseOverrides(ex, exOverrides[ex.id]),
-    );
-  }, [workout.exercises, customForDay, overrides.exercise]);
+    const customOrder = overrides.order?.[workout.id];
+    const fullList = [...workout.exercises, ...customForDay];
+    const apply = (ex) => applyExerciseOverrides(ex, exOverrides[ex.id]);
+    if (!Array.isArray(customOrder)) return fullList.map(apply);
+    // Apply the saved sequence, then append any new exercises added
+    // after the order was saved so nothing drops off the list.
+    const byId = new Map(fullList.map((e) => [e.id, e]));
+    const result = [];
+    for (const id of customOrder) {
+      const ex = byId.get(id);
+      if (ex) { result.push(apply(ex)); byId.delete(id); }
+    }
+    for (const ex of byId.values()) result.push(apply(ex));
+    return result;
+  }, [workout.exercises, customForDay, overrides.exercise, overrides.order, workout.id]);
 
   // Progress: sets logged / sets planned
   const { logged, planned } = useMemo(() => {
@@ -144,6 +165,9 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
           </div>
         </motion.section>
 
+        {/* WARM-UP ────────────────────────────────────────────────── */}
+        <WarmUpCard workoutType={workout.id} />
+
         {/* ADD EXERCISE — discoverable at the TOP, not buried.  ──── */}
         <motion.button
           type="button"
@@ -172,7 +196,22 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
 
         {/* EXERCISE LIST ──────────────────────────────────────────── */}
         <section className="mt-6 space-y-3">
-          <SectionLabel>{lang === 'zh' ? '动作清单' : 'Exercises'}</SectionLabel>
+          <SectionLabel
+            trailing={
+              <button
+                type="button"
+                onClick={() => setReorderOpen(true)}
+                className="v2-caption v2-t2 hover:v2-t1 transition flex items-center gap-1"
+              >
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+                  <path d="M4 8h16M4 12h16M4 16h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+                {lang === 'zh' ? '排序' : 'Reorder'}
+              </button>
+            }
+          >
+            {lang === 'zh' ? '动作清单' : 'Exercises'}
+          </SectionLabel>
           {orderedExercises.map((ex, i) => (
             <ExerciseCard
               key={ex.id}
@@ -185,9 +224,16 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
               weightUnit={weightUnit}
               onLog={() => setLoggerFor(ex)}
               onChipTap={(idx, log) => setActionFor({ exId: ex.id, idx, log })}
+              onOpenDetail={() => setModalFor(ex)}
             />
           ))}
         </section>
+
+        {/* COOL-DOWN ──────────────────────────────────────────────── */}
+        <CoolDownCard workoutType={workout.id} />
+
+        {/* BODY MAP ──────────────────────────────────────────────── */}
+        <BodyMapCard workout={workout} />
       </main>
 
       {/* FLOATING COMPLETE BUTTON ─────────────────────────────────── */}
@@ -228,7 +274,11 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
             t={t}
             onSave={(log) => {
               upsertLog(loggerFor.id, log);
+              const restSecs = loggerFor.restSeconds || 60;
               setLoggerFor(null);
+              // Auto-fire rest countdown — caps at 5min so a stale
+              // exerciseData value can't trap the timer forever.
+              restTimer.start(Math.min(restSecs, 300));
             }}
             onCancel={() => setLoggerFor(null)}
           />
@@ -316,6 +366,28 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
           onClose={() => setAddExOpen(false)}
         />
       </Sheet>
+
+      {/* EXERCISE DETAIL MODAL ─────────────────────────────────────── */}
+      <ExerciseModal
+        open={!!modalFor}
+        exercise={modalFor}
+        onClose={() => setModalFor(null)}
+      />
+
+      {/* REST TIMER (floating pill) ────────────────────────────────── */}
+      <RestTimer
+        timer={restTimer}
+        onDone={() => restTimer.stop()}
+        onStop={() => restTimer.stop()}
+      />
+
+      {/* REORDER SHEET ───────────────────────────────────────────── */}
+      <ReorderSheet
+        open={reorderOpen}
+        onClose={() => setReorderOpen(false)}
+        workout={workout}
+        exercises={orderedExercises}
+      />
     </Screen>
   );
 }
@@ -324,7 +396,7 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
 // Exercise card
 // ─────────────────────────────────────────────────────────────────────
 
-function ExerciseCard({ idx, ex, session, history, lang, t, weightUnit, onLog, onChipTap }) {
+function ExerciseCard({ idx, ex, session, history, lang, t, weightUnit, onLog, onChipTap, onOpenDetail }) {
   const logs = session?.completedSets?.[ex.id] || [];
   const planned = ex.sets || 0;
   const done = logs.length;
@@ -358,15 +430,22 @@ function ExerciseCard({ idx, ex, session, history, lang, t, weightUnit, onLog, o
         <span className="v2-num text-[11px] tracking-wider v2-t3 mt-1.5 w-5">
           {String(idx).padStart(2, '0')}
         </span>
-        <div className="flex-1 min-w-0">
-          <div className="v2-title text-[17px] leading-tight">
+        <button
+          type="button"
+          onClick={onOpenDetail}
+          className="flex-1 min-w-0 text-left"
+        >
+          <div className="v2-title text-[17px] leading-tight flex items-center gap-1.5">
             {locEx(ex, 'name', lang)}
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="v2-t3">
+              <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </div>
           <div className="v2-body text-[12.5px] v2-t2 mt-1">
             {planned} × {ex.repRange}
             {ex.restSeconds ? ` · ${ex.restSeconds}s rest` : ''}
           </div>
-        </div>
+        </button>
         {complete && (
           <span
             className="shrink-0 w-6 h-6 rounded-full grid place-items-center"

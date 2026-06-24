@@ -21,6 +21,7 @@ import ActivityRing from '../components/ActivityRing.jsx';
 import CountUp from '../components/CountUp.jsx';
 import MeshGradient from '../components/MeshGradient.jsx';
 import VolumeChart from '../components/VolumeChart.jsx';
+import SettingsSheet from '../components/SettingsSheet.jsx';
 import { useTheme as useV2Theme } from '../useTheme.js';
 import { tints, tintForKind, KIND_LABEL, KIND_LABEL_ZH, springs, stagger } from '../theme.js';
 
@@ -127,6 +128,7 @@ export default function Dashboard({ history = {}, onOpenWorkout }) {
   const { theme, toggle: toggleTheme } = useV2Theme();
   const toggleLang = () => setLang(lang === 'zh' ? 'en' : 'zh');
 
+  const [settingsOpen, setSettingsOpen] = React.useState(false);
   const scrollRef = React.useRef(null);
   const { scrollY: motionScrollY } = useScroll({ container: scrollRef });
   // Hero parallax — text drifts up at 0.4x scroll, mesh drifts at 0.2x.
@@ -188,10 +190,7 @@ export default function Dashboard({ history = {}, onOpenWorkout }) {
             ariaLabel="Settings"
             variant="glass"
             icon={ICON.settings}
-            onClick={() => {
-              const next = weightUnit === 'kg' ? 'lb' : 'kg';
-              setWeightUnit(next);
-            }}
+            onClick={() => setSettingsOpen(true)}
           />
         }
       />
@@ -274,6 +273,8 @@ export default function Dashboard({ history = {}, onOpenWorkout }) {
         {/* MISSION ─────────────────────────────────────────────────── */}
         <Mission overrides={overrides} lang={lang} t={t} />
       </main>
+
+      <SettingsSheet open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </Screen>
   );
 }
