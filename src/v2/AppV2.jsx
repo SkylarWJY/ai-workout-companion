@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { LanguageProvider } from '../i18n/index.jsx';
 import { OverridesProvider } from '../hooks/useOverrides.jsx';
 import { useLocalStorage } from '../hooks/useLocalStorage.js';
@@ -7,6 +7,7 @@ import { useTheme } from '../hooks/useTheme.js';
 import { WORKOUTS } from '../data/workoutData.js';
 import Dashboard from './screens/Dashboard.jsx';
 import WorkoutDay from './screens/WorkoutDay.jsx';
+import Confetti from './components/Confetti.jsx';
 import { springs } from './theme.js';
 
 function dateKeyFor(ts) {
@@ -46,6 +47,7 @@ function Root() {
   const [activeType, setActiveType] = useState(null);
   const [history, setHistory] = useLocalStorage('atlas.history', {});
   const [activeSession, setActiveSession] = useLocalStorage('atlas.activeSession', null);
+  const [confettiActive, setConfettiActive] = useState(false);
 
   const workout = activeType ? WORKOUTS[activeType] : null;
 
@@ -95,6 +97,12 @@ function Root() {
         },
       }));
     }
+    // Only fire confetti when at least one set was logged — preventing
+    // the burst from playing when the user ends an empty session.
+    if (countSets(activeSession) > 0) {
+      setConfettiActive(true);
+      setTimeout(() => setConfettiActive(false), 3600);
+    }
     setActiveSession(null);
     setActiveType(null);
     setView('home');
@@ -102,33 +110,36 @@ function Root() {
 
   return (
     <div className="v2 min-h-[100dvh] w-full">
-      <div className="max-w-md mx-auto relative">
-        {view === 'workout' && workout && activeSession ? (
-          <motion.div
-            key={`workout-${workout.id}`}
-            initial={{ opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={springs.page}
-          >
-            <WorkoutDay
-              workout={workout}
-              session={activeSession}
-              setSession={setActiveSession}
-              onBack={exitWorkout}
-              onComplete={completeWorkout}
-            />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="home"
-            initial={{ opacity: 0, x: -24 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={springs.page}
-          >
-            <Dashboard history={history} onOpenWorkout={openWorkout} />
-          </motion.div>
-        )}
-      </div>
+      <LayoutGroup>
+        <div className="max-w-md mx-auto relative">
+          {view === 'workout' && workout && activeSession ? (
+            <motion.div
+              key={`workout-${workout.id}`}
+              initial={{ opacity: 0, x: 24 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={springs.page}
+            >
+              <WorkoutDay
+                workout={workout}
+                session={activeSession}
+                setSession={setActiveSession}
+                onBack={exitWorkout}
+                onComplete={completeWorkout}
+              />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="home"
+              initial={{ opacity: 0, x: -24 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={springs.page}
+            >
+              <Dashboard history={history} onOpenWorkout={openWorkout} />
+            </motion.div>
+          )}
+        </div>
+      </LayoutGroup>
+      <Confetti active={confettiActive} />
     </div>
   );
 }

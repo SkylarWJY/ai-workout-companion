@@ -119,22 +119,27 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
           transition={springs.smooth}
           className="pt-6"
         >
-          <div className="v2-caption text-white/55">
+          <div className="v2-caption v2-t2">
             {lang === 'zh' ? '今日训练' : "TODAY'S SESSION"}
           </div>
-          <h1 className="v2-display text-[36px] leading-[1.02] mt-2">{wname}.</h1>
-          <p className="v2-body text-[14px] text-white/55 mt-1.5">
+          <motion.h1
+            layoutId={`workout-name-${workout.id}`}
+            className="v2-display text-[36px] leading-[1.02] mt-2 v2-t1"
+          >
+            {wname}.
+          </motion.h1>
+          <p className="v2-body text-[14px] v2-t2 mt-1.5">
             {locWorkout(workout, 'subtitle', lang)}
           </p>
 
           {/* Progress bar — Apple Health style */}
-          <div className="mt-5 h-1.5 bg-white/[0.08] rounded-full overflow-hidden">
+          <div className="mt-5 h-1.5 v2-bg-soft rounded-full overflow-hidden">
             <motion.div
               initial={false}
               animate={{ width: `${progress * 100}%` }}
               transition={springs.smooth}
               className="h-full rounded-full"
-              style={{ background: progress >= 1 ? tints.green : '#FFFFFF' }}
+              style={{ background: progress >= 1 ? tints.green : 'var(--accent)' }}
             />
           </div>
         </motion.section>
@@ -148,11 +153,10 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
           whileTap={{ scale: 0.985 }}
           onClick={() => setAddExOpen(true)}
           className="mt-7 w-full v2-card-flat py-3 px-4 flex items-center gap-3 text-left"
-          style={{ boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.10)' }}
+          style={{ boxShadow: 'inset 0 0 0 0.5px var(--hairline-strong)' }}
         >
           <span
-            className="w-9 h-9 rounded-full grid place-items-center"
-            style={{ background: 'rgba(255,255,255,0.10)' }}
+            className="w-9 h-9 rounded-full grid place-items-center v2-bg-soft-2"
           >
             {ICON.plus}
           </span>
@@ -160,7 +164,7 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
             <div className="v2-title text-[15px]">
               {lang === 'zh' ? '加一个动作' : 'Add an exercise'}
             </div>
-            <div className="v2-body text-[12px] text-white/45 mt-0.5">
+            <div className="v2-body text-[12px] v2-t3 mt-0.5">
               {lang === 'zh' ? '今天临时换 / 加 — 一次性也行' : 'Swap, supplement, or one-off — your call'}
             </div>
           </div>
@@ -190,7 +194,7 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
       <div
         className="fixed inset-x-0 bottom-0 px-5 pt-3 pb-[calc(env(safe-area-inset-bottom)+12px)] pointer-events-none z-20"
         style={{
-          background: 'linear-gradient(to top, rgba(0,0,0,0.92) 35%, rgba(0,0,0,0))',
+          background: 'linear-gradient(to top, var(--canvas) 35%, transparent)',
         }}
       >
         <div className="max-w-md mx-auto pointer-events-auto">
@@ -351,14 +355,14 @@ function ExerciseCard({ idx, ex, session, history, lang, t, weightUnit, onLog, o
       className="v2-card p-4"
     >
       <div className="flex items-start gap-3">
-        <span className="v2-num text-[11px] tracking-wider text-white/35 mt-1.5 w-5">
+        <span className="v2-num text-[11px] tracking-wider v2-t3 mt-1.5 w-5">
           {String(idx).padStart(2, '0')}
         </span>
         <div className="flex-1 min-w-0">
           <div className="v2-title text-[17px] leading-tight">
             {locEx(ex, 'name', lang)}
           </div>
-          <div className="v2-body text-[12.5px] text-white/55 mt-1">
+          <div className="v2-body text-[12.5px] v2-t2 mt-1">
             {planned} × {ex.repRange}
             {ex.restSeconds ? ` · ${ex.restSeconds}s rest` : ''}
           </div>
@@ -386,8 +390,8 @@ function ExerciseCard({ idx, ex, session, history, lang, t, weightUnit, onLog, o
         {Array.from({ length: Math.max(0, planned - done) }).map((_, i) => (
           <span
             key={`empty-${i}`}
-            className="h-7 px-3 rounded-full flex items-center gap-1 text-[11px] tracking-wide v2-num text-white/30"
-            style={{ boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.10)' }}
+            className="h-7 px-3 rounded-full flex items-center gap-1 text-[11px] tracking-wide v2-num v2-t4"
+            style={{ boxShadow: 'inset 0 0 0 0.5px var(--hairline-strong)' }}
           >
             {String(done + i + 1).padStart(2, '0')}
           </span>
@@ -399,22 +403,22 @@ function ExerciseCard({ idx, ex, session, history, lang, t, weightUnit, onLog, o
         <div className="flex-1 min-w-0">
           {rec ? (
             <div className="flex items-center gap-2">
-              <span className="v2-caption text-[10px] text-white/40">
+              <span className="v2-caption text-[10px] v2-t3">
                 {lang === 'zh' ? '建议' : 'Try'}
               </span>
               <Chip size="sm" tint={tintForKind(rec.kind)}>
                 {rec.weight} {weightUnit}
               </Chip>
-              <span className="v2-caption text-[10px] text-white/40 whitespace-nowrap">
+              <span className="v2-caption text-[10px] v2-t3 whitespace-nowrap">
                 {(lang === 'zh' ? KIND_LABEL_ZH : KIND_LABEL)[rec.kind]}
               </span>
             </div>
           ) : lastLog ? (
-            <span className="v2-caption text-[10px] text-white/40">
+            <span className="v2-caption text-[10px] v2-t3">
               {lang === 'zh' ? `上次 ${lastLog.weight}${lastLog.weightUnit || weightUnit} × ${lastLog.reps}` : `Last ${lastLog.weight} ${lastLog.weightUnit || weightUnit} × ${lastLog.reps}`}
             </span>
           ) : (
-            <span className="v2-caption text-[10px] text-white/40">
+            <span className="v2-caption text-[10px] v2-t3">
               {lang === 'zh' ? '首次基线' : 'First baseline'}
             </span>
           )}
@@ -424,7 +428,8 @@ function ExerciseCard({ idx, ex, session, history, lang, t, weightUnit, onLog, o
           whileTap={{ scale: 0.94 }}
           transition={springs.press}
           onClick={onLog}
-          className="h-9 px-4 rounded-full bg-white text-black font-semibold text-[13px] tracking-[-0.01em]"
+          className="h-9 px-4 rounded-full font-semibold text-[13px] tracking-[-0.01em]"
+          style={{ background: 'var(--accent)', color: 'var(--canvas)' }}
         >
           {complete
             ? (lang === 'zh' ? '+ 加一组' : '+ Extra set')
@@ -443,15 +448,15 @@ function SetChip({ log, displayUnit, onClick }) {
   return (
     <motion.button
       type="button"
+      // Stamp-in: rotate from -8° + scale 0.6 → settle. Logging a fresh
+      // set should feel decisive — Apple Watch ring-close energy.
+      initial={{ scale: 0.5, rotate: -10, opacity: 0 }}
+      animate={{ scale: 1, rotate: 0, opacity: 1 }}
+      transition={{ type: 'spring', stiffness: 540, damping: 26, mass: 0.7 }}
       whileTap={{ scale: 0.92 }}
-      transition={springs.press}
       onClick={onClick}
-      className="h-7 px-2.5 rounded-full flex items-center gap-1.5 text-[11px] v2-num font-semibold tracking-[0.01em]"
-      style={{
-        background: 'rgba(255,255,255,0.08)',
-        color: 'rgba(255,255,255,0.95)',
-        boxShadow: `inset 0 0 0 0.5px rgba(255,255,255,0.12)`,
-      }}
+      className="h-7 px-2.5 rounded-full flex items-center gap-1.5 text-[11px] v2-num font-semibold tracking-[0.01em] v2-t1 v2-bg-soft-2"
+      style={{ boxShadow: `inset 0 0 0 0.5px var(--hairline-strong)` }}
     >
       <span>{w}{log.weightUnit || displayUnit}</span>
       <span className="opacity-50">×</span>
@@ -539,7 +544,7 @@ function LoggerForm({ exercise, history, weightUnit, lang, t, onSave, onCancel, 
               {(lang === 'zh' ? KIND_LABEL_ZH : KIND_LABEL)[rec.kind]}
             </span>
           </div>
-          <div className="v2-body text-[12.5px] text-white/70 mt-1.5">
+          <div className="v2-body text-[12.5px] v2-t2 mt-1.5">
             {t(`log.rec.${rec.reasoning}`)}
           </div>
         </motion.div>
@@ -583,7 +588,7 @@ function LoggerForm({ exercise, history, weightUnit, lang, t, onSave, onCancel, 
               style={
                 difficulty === d.id
                   ? { background: d.tint, color: '#000' }
-                  : { background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.78)', boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.12)' }
+                  : { background: 'var(--hairline)', color: 'var(--label-1)', boxShadow: 'inset 0 0 0 0.5px var(--hairline-strong)' }
               }
             >
               {d.label}
@@ -643,10 +648,10 @@ function StepperButton({ onClick, symbol }) {
       whileTap={{ scale: 0.88 }}
       transition={springs.press}
       onClick={onClick}
-      className="w-12 h-12 rounded-full grid place-items-center text-[22px] font-light text-white"
+      className="w-12 h-12 rounded-full grid place-items-center text-[22px] font-light v2-t1"
       style={{
-        background: 'rgba(255,255,255,0.08)',
-        boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.12)',
+        background: 'var(--hairline)',
+        boxShadow: 'inset 0 0 0 0.5px var(--hairline-strong)',
       }}
     >
       {symbol}
@@ -703,7 +708,7 @@ function AddExerciseForm({ workoutId, lang, onClose }) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder={lang === 'zh' ? '比如 「绳索三头屈伸」' : 'e.g. Cable Tricep Pushdown'}
-          className="w-full bg-transparent border-0 outline-none v2-title text-[20px] text-white placeholder-white/30"
+          className="w-full bg-transparent border-0 outline-none v2-title text-[20px] text-white placeholder:opacity-30"
         />
       </Field>
       <div className="v2-hairline" />
@@ -732,7 +737,7 @@ function AddExerciseForm({ workoutId, lang, onClose }) {
           value={primary}
           onChange={(e) => setPrimary(e.target.value)}
           placeholder={lang === 'zh' ? '比如「三头」' : 'e.g. Triceps'}
-          className="w-full bg-transparent border-0 outline-none v2-body text-[16px] text-white placeholder-white/30"
+          className="w-full bg-transparent border-0 outline-none v2-body text-[16px] text-white placeholder:opacity-30"
         />
       </Field>
 

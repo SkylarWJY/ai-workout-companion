@@ -63,10 +63,11 @@ button {
    ─────────────────────────────────────────────────────── */
 
 .v2 {
-  /* OLED-black canvas with Apple's grouped-table elevation grays.
-     Numbers picked from iOS 18 system colors so cards feel native
-     when running as a PWA on a real iPhone. */
+  /* Dark mode = OLED-black canvas with Apple's grouped-table elevation
+     grays. Numbers picked from iOS 18 system colors so cards feel
+     native when running as a PWA on a real iPhone. */
   --canvas:       #000000;
+  --canvas-deep:  #000000;       /* fallback for gradients */
   --surface-1:    rgba(28, 28, 30, 1);    /* primary card */
   --surface-2:    rgba(44, 44, 46, 1);    /* nested card */
   --surface-3:    rgba(58, 58, 60, 1);    /* chip / pill */
@@ -89,6 +90,13 @@ button {
   --tint-pink:    #FF375F;
 
   --accent:       #FFFFFF;  /* mono accent for the most premium feel */
+  --press-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.45);
+
+  /* Mesh gradient stop colors — used by the moving blob behind hero.
+     In dark mode these stay subtle so OLED black still dominates. */
+  --mesh-1: rgba(94, 92, 230, 0.32);
+  --mesh-2: rgba(255, 55, 95, 0.22);
+  --mesh-3: rgba(48, 209, 88, 0.18);
 
   color: var(--label-1);
   background: var(--canvas);
@@ -98,7 +106,46 @@ button {
   text-rendering: optimizeLegibility;
 }
 
-.v2 ::selection { background: rgba(255, 255, 255, 0.18); color: #fff; }
+/* Light theme — soft warm-white canvas with iOS-grouped-table surfaces.
+   Mirrors Apple's light-mode hierarchy so the same components read the
+   same way visually. */
+.v2.light {
+  --canvas:       #F5F5F7;
+  --canvas-deep:  #FFFFFF;
+  --surface-1:    rgba(255, 255, 255, 1);
+  --surface-2:    rgba(248, 248, 250, 1);
+  --surface-3:    rgba(238, 238, 240, 1);
+  --glass:        rgba(255, 255, 255, 0.72);
+  --glass-strong: rgba(255, 255, 255, 0.88);
+  --hairline:     rgba(0, 0, 0, 0.06);
+  --hairline-strong: rgba(0, 0, 0, 0.10);
+
+  --label-1:      rgba(0, 0, 0, 0.92);
+  --label-2:      rgba(60, 60, 67, 0.62);
+  --label-3:      rgba(60, 60, 67, 0.32);
+  --label-4:      rgba(60, 60, 67, 0.18);
+
+  /* iOS light-mode tints — slightly darker so contrast on white holds */
+  --tint-blue:    #007AFF;
+  --tint-indigo:  #5856D6;
+  --tint-green:   #34C759;
+  --tint-orange:  #FF9500;
+  --tint-red:     #FF3B30;
+  --tint-mint:    #00C7BE;
+  --tint-pink:    #FF2D55;
+
+  --accent:       #000000;
+  --press-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.10);
+
+  --mesh-1: rgba(94, 92, 230, 0.20);
+  --mesh-2: rgba(255, 55, 95, 0.16);
+  --mesh-3: rgba(48, 209, 88, 0.14);
+
+  color: var(--label-1);
+  background: var(--canvas);
+}
+
+.v2 ::selection { background: rgba(127, 127, 127, 0.25); color: var(--label-1); }
 
 /* Hero display type — tight tracking, optical kerning, large size */
 .v2-display {
@@ -123,6 +170,23 @@ button {
   text-transform: uppercase;
   color: var(--label-2);
 }
+
+/* Theme-aware text utilities. Use these instead of text-white/* so the
+   components automatically respect light/dark. */
+.v2-t1 { color: var(--label-1); }
+.v2-t2 { color: var(--label-2); }
+.v2-t3 { color: var(--label-3); }
+.v2-t4 { color: var(--label-4); }
+
+/* Theme-aware fill / stroke for SVG */
+.v2-fill-1 { fill: var(--label-1); }
+.v2-stroke-1 { stroke: var(--label-1); }
+
+/* Theme-aware subtle background utilities */
+.v2-bg-surface-1 { background: var(--surface-1); }
+.v2-bg-surface-2 { background: var(--surface-2); }
+.v2-bg-soft { background: var(--hairline); }
+.v2-bg-soft-2 { background: var(--hairline-strong); }
 
 /* Surfaces. Use these instead of raw bg colors so card depth
    stays consistent across the whole app. */
@@ -208,3 +272,46 @@ button {
 .v2-glow-green { box-shadow: 0 0 0 0.5px rgba(48, 209, 88, 0.4), 0 0 18px -6px rgba(48, 209, 88, 0.55); }
 .v2-glow-blue  { box-shadow: 0 0 0 0.5px rgba(10, 132, 255, 0.4), 0 0 18px -6px rgba(10, 132, 255, 0.55); }
 .v2-glow-amber { box-shadow: 0 0 0 0.5px rgba(255, 159, 10, 0.4), 0 0 18px -6px rgba(255, 159, 10, 0.55); }
+
+/* ─── Animated mesh gradient — sits behind hero, drifts slowly. */
+@keyframes v2-mesh-drift {
+  0%   { transform: translate3d(-12%, -8%,  0) rotate(0deg)   scale(1.05); }
+  33%  { transform: translate3d(  8%, -4%,  0) rotate(120deg) scale(1.15); }
+  66%  { transform: translate3d( -4%,  6%,  0) rotate(240deg) scale(1.10); }
+  100% { transform: translate3d(-12%, -8%,  0) rotate(360deg) scale(1.05); }
+}
+.v2-mesh {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  background:
+    radial-gradient(40% 35% at 25% 25%, var(--mesh-1) 0%, transparent 60%),
+    radial-gradient(35% 30% at 75% 35%, var(--mesh-2) 0%, transparent 60%),
+    radial-gradient(45% 40% at 50% 75%, var(--mesh-3) 0%, transparent 60%);
+  filter: blur(40px) saturate(140%);
+  animation: v2-mesh-drift 26s ease-in-out infinite;
+  z-index: 0;
+  opacity: 0.95;
+}
+
+/* Confetti — burst on workout-complete. SVG dots styled with conic
+   gradient + transform animation. */
+@keyframes v2-confetti-fall {
+  0%   { transform: translate(var(--cx, 0), -10vh) rotate(0deg) scale(1); opacity: 1; }
+  100% { transform: translate(var(--cx, 0), 100vh) rotate(720deg) scale(0.4); opacity: 0; }
+}
+.v2-confetto {
+  position: absolute;
+  top: 0;
+  width: 9px;
+  height: 14px;
+  border-radius: 2px;
+  animation: v2-confetti-fall var(--dur, 2.6s) cubic-bezier(0.22, 0.9, 0.4, 1) forwards;
+  will-change: transform, opacity;
+}
+
+/* Ring chart wrapper — small subtle drop shadow so the ring lifts off the bg. */
+.v2-ring-shadow { filter: drop-shadow(0 8px 18px rgba(0,0,0,0.18)); }
+
+/* Tabular-numerals helper for big stat counters. */
+.v2-numeric { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum', 'ss01'; }

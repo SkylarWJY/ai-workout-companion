@@ -23,11 +23,11 @@ export default function Chip({
   if (variant === 'solid') {
     style = tint
       ? { background: hexToRgba(tint, 0.18), color: tint, boxShadow: `inset 0 0 0 0.5px ${hexToRgba(tint, 0.32)}` }
-      : { background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.92)' };
+      : { background: 'var(--hairline-strong)', color: 'var(--label-1)' };
   } else if (variant === 'ghost') {
     style = selected
-      ? { background: 'rgba(255,255,255,0.95)', color: '#000' }
-      : { background: 'transparent', color: 'rgba(255,255,255,0.78)', boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.16)' };
+      ? { background: 'var(--accent)', color: 'var(--canvas)' }
+      : { background: 'transparent', color: 'var(--label-1)', boxShadow: 'inset 0 0 0 0.5px var(--hairline-strong)' };
   }
 
   const Tag = onClick ? motion.button : motion.span;

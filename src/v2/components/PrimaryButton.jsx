@@ -10,7 +10,7 @@ export default function PrimaryButton({
   children,
   variant = 'filled',
   size = 'md',
-  tint = '#FFFFFF',
+  tint = null,
   onClick,
   disabled = false,
   className = '',
@@ -24,20 +24,30 @@ export default function PrimaryButton({
     lg: 'h-14 px-7 text-[17px] rounded-2xl',
   }[size];
 
+  // When tint isn't passed, use the theme accent (white in dark / black in light)
+  // so the same JSX reads correctly in both color schemes.
+  const useThemeAccent = tint == null;
+  const tintHex = tint || '#FFFFFF'; // hex needed for rgba helper below
   const v = {
-    filled: {
-      background: tint,
-      color: tint === '#FFFFFF' ? '#000000' : '#FFFFFF',
-    },
-    tinted: {
-      background: hexToRgba(tint, 0.16),
-      color: tint,
-      backdropFilter: 'blur(20px) saturate(180%)',
-      WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-    },
+    filled: useThemeAccent
+      ? { background: 'var(--accent)', color: 'var(--canvas)' }
+      : { background: tintHex, color: tintHex === '#FFFFFF' ? '#000000' : '#FFFFFF' },
+    tinted: useThemeAccent
+      ? {
+          background: 'var(--hairline-strong)',
+          color: 'var(--label-1)',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        }
+      : {
+          background: hexToRgba(tintHex, 0.16),
+          color: tintHex,
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        },
     plain: {
       background: 'transparent',
-      color: tint,
+      color: useThemeAccent ? 'var(--label-1)' : tintHex,
     },
   }[variant];
 
