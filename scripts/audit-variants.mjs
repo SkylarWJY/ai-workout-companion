@@ -10,6 +10,10 @@ const issues = [];
 
 for (const [exerciseId, variants] of Object.entries(DEMO_VARIANTS)) {
   if (!variants || variants.length <= 1) continue;
+  // Skylar Sculpt plan exercises (s-*) intentionally re-use the same
+  // short form-tutorial across alternates — "use this video for the
+  // form whether you do it with cable, dumbbell, or machine."
+  if (exerciseId.startsWith('s-')) continue;
   const byVideo = new Map();
   for (const v of variants) {
     const meta = resolveMeta(exerciseId, v);

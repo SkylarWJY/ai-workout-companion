@@ -975,30 +975,31 @@ export const SKYLAR_PLAN = {
 };
 
 // Suggested YouTube tutorials for the NEW exercises in this plan.
-// Reuses curated default-plan IDs where the move already exists;
-// the user can swap any one via the modal pencil at any time.
-// Mapping: exercise.id  →  default youtubeId fallback
+// EVERY id below is taken from the default-plan EXERCISE_META or
+// DEMO_VARIANTS that the user already vetted — short focus clips
+// (DeltaBolic / Jeff Nippard style, 1–3 min), not 10-min lectures.
+// User can swap any one via the modal pencil at any time.
 export const SKYLAR_TUTORIAL_FALLBACKS = {
   // Push
-  's-push-1': '4tj4DH9KuQI', // DeltaBolic — PERFECT Cable Lateral Raise (fallback to lateral raise default)
-  's-push-2': '6v4nrRVySj0', // The PERFECT Machine Shoulder Press (push-1 machine variant)
-  's-push-3': 'TfwzWdvHGiM', // Jeff Nippard — Reverse Pec Deck (rear delt fallback)
-  's-push-4': 'mGqEWBCWN9c', // DeltaBolic — Lateral Raises
-  's-push-5': '-PqzEk57xiw', // DeltaBolic — PERFECT Tricep Pushdown (rope variant)
-  's-push-6': '_HDZODOx7Zw', // DeltaBolic — Hanging Leg Raises
+  's-push-1': 'UFcaodmbXd8', // Lateral Raise Tip — same channel/length as default push-2
+  's-push-2': '6v4nrRVySj0', // The PERFECT Machine Shoulder Press (default push-1 machine variant)
+  's-push-3': 'LsT-bR_zxLo', // DeltaBolic — PERFECT Dumbbell Rear Delt Fly (same target as reverse pec deck)
+  's-push-4': 'UFcaodmbXd8', // Lateral Raise Tip
+  's-push-5': '-PqzEk57xiw', // DeltaBolic — PERFECT Tricep Pushdown (rope variant from default push-5)
+  's-push-6': 'KDbFKEScp1M', // Hanging Leg Raise mistake — short clip
   // Pull
-  's-pull-1': 'CAwf7n6Luuc', // Jeff Nippard — Wide Lat Pulldown
-  's-pull-2': '4v59ShSjX2w', // DeltaBolic — Chest-Supported Row (T-Bar version)
-  's-pull-3': 'la9JtkfcqgY', // Renaissance — Straight-Arm Pulldown
-  's-pull-4': 'TfwzWdvHGiM', // Jeff Nippard — Reverse Pec Deck
-  's-pull-5': 'RHc3CVgM8jw', // Jeff Nippard — Hammer Curl
-  's-pull-6': 'kvw60RrZ8mg', // Jeff Nippard — Cable Crunch
+  's-pull-1': 'bNmvKpJSWKM', // The PERFECT Lat Pulldown (default pull-3)
+  's-pull-2': '4v59ShSjX2w', // DeltaBolic — Chest-Supported T-Bar Row (default pull-2 bestpick)
+  's-pull-3': 'bNmvKpJSWKM', // Closest verified clip — lat-focused pulldown form
+  's-pull-4': 'LsT-bR_zxLo', // DeltaBolic — Rear Delt Fly form
+  's-pull-5': 'j1FjaWu5Am4', // Bicep form tips (default pull-6)
+  's-pull-6': 'XWJmFD_AdbM', // Jeremy Ethier — Ab Roller form (default pull-7, closest cable-style ab work)
   // Leg
-  's-leg-1': 'xDmFkJxPzeM', // Bret Contreras — Hip Thrust
-  's-leg-2': 'IZxyjW7MPJQ', // DeltaBolic — Leg Press
-  's-leg-3': 'jEy_czb3RKA', // DeltaBolic — RDL
-  's-leg-4': '2C-uNgKwPLE', // Athlean-X — Bulgarian Split Squat
-  's-leg-5': '4tj4DH9KuQI', // Cable Lateral Raise
-  's-leg-6': '-M4-G8p8fmc', // Standing Calf Raise
-  's-leg-7': '4XLEnwUr1d8', // Dead Bug
+  's-leg-1': '_i6qpcI1Nw4', // Hip Thrust Tips (default leg-4)
+  's-leg-2': 'YSnMWxs7wss', // GOBLET SQUAT key points (default leg-1)
+  's-leg-3': 'CBOhr6H7BEY', // RDL Tips (default leg-2)
+  's-leg-4': 'uBSoEWZu07k', // Bulgarian Split Squat – Glute-Focused (default leg-3)
+  's-leg-5': 'UFcaodmbXd8', // Lateral Raise Tip
+  's-leg-6': 'wdOkFomQNp8', // Build BIGGER Calves (default leg-6)
+  's-leg-7': 'qV0K0dwPYAU', // The Deadbug: Master This Core Exercise (default leg-7)
 };
