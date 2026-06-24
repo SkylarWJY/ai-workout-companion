@@ -63,11 +63,11 @@ button {
    ─────────────────────────────────────────────────────── */
 
 .v2 {
-  /* Dark mode = OLED-black canvas with Apple's grouped-table elevation
-     grays. Numbers picked from iOS 18 system colors so cards feel
-     native when running as a PWA on a real iPhone. */
-  --canvas:       #000000;
-  --canvas-deep:  #000000;       /* fallback for gradients */
+  /* Dark mode = near-OLED canvas (#070708, not pure black) so the
+     aurora behind the glass cards has something to glow against
+     while still feeling pitch-dark on AMOLED screens. */
+  --canvas:       #07070A;
+  --canvas-deep:  #07070A;       /* fallback for gradients */
   --surface-1:    rgba(28, 28, 30, 1);    /* primary card */
   --surface-2:    rgba(44, 44, 46, 1);    /* nested card */
   --surface-3:    rgba(58, 58, 60, 1);    /* chip / pill */
@@ -189,24 +189,45 @@ button {
 .v2-bg-soft-2 { background: var(--hairline-strong); }
 
 /* Surfaces. Use these instead of raw bg colors so card depth
-   stays consistent across the whole app. */
+   stays consistent across the whole app.
+   ─── Liquid-glass refresh ───
+   Cards are now translucent panels that show the aurora background
+   through, with strong backdrop blur for that frosted-glass refraction.
+   The hairline highlight on top + soft drop shadow give them the
+   "panel floating in space" feel from Skylar's reference. */
 .v2-card {
-  background: var(--surface-1);
+  background: rgba(28, 28, 30, 0.52);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+          backdrop-filter: blur(28px) saturate(180%);
   border-radius: 22px;
   box-shadow:
-    inset 0 0.5px 0 0 rgba(255, 255, 255, 0.08),
-    0 1px 1px rgba(0, 0, 0, 0.5),
-    0 12px 28px -8px rgba(0, 0, 0, 0.45);
+    inset 0 0.5px 0 0 rgba(255, 255, 255, 0.14),
+    inset 0 -0.5px 0 0 rgba(255, 255, 255, 0.04),
+    0 1px 1px rgba(0, 0, 0, 0.45),
+    0 18px 36px -10px rgba(0, 0, 0, 0.48);
 }
 .v2-card-flat {
-  background: var(--surface-1);
+  background: rgba(28, 28, 30, 0.42);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+          backdrop-filter: blur(20px) saturate(180%);
   border-radius: 18px;
-  box-shadow: inset 0 0.5px 0 0 rgba(255, 255, 255, 0.06);
+  box-shadow:
+    inset 0 0.5px 0 0 rgba(255, 255, 255, 0.10),
+    0 8px 22px -8px rgba(0, 0, 0, 0.35);
 }
 .v2-card-nested {
-  background: var(--surface-2);
+  background: rgba(44, 44, 46, 0.55);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+          backdrop-filter: blur(14px) saturate(160%);
   border-radius: 14px;
 }
+
+/* Light-mode glass tint — keep panels readable on the warm-white canvas. */
+.v2.light .v2-card        { background: rgba(255, 255, 255, 0.62);
+  box-shadow: inset 0 0.5px 0 0 rgba(255, 255, 255, 0.8), 0 1px 1px rgba(0,0,0,0.04), 0 18px 36px -10px rgba(0,0,0,0.12); }
+.v2.light .v2-card-flat   { background: rgba(255, 255, 255, 0.52);
+  box-shadow: inset 0 0.5px 0 0 rgba(255, 255, 255, 0.7), 0 8px 22px -8px rgba(0,0,0,0.08); }
+.v2.light .v2-card-nested { background: rgba(248, 248, 250, 0.62); }
 
 /* Apple-style glass. saturate(180%) gives that vibrant frost feel
    you can't get with raw blur. */
@@ -272,6 +293,42 @@ button {
 .v2-glow-green { box-shadow: 0 0 0 0.5px rgba(48, 209, 88, 0.4), 0 0 18px -6px rgba(48, 209, 88, 0.55); }
 .v2-glow-blue  { box-shadow: 0 0 0 0.5px rgba(10, 132, 255, 0.4), 0 0 18px -6px rgba(10, 132, 255, 0.55); }
 .v2-glow-amber { box-shadow: 0 0 0 0.5px rgba(255, 159, 10, 0.4), 0 0 18px -6px rgba(255, 159, 10, 0.55); }
+
+/* Ambient aurora — sits behind the entire .v2 surface and drifts
+   constantly. Glass cards refract this through their backdrop-blur,
+   giving the whole app a "panel floating over a living sky" feel
+   (the Skylar liquid-glass reference). */
+.v2 { position: relative; }
+.v2::before {
+  content: '';
+  position: fixed;
+  inset: -20%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(35% 30% at 20% 20%, rgba(94, 92, 230, 0.36) 0%, transparent 60%),
+    radial-gradient(30% 26% at 78% 18%, rgba(255, 55, 95, 0.26) 0%, transparent 60%),
+    radial-gradient(40% 36% at 50% 80%, rgba(48, 209, 88, 0.22) 0%, transparent 60%),
+    radial-gradient(28% 24% at 85% 70%, rgba(10, 132, 255, 0.24) 0%, transparent 60%);
+  filter: blur(60px) saturate(140%);
+  animation: v2-aurora 40s ease-in-out infinite;
+}
+.v2.light::before {
+  background:
+    radial-gradient(35% 30% at 20% 20%, rgba(94, 92, 230, 0.22) 0%, transparent 60%),
+    radial-gradient(30% 26% at 78% 18%, rgba(255, 55, 95, 0.16) 0%, transparent 60%),
+    radial-gradient(40% 36% at 50% 80%, rgba(48, 209, 88, 0.14) 0%, transparent 60%),
+    radial-gradient(28% 24% at 85% 70%, rgba(10, 132, 255, 0.16) 0%, transparent 60%);
+}
+@keyframes v2-aurora {
+  0%   { transform: translate3d(-4%,  2%, 0) rotate(0deg)   scale(1.05); }
+  33%  { transform: translate3d( 6%, -4%, 0) rotate(60deg)  scale(1.15); }
+  66%  { transform: translate3d(-2%,  5%, 0) rotate(-30deg) scale(1.10); }
+  100% { transform: translate3d(-4%,  2%, 0) rotate(0deg)   scale(1.05); }
+}
+
+/* Make sure main app content sits above the aurora layer. */
+.v2 > * { position: relative; z-index: 1; }
 
 /* ─── Animated mesh gradient — sits behind hero, drifts slowly. */
 @keyframes v2-mesh-drift {

@@ -40,9 +40,15 @@ export function useT() {
 }
 
 // Pull a localized field off an exercise.
-// Falls back to English value if no ZH translation exists.
+// Resolution order for Chinese:
+//   1. Inline `${field}Zh` on the exercise itself (coach-plan data
+//      stores translations alongside the source)
+//   2. EXERCISES_ZH dictionary (default-plan exercises live here)
+//   3. English fallback
 export function locEx(exercise, field, lang) {
   if (lang !== 'zh') return exercise[field];
+  const inline = exercise?.[`${field}Zh`];
+  if (inline != null) return inline;
   const zh = EXERCISES_ZH[exercise.id]?.[field];
   if (zh != null) return zh;
   return exercise[field];
@@ -50,6 +56,8 @@ export function locEx(exercise, field, lang) {
 
 export function locWorkout(workout, field, lang) {
   if (lang !== 'zh') return workout[field];
+  const inline = workout?.[`${field}Zh`];
+  if (inline != null) return inline;
   const zh = WORKOUTS_ZH[workout.id]?.[field];
   if (zh != null) return zh;
   return workout[field];
