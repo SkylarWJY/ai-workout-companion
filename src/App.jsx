@@ -26,7 +26,48 @@ function countSets(session) {
   return n;
 }
 
+// Lazy-load v2 so the v0.8 bundle stays unaffected — the v2 chunk only
+// downloads when the gate trips. Production / root URL keeps shipping v1.
+const AppV2 = React.lazy(() => import('./v2/AppV2.jsx'));
+
+function useV2Gate() {
+  // Two triggers: ?v=2 in the URL, or localStorage.atlas.theme === 'v2'.
+  // URL takes precedence so testers can A/B without persisting state.
+  const [on, setOn] = React.useState(() => {
+    if (typeof window === 'undefined') return false;
+    const url = new URL(window.location.href);
+    const param = url.searchParams.get('v');
+    if (param === '2') return true;
+    if (param === '1') return false;
+    try {
+      return JSON.parse(localStorage.getItem('atlas.theme') || 'null') === 'v2';
+    } catch { return false; }
+  });
+  React.useEffect(() => {
+    // Listen for runtime toggles from inside the app.
+    const handler = () => setOn((prev) => {
+      try { return JSON.parse(localStorage.getItem('atlas.theme') || 'null') === 'v2'; }
+      catch { return prev; }
+    });
+    window.addEventListener('storage', handler);
+    window.addEventListener('atlas-theme-change', handler);
+    return () => {
+      window.removeEventListener('storage', handler);
+      window.removeEventListener('atlas-theme-change', handler);
+    };
+  }, []);
+  return on;
+}
+
 export default function App() {
+  const v2 = useV2Gate();
+  if (v2) {
+    return (
+      <React.Suspense fallback={<div className="v2 v2-screen" />}>
+        <AppV2 />
+      </React.Suspense>
+    );
+  }
   return (
     <LanguageProvider>
       <OverridesProvider>
