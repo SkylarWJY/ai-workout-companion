@@ -108,7 +108,7 @@ export default function CoolDownCard({ workoutType }) {
         </span>
       </div>
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         {phase === 'list' ? (
           <motion.div
             key="list"
@@ -118,10 +118,29 @@ export default function CoolDownCard({ workoutType }) {
             transition={{ duration: 0.2 }}
             className="v2-card p-4"
           >
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               {stretches.map((s, i) => (
-                <li key={s.id} className="flex items-start gap-3">
-                  <span className="v2-num v2-t3 text-[11px] w-5 mt-0.5">{String(i + 1).padStart(2, '0')}</span>
+                <li key={s.id} className="flex items-center gap-3">
+                  {/* Thumb of the stretch pose */}
+                  <div
+                    className="shrink-0 w-14 h-14 rounded-2xl overflow-hidden relative"
+                    style={{ background: 'var(--surface-2)' }}
+                  >
+                    {s.image && (
+                      <img
+                        src={s.image}
+                        alt=""
+                        className="w-full h-full object-cover"
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                      />
+                    )}
+                    <span
+                      className="absolute top-1 left-1 px-1.5 py-0.5 rounded-full text-[9px] v2-num font-semibold"
+                      style={{ background: 'rgba(0,0,0,0.55)', color: '#fff' }}
+                    >
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                  </div>
                   <div className="flex-1 min-w-0">
                     <div className="v2-body text-[14px] v2-t1 truncate">{locStretch(s, 'name', lang)}</div>
                     <div className="v2-caption v2-t3 text-[9px] tracking-wide mt-0.5">
@@ -156,44 +175,77 @@ export default function CoolDownCard({ workoutType }) {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
             transition={springs.smooth}
-            className="v2-card p-5 text-center"
+            className="v2-card overflow-hidden"
           >
-            <div className="v2-caption v2-t3 text-[9px] tracking-wide">
-              {idx + 1} / {total}
-            </div>
-            <div className="v2-title text-[18px] v2-t1 mt-1">
-              {locStretch(current, 'name', lang)}
-            </div>
-            <div className="v2-body text-[12.5px] v2-t2 mt-1 max-w-[26ch] mx-auto leading-relaxed">
-              {locStretch(current, 'cue', lang)}
-            </div>
-
-            {/* Big ring */}
-            <div className="relative w-[180px] h-[180px] mx-auto mt-4">
-              <svg width="180" height="180" viewBox="0 0 180 180" className="-rotate-90 v2-ring-shadow">
-                <circle cx="90" cy="90" r={R} stroke={tints.mint} strokeOpacity="0.18" strokeWidth="10" fill="none" />
-                <motion.circle
-                  cx="90" cy="90" r={R}
-                  stroke={tints.mint}
-                  strokeWidth="10"
-                  strokeLinecap="round"
-                  fill="none"
-                  strokeDasharray={C}
-                  animate={{ strokeDashoffset: C * (1 - pct) }}
-                  transition={{ type: 'spring', stiffness: 80, damping: 22 }}
+            {/* Hero image — full-width pose photo with blur-edge gradient. */}
+            {current.image && (
+              <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
+                <img
+                  src={current.image}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover"
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
                 />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                {isUni && (
-                  <div className="v2-caption text-[10px]" style={{ color: tints.mint }}>
-                    {lang === 'zh' ? (side === 'L' ? '左侧' : '右侧') : (side === 'L' ? 'LEFT' : 'RIGHT')}
-                  </div>
-                )}
-                <div className="v2-display v2-numeric v2-t1 text-[44px] mt-1">
-                  {fmtTime(remaining)}
+                <div
+                  className="absolute inset-0"
+                  style={{ background: 'linear-gradient(to bottom, transparent 50%, var(--surface-1) 100%)' }}
+                />
+                <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+                  <span
+                    className="v2-caption text-[10px] tracking-wide px-2 py-1 rounded-full"
+                    style={{ background: 'rgba(0,0,0,0.5)', color: '#fff' }}
+                  >
+                    {idx + 1} / {total}
+                  </span>
+                  <span
+                    className="v2-caption text-[10px] tracking-wide px-2 py-1 rounded-full"
+                    style={{ background: 'rgba(0,0,0,0.5)', color: '#fff' }}
+                  >
+                    {locStretch(current, 'target', lang)}
+                  </span>
                 </div>
               </div>
-            </div>
+            )}
+
+            <div className="px-5 pt-3 pb-5 text-center">
+              {!current.image && (
+                <div className="v2-caption v2-t3 text-[9px] tracking-wide">
+                  {idx + 1} / {total}
+                </div>
+              )}
+              <div className="v2-title text-[18px] v2-t1 mt-1">
+                {locStretch(current, 'name', lang)}
+              </div>
+              <div className="v2-body text-[12.5px] v2-t2 mt-1 max-w-[26ch] mx-auto leading-relaxed">
+                {locStretch(current, 'cue', lang)}
+              </div>
+
+              {/* Big ring */}
+              <div className="relative w-[180px] h-[180px] mx-auto mt-4">
+                <svg width="180" height="180" viewBox="0 0 180 180" className="-rotate-90 v2-ring-shadow">
+                  <circle cx="90" cy="90" r={R} stroke={tints.mint} strokeOpacity="0.18" strokeWidth="10" fill="none" />
+                  <motion.circle
+                    cx="90" cy="90" r={R}
+                    stroke={tints.mint}
+                    strokeWidth="10"
+                    strokeLinecap="round"
+                    fill="none"
+                    strokeDasharray={C}
+                    animate={{ strokeDashoffset: C * (1 - pct) }}
+                    transition={{ type: 'spring', stiffness: 80, damping: 22 }}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  {isUni && (
+                    <div className="v2-caption text-[10px]" style={{ color: tints.mint }}>
+                      {lang === 'zh' ? (side === 'L' ? '左侧' : '右侧') : (side === 'L' ? 'LEFT' : 'RIGHT')}
+                    </div>
+                  )}
+                  <div className="v2-display v2-numeric v2-t1 text-[44px] mt-1">
+                    {fmtTime(remaining)}
+                  </div>
+                </div>
+              </div>
 
             {/* L/R toggle when unilateral */}
             {isUni && (
@@ -229,6 +281,7 @@ export default function CoolDownCard({ workoutType }) {
                   : (lang === 'zh' ? '下一个' : 'Next stretch')}
               </PrimaryButton>
             </div>
+            </div>{/* close px-5 pt-3 pb-5 wrapper */}
           </motion.div>
         )}
       </AnimatePresence>
