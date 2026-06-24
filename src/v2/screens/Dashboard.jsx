@@ -126,7 +126,7 @@ function isoWeekKey(d) {
 
 export default function Dashboard({ history = {}, onOpenWorkout }) {
   const { t, lang, setLang } = useLang();
-  const { overrides, weightUnit, setWeightUnit, setOverride, clearOverride } = useOverrides();
+  const { overrides, weightUnit, setWeightUnit, setOverride, clearOverride, setTopLevel } = useOverrides();
   const { theme, toggle: toggleTheme } = useV2Theme();
   const toggleLang = () => setLang(lang === 'zh' ? 'en' : 'zh');
 
@@ -159,9 +159,9 @@ export default function Dashboard({ history = {}, onOpenWorkout }) {
   const [editingCalendar, setEditingCalendar] = React.useState(false);
   const setDayType = (idx, type) => {
     const next = weeklySplit.map((d, i) => (i === idx ? { ...d, type } : d));
-    setOverride('weeklySplit', null, null, next);
+    setTopLevel('weeklySplit', next);
   };
-  const resetSplit = () => clearOverride('weeklySplit', null, null);
+  const resetSplit = () => setTopLevel('weeklySplit', null);
 
   const todayDate = new Date();
   const todayDay = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][todayDate.getDay()];

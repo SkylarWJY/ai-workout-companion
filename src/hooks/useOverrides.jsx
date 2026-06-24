@@ -87,12 +87,29 @@ export function OverridesProvider({ children }) {
 
   const resetAll = useCallback(() => setOverrides({}), [setOverrides]);
 
+  // Writes a whole top-level value (e.g. an array of weekly-split entries).
+  // setOverride() can't do this — its (scope, id, field, value) shape
+  // always treats the slot as a nested record, so a top-level array
+  // becomes an object keyed by "null" and downstream consumers crash.
+  const setTopLevel = useCallback(
+    (key, value) => {
+      setOverrides((prev) => {
+        const next = { ...prev };
+        if (value == null) delete next[key];
+        else next[key] = value;
+        return next;
+      });
+    },
+    [setOverrides],
+  );
+
   return (
     <OverridesContext.Provider
       value={{
         overrides,
         setOverride,
         clearOverride,
+        setTopLevel,
         resetAll,
         weightUnit,
         setWeightUnit,

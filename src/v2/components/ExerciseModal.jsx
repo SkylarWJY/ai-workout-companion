@@ -220,75 +220,11 @@ function ModalBody({ exercise, onEdit }) {
           </Chip>
         </div>
       ) : meta?.youtubeId ? (
-        <>
-          {/* Thumbnail + tap → YouTube. We drop the iframe entirely
-              because most of our short-form videos are YouTube Shorts,
-              which refuse iframe playback and just render a non-
-              functional cover. A thumbnail with a real anchor tap is
-              honest: one tap → YouTube App opens → video plays.
-              Works for Shorts AND long-form. No mystery "video
-              unavailable" state. */}
-          <a
-            href={`https://www.youtube.com/watch?v=${meta.youtubeId}`}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-4 block rounded-3xl overflow-hidden relative group"
-            style={{ aspectRatio: '16/9' }}
-          >
-            <img
-              src={`https://i.ytimg.com/vi/${meta.youtubeId}/hqdefault.jpg`}
-              alt="Exercise tutorial preview"
-              className="absolute inset-0 w-full h-full object-cover"
-              loading="lazy"
-              onError={(e) => {
-                // Fallback to mqdefault if hqdefault is missing for this id.
-                e.currentTarget.src = `https://i.ytimg.com/vi/${meta.youtubeId}/mqdefault.jpg`;
-              }}
-            />
-            {/* Dark gradient + centered red play button */}
-            <div className="absolute inset-0" style={{
-              background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.45) 100%)',
-            }} />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div
-                className="flex items-center justify-center transition-transform group-hover:scale-110"
-                style={{
-                  width: 64, height: 44,
-                  background: '#FF0000',
-                  borderRadius: 12,
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-                }}
-              >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff">
-                  <path d="M8 5v14l11-7L8 5z" />
-                </svg>
-              </div>
-            </div>
-            {/* Caption pill */}
-            <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-              <div
-                style={{
-                  background: 'rgba(0,0,0,0.6)',
-                  backdropFilter: 'blur(8px)',
-                  WebkitBackdropFilter: 'blur(8px)',
-                  borderRadius: 999,
-                  padding: '4px 10px',
-                  color: '#fff',
-                  fontSize: 11,
-                  fontWeight: 600,
-                  letterSpacing: '0.02em',
-                }}
-              >
-                {lang === 'zh' ? '点击播放 · YouTube' : 'Tap to play · YouTube'}
-              </div>
-            </div>
-            {perVariantYt && (
-              <Chip size="sm" tint={tints.blue} className="absolute top-3 left-3 z-10">
-                {lang === 'zh' ? '自定义' : 'Custom'}
-              </Chip>
-            )}
-          </a>
-        </>
+        <YouTubePlayer
+          videoId={meta.youtubeId}
+          lang={lang}
+          isCustom={!!perVariantYt}
+        />
       ) : null}
 
       {/* Progress hero — big animated chart with count-up + tracker */}
@@ -402,6 +338,88 @@ function ModalBody({ exercise, onEdit }) {
           </div>
         </section>
       )}
+    </div>
+  );
+}
+
+// Click-to-play YouTube tile.
+// Two states:
+//  1. Thumbnail with the red play button overlay (no iframe, no Shorts
+//     cover, no network call until the user wants the video).
+//  2. After tap → iframe with autoplay=1 in the SAME slot. The video
+//     plays inline. For Shorts that refuse iframe embed, a small
+//     "在 YouTube 打开" link sits under the player as the escape hatch.
+function YouTubePlayer({ videoId, lang, isCustom }) {
+  const [playing, setPlaying] = React.useState(false);
+  // Reset when the videoId changes (variant switch).
+  React.useEffect(() => { setPlaying(false); }, [videoId]);
+
+  return (
+    <div className="mt-4">
+      <div className="rounded-3xl overflow-hidden relative" style={{ aspectRatio: '16/9' }}>
+        {playing ? (
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0&modestbranding=1`}
+            title="Exercise tutorial"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            className="absolute inset-0 w-full h-full"
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={() => setPlaying(true)}
+            className="absolute inset-0 w-full h-full block group"
+            aria-label="Play tutorial"
+          >
+            <img
+              src={`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+              loading="lazy"
+              onError={(e) => {
+                e.currentTarget.src = `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`;
+              }}
+            />
+            <div className="absolute inset-0" style={{
+              background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.45) 100%)',
+            }} />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div
+                className="flex items-center justify-center transition-transform group-hover:scale-110"
+                style={{
+                  width: 64, height: 44,
+                  background: '#FF0000',
+                  borderRadius: 12,
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+                }}
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff">
+                  <path d="M8 5v14l11-7L8 5z" />
+                </svg>
+              </div>
+            </div>
+          </button>
+        )}
+        {isCustom && (
+          <Chip size="sm" tint={tints.green} className="absolute top-3 left-3 z-10">
+            {lang === 'zh' ? '自定义' : 'Custom'}
+          </Chip>
+        )}
+      </div>
+      {/* Fallback for Shorts / blocked embeds — small caption link */}
+      <a
+        href={`https://www.youtube.com/watch?v=${videoId}`}
+        target="_blank"
+        rel="noreferrer"
+        className="mt-2 flex items-center justify-center gap-1.5 v2-caption v2-t3 hover:v2-t1 transition text-[11px] py-1"
+      >
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="#FF0000">
+          <path d="M21.6 7.2c-.2-1-.9-1.7-1.9-1.9C18 5 12 5 12 5s-6 0-7.7.3c-1 .2-1.7.9-1.9 1.9C2 9 2 12 2 12s0 3 .4 4.8c.2 1 .9 1.7 1.9 1.9C6 19 12 19 12 19s6 0 7.7-.3c1-.2 1.7-.9 1.9-1.9C22 15 22 12 22 12s0-3-.4-4.8z" />
+          <path d="M10 15.5l5-3.5-5-3.5v7z" fill="#fff" />
+        </svg>
+        {lang === 'zh' ? '播放卡住？在 YouTube 打开' : 'Stuck? Open in YouTube'}
+      </a>
     </div>
   );
 }

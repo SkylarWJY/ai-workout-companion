@@ -164,15 +164,16 @@ button {
   --label-3:      rgba(235, 245, 220, 0.34);
   --label-4:      rgba(235, 245, 220, 0.20);
 
-  /* Tints recolored to lime-family so iOS-style accent chips don't
-     fight the protagonist color. Blue stays for "Custom" badge. */
-  --tint-blue:    #5DD3FF;
-  --tint-indigo:  #B8FF5E;
-  --tint-green:   #C5F75E;
-  --tint-orange:  #FFD75E;
-  --tint-red:     #FF6B5E;
-  --tint-mint:    #A8FFC7;
-  --tint-pink:    #FF9F5E;
+  /* Every tint mapped into the lime family. No blue / indigo / pink
+     allowed — the reference is mono-accent and any non-lime chip
+     fights the protagonist color. Red kept for warnings only. */
+  --tint-blue:    #8DD9A0;  /* sage — was iOS blue */
+  --tint-indigo:  #B8FF5E;  /* light lime */
+  --tint-green:   #C5F75E;  /* the accent */
+  --tint-orange:  #E5DD5E;  /* warm citron */
+  --tint-red:     #FF6B5E;  /* warning only */
+  --tint-mint:    #A8FFC7;  /* mint */
+  --tint-pink:    #C5F75E;  /* alias to accent */
 
   --accent:       #C5F75E;
   --press-shadow: 0 18px 60px -16px rgba(197, 247, 94, 0.35);
