@@ -1,0 +1,203 @@
+/* ───── v3 — Neon performance aesthetic ─────
+ * Acid lime on dark olive black. Industrial. One hero card per screen.
+ * No glass, no aurora — sharp contrast, big numbers, monospace numerics.
+ * Scoped to .v3 root so v0.8 / v2 are untouched.
+ */
+.v3 {
+  --c-canvas:   #0A0E07;        /* deep olive-black backdrop */
+  --c-surface:  #131A0E;         /* card surface */
+  --c-surface2: #1B240F;         /* nested chip surface */
+  --c-border:   rgba(197,247,94,0.10);
+
+  --c-accent:   #C5F75E;         /* acid lime — the only pop color */
+  --c-accent-d: #9BC848;         /* accent pressed */
+  --c-accent-w: rgba(197,247,94,0.18); /* lime tint wash */
+
+  --c-text:     #FFFFFF;
+  --c-text-2:   rgba(255,255,255,0.55);
+  --c-text-3:   rgba(255,255,255,0.32);
+  --c-ink:      #07090A;         /* black ink ON lime */
+
+  --r-sm: 14px;
+  --r-md: 22px;
+  --r-lg: 30px;
+  --r-pill: 999px;
+
+  --shadow-pop: 0 18px 60px -16px rgba(197,247,94,0.35);
+
+  background: var(--c-canvas);
+  color: var(--c-text);
+  font-family: 'Inter', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'ss01', 'cv11', 'tnum';
+  min-height: 100dvh;
+}
+
+/* Subtle film grain to break up the flat dark — not noise enough to compete
+ * with the lime hero card. */
+.v3::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(197,247,94,0.06), transparent 38%),
+    radial-gradient(circle at 90% 100%, rgba(197,247,94,0.04), transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.v3 > * { position: relative; z-index: 1; }
+
+.v3-screen {
+  min-height: 100dvh;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.v3-card {
+  background: var(--c-surface);
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-border);
+}
+
+.v3-accent {
+  background: var(--c-accent);
+  color: var(--c-ink);
+  border-radius: var(--r-md);
+}
+
+/* Big number — used for kcal, bpm, percent.
+ * Tabular figures so digits don't reflow as values tick. */
+.v3-num {
+  font-feature-settings: 'tnum';
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.v3-h1 {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-size: 28px;
+  line-height: 1.05;
+}
+
+.v3-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-text-2);
+  font-weight: 600;
+}
+
+.v3-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: var(--r-pill);
+  font-weight: 600;
+  font-size: 13px;
+  background: var(--c-ink);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.v3-pill.is-light {
+  background: #fff;
+  color: var(--c-ink);
+}
+
+.v3-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--c-surface2);
+  color: var(--c-text);
+  border: 1px solid var(--c-border);
+}
+
+.v3-iconbtn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--c-ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+}
+
+/* Calendar grid */
+.v3-cal {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  row-gap: 12px;
+  text-align: center;
+  font-feature-settings: 'tnum';
+}
+.v3-cal-head {
+  font-size: 11px;
+  color: var(--c-text-2);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.v3-cal-day {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--c-text);
+  height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+}
+.v3-cal-day.dim { color: var(--c-text-3); font-weight: 500; }
+.v3-cal-day.today {
+  background: var(--c-accent);
+  color: var(--c-ink);
+  width: 32px;
+  margin: 0 auto;
+}
+.v3-cal-day.scheduled {
+  border: 1.5px solid var(--c-accent-w);
+  width: 32px;
+  margin: 0 auto;
+}
+
+/* Bottom nav */
+.v3-tabbar {
+  position: fixed;
+  left: 0; right: 0;
+  bottom: 0;
+  padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, transparent 0%, var(--c-canvas) 28%);
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: end;
+  z-index: 20;
+}
+.v3-tabbar-item {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 8px 4px;
+  color: var(--c-text-2);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  background: none; border: none; cursor: pointer;
+}
+.v3-tabbar-item.is-active { color: var(--c-text); }
+.v3-tabbar-fab {
+  width: 54px; height: 54px;
+  background: var(--c-accent);
+  color: var(--c-ink);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-pop);
+  border: 4px solid var(--c-canvas);
+  margin-top: -22px;
+  cursor: pointer;
+}

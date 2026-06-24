@@ -29,25 +29,33 @@ function countSets(session) {
 // Lazy-load v2 so the v0.8 bundle stays unaffected — the v2 chunk only
 // downloads when the gate trips. Production / root URL keeps shipping v1.
 const AppV2 = React.lazy(() => import('./v2/AppV2.jsx'));
+// Lazy-load v3 (neon performance aesthetic) — same isolation pattern.
+const AppV3 = React.lazy(() => import('./v3/AppV3.jsx'));
 
-function useV2Gate() {
-  // Two triggers: ?v=2 in the URL, or localStorage.atlas.theme === 'v2'.
-  // URL takes precedence so testers can A/B without persisting state.
-  const [on, setOn] = React.useState(() => {
-    if (typeof window === 'undefined') return false;
+function useVersionGate() {
+  // ?v=1 → legacy, ?v=2 → v2, ?v=3 → v3. URL wins over localStorage.
+  const [v, setV] = React.useState(() => {
+    if (typeof window === 'undefined') return 1;
     const url = new URL(window.location.href);
     const param = url.searchParams.get('v');
-    if (param === '2') return true;
-    if (param === '1') return false;
+    if (param === '3') return 3;
+    if (param === '2') return 2;
+    if (param === '1') return 1;
     try {
-      return JSON.parse(localStorage.getItem('atlas.theme') || 'null') === 'v2';
-    } catch { return false; }
+      const t = JSON.parse(localStorage.getItem('atlas.theme') || 'null');
+      if (t === 'v3') return 3;
+      if (t === 'v2') return 2;
+    } catch {}
+    return 1;
   });
   React.useEffect(() => {
-    // Listen for runtime toggles from inside the app.
-    const handler = () => setOn((prev) => {
-      try { return JSON.parse(localStorage.getItem('atlas.theme') || 'null') === 'v2'; }
-      catch { return prev; }
+    const handler = () => setV((prev) => {
+      try {
+        const t = JSON.parse(localStorage.getItem('atlas.theme') || 'null');
+        if (t === 'v3') return 3;
+        if (t === 'v2') return 2;
+        return 1;
+      } catch { return prev; }
     });
     window.addEventListener('storage', handler);
     window.addEventListener('atlas-theme-change', handler);
@@ -56,12 +64,19 @@ function useV2Gate() {
       window.removeEventListener('atlas-theme-change', handler);
     };
   }, []);
-  return on;
+  return v;
 }
 
 export default function App() {
-  const v2 = useV2Gate();
-  if (v2) {
+  const v = useVersionGate();
+  if (v === 3) {
+    return (
+      <React.Suspense fallback={<div style={{ background: '#0B0F08', minHeight: '100vh' }} />}>
+        <AppV3 />
+      </React.Suspense>
+    );
+  }
+  if (v === 2) {
     return (
       <React.Suspense fallback={<div className="v2 v2-screen" />}>
         <AppV2 />
