@@ -327,8 +327,11 @@ button {
   100% { transform: translate3d(-4%,  2%, 0) rotate(0deg)   scale(1.05); }
 }
 
-/* Make sure main app content sits above the aurora layer. */
-.v2 > * { position: relative; z-index: 1; }
+/* Main app content paints above the aurora ::before by natural
+   document order. Don't blanket-force position:relative on every
+   direct child — that would override the fixed-positioning on the
+   portaled Rest/Work overlays and prevent them from going truly
+   full-screen on phones. */
 
 /* ─── Animated mesh gradient — sits behind hero, drifts slowly. */
 @keyframes v2-mesh-drift {
