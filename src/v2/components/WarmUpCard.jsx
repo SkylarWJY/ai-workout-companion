@@ -64,7 +64,7 @@ export default function WarmUpCard({ workoutType }) {
         <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
           {source === 'alt' && warmup.altYoutubeId ? (
             <iframe
-              src={`https://www.youtube.com/embed/${warmup.altYoutubeId}?autoplay=${playing ? 1 : 0}&playsinline=1&rel=0`}
+              src={`https://www.youtube-nocookie.com/embed/${warmup.altYoutubeId}?autoplay=${playing ? 1 : 0}&playsinline=1&rel=0`}
               title="Warm-up tutorial"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen

@@ -105,7 +105,7 @@ export default function ExerciseDemo({
     ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`
     : null;
   const embedSrc = videoId
-    ? `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0&modestbranding=1`
+    ? `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0&modestbranding=1`
     : null;
   const watchUrl = videoId
     ? `https://www.youtube.com/shorts/${videoId}`

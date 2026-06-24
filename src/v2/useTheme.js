@@ -1,20 +1,27 @@
 import { useEffect } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage.js';
 
-// Persists & applies the v2 light/dark choice. Toggling adds/removes
-// the `.light` class on the root .v2 container so every CSS var swaps.
+// Persists & applies the v2 theme. Three states: 'light' | 'dark' | 'neon'.
+// Class on the root .v2 container determines which CSS-var set wins.
+const THEMES = ['light', 'dark', 'neon'];
+
 export function useTheme() {
-  // Default to 'light' — user explicitly wanted the lighter, softer
-  // surface as the first impression. Aurora behind the warm glass
-  // panels reads beautifully on the warm-white canvas.
+  // Default 'light' — soft warm-white aurora is the first-impression
+  // surface. User cycles through light → dark → neon → light from the
+  // nav toggle.
   const [theme, setTheme] = useLocalStorage('atlas.v2theme', 'light');
 
   useEffect(() => {
     const root = document.querySelector('.v2');
     if (!root) return;
-    if (theme === 'light') root.classList.add('light');
-    else root.classList.remove('light');
+    root.classList.remove('light', 'neon');
+    if (theme === 'light' || theme === 'neon') root.classList.add(theme);
   }, [theme]);
 
-  return { theme, setTheme, toggle: () => setTheme((t) => (t === 'light' ? 'dark' : 'light')) };
+  const cycle = () => setTheme((t) => {
+    const i = THEMES.indexOf(t);
+    return THEMES[(i + 1) % THEMES.length] || 'light';
+  });
+
+  return { theme, setTheme, toggle: cycle };
 }

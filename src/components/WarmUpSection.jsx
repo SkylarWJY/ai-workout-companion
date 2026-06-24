@@ -96,7 +96,7 @@ export default function WarmUpSection({ workoutType, warmup, done, onMarkDone })
   const playerTile = youtubeOverride && !localVideoUrl ? (
     <div className="relative aspect-[3/4] bg-ink-900 overflow-hidden">
       <iframe
-        src={`https://www.youtube.com/embed/${youtubeOverride}?playsinline=1&rel=0&modestbranding=1`}
+        src={`https://www.youtube-nocookie.com/embed/${youtubeOverride}?playsinline=1&rel=0&modestbranding=1`}
         title={t('warm.title')}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowFullScreen

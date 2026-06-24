@@ -11,7 +11,7 @@ export default function YouTubeEmbed({ videoId }) {
   if (!videoId) return null;
 
   const thumb = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
-  const embedSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0&modestbranding=1`;
+  const embedSrc = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0&modestbranding=1`;
   const watchUrl = `https://www.youtube.com/shorts/${videoId}`;
 
   return (
