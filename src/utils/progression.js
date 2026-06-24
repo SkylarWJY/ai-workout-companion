@@ -10,27 +10,44 @@
 
 import { convertWeight } from './weight.js';
 
-// Below these thresholds we use much smaller bumps — lateral raises,
-// front raises, kickbacks, etc. live in single-digit / low-double-digit
-// land and +2.5 kg is a 25% jump, way too aggressive.
-const SMALL_WEIGHT_THRESHOLD_KG = 15;
-const SMALL_WEIGHT_THRESHOLD_LB = 30;
+// Plate increment lookup by weight bracket. Real gyms have 0.5 kg / 1 lb
+// micro-plates for isolation work and 2.5 / 5 plates for compounds — these
+// brackets match what people can actually load.
+function bumpSize(currentWeight, unit, kind) {
+  let small;
+  let big;
+  if (unit === 'kg') {
+    if (currentWeight < 10) {
+      small = 0.5; big = 1;
+    } else if (currentWeight < 25) {
+      small = 1;   big = 2.5;
+    } else if (currentWeight < 100) {
+      small = 2.5; big = 5;
+    } else {
+      small = 5;   big = 10;
+    }
+  } else {
+    if (currentWeight < 20) {
+      small = 1;   big = 2;
+    } else if (currentWeight < 50) {
+      small = 2.5; big = 5;
+    } else if (currentWeight < 200) {
+      small = 5;   big = 10;
+    } else {
+      small = 10;  big = 20;
+    }
+  }
+  if (kind === 'big') return big;
+  if (kind === 'small') return small;
+  return 0;
+}
 
-// Smallest plate increment available on most gym setups.
+// Round the recommendation to the smallest plate increment available so
+// it's loadable on a real bar / rack.
 function roundToPlate(w, unit) {
   if (!Number.isFinite(w)) return w;
   if (unit === 'kg') return Math.round(w * 2) / 2; // 0.5 kg
   return Math.round(w); // 1 lb
-}
-
-function bumpSize(currentWeight, unit, kind) {
-  const isSmall =
-    unit === 'kg'
-      ? currentWeight < SMALL_WEIGHT_THRESHOLD_KG
-      : currentWeight < SMALL_WEIGHT_THRESHOLD_LB;
-  if (kind === 'big') return isSmall ? (unit === 'kg' ? 1 : 2) : unit === 'kg' ? 5 : 10;
-  if (kind === 'small') return isSmall ? (unit === 'kg' ? 0.5 : 1) : unit === 'kg' ? 2.5 : 5;
-  return 0;
 }
 
 // Pull "low" and "high" out of strings like "6-10", "10–15", "8-12 ea",
@@ -99,42 +116,59 @@ export function recommendNextWeight({
   const reps = Number(ref.reps) || 0;
   const diff = ref.difficulty;
 
-  // At-the-top decision tree
-  if (reps >= range.high) {
-    if (diff === 'easy') {
-      return {
-        weight: roundToPlate(w + bumpSize(w, currentUnit, 'big'), currentUnit),
-        kind: 'bigBump',
-        reasoning: 'easyAtTop',
-        from: { weight: w, reps, difficulty: diff, unit: currentUnit },
-      };
-    }
-    if (diff === 'moderate' || diff === 'hard') {
-      return {
-        weight: roundToPlate(w + bumpSize(w, currentUnit, 'small'), currentUnit),
-        kind: 'smallBump',
-        reasoning: diff === 'moderate' ? 'moderateAtTop' : 'hardAtTop',
-        from: { weight: w, reps, difficulty: diff, unit: currentUnit },
-      };
-    }
-  }
+  const from = { weight: w, reps, difficulty: diff, unit: currentUnit };
 
-  // Failed reps OR dropped below the bottom of the range → de-load
-  if (diff === 'failure' || reps < range.low) {
+  // Double-progression model. Add weight ONLY after the rep-range ceiling
+  // has been broken (or hit at very low effort). Anywhere inside the range
+  // → hold the weight and push for more reps next session.
+
+  // Above ceiling: clearly ready to load up.
+  if (reps > range.high) {
+    const kind = diff === 'easy' ? 'big' : 'small';
     return {
-      weight: roundToPlate(w * 0.9, currentUnit),
-      kind: 'deload',
-      reasoning: 'failedReps',
-      from: { weight: w, reps, difficulty: diff, unit: currentUnit },
+      weight: roundToPlate(w + bumpSize(w, currentUnit, kind), currentUnit),
+      kind: kind === 'big' ? 'bigBump' : 'smallBump',
+      reasoning: kind === 'big' ? 'exceededRangeEasy' : 'exceededRange',
+      from,
     };
   }
 
-  // Anywhere in the middle: hold weight, push for more reps next time
+  // Exactly at ceiling: only bump if it felt easy. Otherwise consolidate
+  // — repeat at this weight, see if effort drops or reps go up.
+  if (reps === range.high) {
+    if (diff === 'easy') {
+      return {
+        weight: roundToPlate(w + bumpSize(w, currentUnit, 'small'), currentUnit),
+        kind: 'smallBump',
+        reasoning: 'easyAtTop',
+        from,
+      };
+    }
+    return {
+      weight: roundToPlate(w, currentUnit),
+      kind: 'holdAtTop',
+      reasoning: 'holdAtTop',
+      from,
+    };
+  }
+
+  // Below the floor: too heavy to even hit the working range.
+  if (reps < range.low) {
+    return {
+      weight: roundToPlate(w * 0.9, currentUnit),
+      kind: 'deload',
+      reasoning: 'underLow',
+      from,
+    };
+  }
+
+  // Inside the range. Going to failure here is intentional, not a problem
+  // — that's hypertrophy training. Hold weight, chase more reps.
   return {
     weight: roundToPlate(w, currentUnit),
     kind: 'maintain',
     reasoning: 'pushReps',
-    from: { weight: w, reps, difficulty: diff, unit: currentUnit },
+    from,
   };
 }
 
