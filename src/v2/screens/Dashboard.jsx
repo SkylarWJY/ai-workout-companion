@@ -22,6 +22,8 @@ import CountUp from '../components/CountUp.jsx';
 import MeshGradient from '../components/MeshGradient.jsx';
 import VolumeChart from '../components/VolumeChart.jsx';
 import SettingsSheet from '../components/SettingsSheet.jsx';
+import SessionHistorySheet from '../components/SessionHistorySheet.jsx';
+import GlassTabBar from '../components/GlassTabBar.jsx';
 import { useTheme as useV2Theme } from '../useTheme.js';
 import { tints, tintForKind, KIND_LABEL, KIND_LABEL_ZH, springs, stagger } from '../theme.js';
 
@@ -129,6 +131,10 @@ export default function Dashboard({ history = {}, onOpenWorkout }) {
   const toggleLang = () => setLang(lang === 'zh' ? 'en' : 'zh');
 
   const [settingsOpen, setSettingsOpen] = React.useState(false);
+  const [historyOpen, setHistoryOpen] = React.useState(false);
+  // Tracks which glass-pill tab is "active" — purely visual; tapping
+  // History/Plans opens their respective sheet rather than navigating.
+  const [activeTab, setActiveTab] = React.useState('home');
   const scrollRef = React.useRef(null);
   const { scrollY: motionScrollY } = useScroll({ container: scrollRef });
   // Hero parallax — text drifts up at 0.4x scroll, mesh drifts at 0.2x.
@@ -212,8 +218,12 @@ export default function Dashboard({ history = {}, onOpenWorkout }) {
 
       <main
         ref={scrollRef}
-        className="px-5 pb-32 v2-body overflow-y-auto"
-        style={{ height: 'calc(100dvh - env(safe-area-inset-top))' }}
+        className="px-5 v2-body overflow-y-auto"
+        style={{
+          height: 'calc(100dvh - env(safe-area-inset-top))',
+          // Extra bottom space so content clears the floating tab bar.
+          paddingBottom: 'calc(env(safe-area-inset-bottom) + 110px)',
+        }}
       >
         {/* HERO with mesh, ring, parallax ─────────────────────────── */}
         <Hero
@@ -333,7 +343,26 @@ export default function Dashboard({ history = {}, onOpenWorkout }) {
         <Mission overrides={overrides} lang={lang} t={t} />
       </main>
 
-      <SettingsSheet open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <SettingsSheet open={settingsOpen} onClose={() => { setSettingsOpen(false); setActiveTab('home'); }} />
+      <SessionHistorySheet open={historyOpen} onClose={() => { setHistoryOpen(false); setActiveTab('home'); }} />
+
+      {/* Liquid-glass bottom nav — floats over content. Home stays
+          the active tab; Plans / History open their sheets and revert
+          to Home on close so the lime highlight never lies about the
+          current screen. */}
+      <GlassTabBar
+        active={activeTab}
+        onChange={(id) => {
+          setActiveTab(id);
+          if (id === 'plans') { setSettingsOpen(true); }
+          else if (id === 'history') { setHistoryOpen(true); }
+        }}
+        tabs={[
+          { id: 'home',    label: lang === 'zh' ? '主页' : 'Home' },
+          { id: 'plans',   label: lang === 'zh' ? '计划' : 'Plans' },
+          { id: 'history', label: lang === 'zh' ? '历史' : 'History' },
+        ]}
+      />
     </Screen>
   );
 }
