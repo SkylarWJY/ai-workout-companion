@@ -1695,164 +1695,71 @@ export const DEMO_VARIANTS = {
 };
 
 // ─── Skylar Sculpt plan variants ───
-// Each exercise in coachPlans.js gets 2-3 swappable variants so the
-// user can flip tool when the gym doesn't have the primary machine.
-// All youtubeIds reuse verified short clips from EXERCISE_META above.
+// HONEST audit: only list a variant when I have a DISTINCT verified
+// short tutorial video for it. Exercises with just one good clip get
+// NO variant chips — the user isn't fooled into thinking they have
+// options that all point at the same video.
+//
+// All youtubeIds below are taken from the default-plan EXERCISE_META,
+// which the user has already vetted as working short clips.
 const SKYLAR_VARIANTS = {
-  's-push-1': [
-    { key: 'cable',    label: 'Single-Arm Cable', labelZh: '单手绳索' },
-    { key: 'dumbbell', label: 'Dumbbell',         labelZh: '哑铃',
-      youtubeId: 'UFcaodmbXd8' },
-    { key: 'bestpick', label: 'Best for Side Delts', labelZh: '中束最佳',
-      isBestPick: true,
-      youtubeId: 'UFcaodmbXd8' },
-  ],
+  // 推肩机 vs 哑铃推举 — two genuinely different motions, two distinct
+  // verified videos.
   's-push-2': [
-    { key: 'machine',  label: 'Machine Press',  labelZh: '推肩机' },
-    { key: 'dumbbell', label: 'Dumbbell',       labelZh: '哑铃',
-      youtubeId: 'k6tzKisR3NY' },
-    { key: 'bestpick', label: 'Best for Maintenance', labelZh: '维持型最佳',
-      isBestPick: true,
+    { key: 'machine',  label: 'Machine Press',  labelZh: '推肩机',
       youtubeId: '6v4nrRVySj0' },
+    { key: 'dumbbell', label: 'Dumbbell Press', labelZh: '哑铃推举',
+      youtubeId: 'k6tzKisR3NY' },
   ],
+
+  // Reverse Pec Deck → no verified machine pec deck clip; offer the two
+  // tool substitutes I do have verified short clips for.
   's-push-3': [
-    { key: 'machine',  label: 'Reverse Pec Deck', labelZh: '反向蝴蝶机' },
-    { key: 'dumbbell', label: 'DB Rear Fly',      labelZh: '哑铃后飞鸟',
+    { key: 'dumbbell', label: 'DB Rear Fly',    labelZh: '哑铃后飞鸟',
       youtubeId: 'LsT-bR_zxLo' },
-    { key: 'cable',    label: 'Cable Rear Fly',   labelZh: '绳索后飞鸟',
+    { key: 'cable',    label: 'Cable Face Pull', labelZh: '绳索面拉',
       youtubeId: 'I41wK3wTZlo' },
-    { key: 'bestpick', label: 'Best for Rear Delts', labelZh: '后束最佳',
-      isBestPick: true,
-      youtubeId: 'LsT-bR_zxLo' },
   ],
-  's-push-4': [
-    { key: 'dumbbell', label: 'DB Lateral',     labelZh: '哑铃侧平举' },
-    { key: 'cable',    label: 'Cable Lateral',  labelZh: '绳索侧平举',
-      youtubeId: 'UFcaodmbXd8' },
-    { key: 'bestpick', label: 'Best for Burn',  labelZh: '燃烧组最佳',
-      isBestPick: true,
-      youtubeId: 'UFcaodmbXd8' },
-  ],
+
+  // Tricep — three distinct attachments, three distinct verified clips.
   's-push-5': [
-    { key: 'rope',     label: 'Rope Pushdown',  labelZh: '绳索三头下压' },
-    { key: 'cable',    label: 'Straight Bar',   labelZh: '绳索直杆',
-      youtubeId: '4NWWB0f0vzQ' },
-    { key: 'bestpick', label: 'Best for Long Head', labelZh: '长头最佳',
-      isBestPick: true,
+    { key: 'rope',     label: 'Rope Pushdown', labelZh: '绳索三头下压',
       youtubeId: '-PqzEk57xiw' },
+    { key: 'cable',    label: 'Straight Bar',  labelZh: '直杆',
+      youtubeId: '4NWWB0f0vzQ' },
+    { key: 'kickback', label: 'DB Kickback',   labelZh: '哑铃后摆',
+      youtubeId: 'GZ3NzlJs_yg' },
   ],
-  's-push-6': [
-    { key: 'bodyweight', label: 'Hanging Raise', labelZh: '悬挂举腿' },
-    { key: 'plank',      label: 'Plank',         labelZh: '平板支撑',
-      youtubeId: 'KDbFKEScp1M' },
-    { key: 'bestpick',   label: 'Best for Roman Lines', labelZh: '马甲线最佳',
-      isBestPick: true,
-      youtubeId: 'KDbFKEScp1M' },
-  ],
+
+  // Lat width — pulldown is primary, assisted pull-up is the swap.
   's-pull-1': [
-    { key: 'cable',    label: 'Wide-Grip Pulldown', labelZh: '宽距高位下拉' },
-    { key: 'pullup',   label: 'Assisted Pull-Up',   labelZh: '辅助引体',
+    { key: 'cable',  label: 'Wide-Grip Pulldown', labelZh: '宽距下拉',
+      youtubeId: 'bNmvKpJSWKM' },
+    { key: 'pullup', label: 'Assisted Pull-Up',   labelZh: '辅助引体',
       youtubeId: 'yF85efFDGY4' },
-    { key: 'bestpick', label: 'Best for V-Taper',   labelZh: 'V 倒三角最佳',
-      isBestPick: true,
-      youtubeId: 'bNmvKpJSWKM' },
   ],
+
+  // Chest-supported row — three distinct angles, three verified clips.
   's-pull-2': [
-    { key: 'machine',  label: 'Chest-Supp Machine', labelZh: '胸托划船机' },
-    { key: 'cable',    label: 'Seated Cable Row',   labelZh: '坐姿绳索划船',
+    { key: 'machine',  label: 'Chest-Supp Machine', labelZh: '胸托划船机',
       youtubeId: 'lHD0Z4pI0Cg' },
-    { key: 'bestpick', label: 'Best for Mid-Back',  labelZh: '中背最佳',
-      isBestPick: true,
+    { key: 'cable',    label: 'T-Bar Row',          labelZh: 'T 杆划船',
       youtubeId: '4v59ShSjX2w' },
+    { key: 'dumbbell', label: 'Single-Arm DB Row',  labelZh: '单臂哑铃划船',
+      youtubeId: 'jpi4reqwiKY' },
   ],
-  's-pull-3': [
-    { key: 'cable',    label: 'Straight-Arm Pulldown', labelZh: '直臂绳索下压' },
-    { key: 'machine',  label: 'Pullover Machine',      labelZh: 'Pullover 机',
-      youtubeId: 'bNmvKpJSWKM' },
-    { key: 'bestpick', label: 'Best for Lower Lats',   labelZh: '下阔背最佳',
-      isBestPick: true,
-      youtubeId: 'bNmvKpJSWKM' },
-  ],
+
+  // Pull-day rear delt repeat — same two-tool option as s-push-3.
   's-pull-4': [
-    { key: 'machine',  label: 'Reverse Pec Deck', labelZh: '反向蝴蝶机' },
-    { key: 'cable',    label: 'Cable Face Pull',  labelZh: '绳索面拉',
-      youtubeId: 'I41wK3wTZlo' },
-    { key: 'bestpick', label: 'Best for Rear Delts', labelZh: '后束最佳',
-      isBestPick: true,
+    { key: 'dumbbell', label: 'DB Rear Fly',     labelZh: '哑铃后飞鸟',
       youtubeId: 'LsT-bR_zxLo' },
+    { key: 'cable',    label: 'Cable Face Pull', labelZh: '绳索面拉',
+      youtubeId: 'I41wK3wTZlo' },
   ],
-  's-pull-5': [
-    { key: 'cable',    label: 'Rope Hammer Curl', labelZh: '绳索锤式弯举' },
-    { key: 'dumbbell', label: 'DB Hammer Curl',   labelZh: '哑铃锤式',
-      youtubeId: 'j1FjaWu5Am4' },
-    { key: 'bestpick', label: 'Best for Arm Width', labelZh: '手臂围度最佳',
-      isBestPick: true,
-      youtubeId: 'j1FjaWu5Am4' },
-  ],
-  's-pull-6': [
-    { key: 'cable',     label: 'Cable Crunch', labelZh: '绳索卷腹' },
-    { key: 'bodyweight', label: 'Floor Crunch', labelZh: '地面卷腹',
-      youtubeId: 'XWJmFD_AdbM' },
-    { key: 'bestpick',  label: 'Best for Upper Abs', labelZh: '上腹最佳',
-      isBestPick: true,
-      youtubeId: 'XWJmFD_AdbM' },
-  ],
-  's-leg-1': [
-    { key: 'machine',  label: 'Hip Thrust Machine', labelZh: '臀推机' },
-    { key: 'barbell',  label: 'Barbell Hip Thrust', labelZh: '杠铃臀推',
-      youtubeId: '_i6qpcI1Nw4' },
-    { key: 'bestpick', label: 'Best for Glute Shape', labelZh: '臀型最佳',
-      isBestPick: true,
-      youtubeId: '_i6qpcI1Nw4' },
-  ],
-  's-leg-2': [
-    { key: 'machine',  label: 'Leg Press', labelZh: '腿举' },
-    { key: 'dumbbell', label: 'Goblet Squat', labelZh: '高脚杯深蹲',
-      youtubeId: 'YSnMWxs7wss' },
-    { key: 'bestpick', label: 'Best for Quads', labelZh: '股四头最佳',
-      isBestPick: true,
-      youtubeId: 'YSnMWxs7wss' },
-  ],
-  's-leg-3': [
-    { key: 'dumbbell', label: 'DB RDL',     labelZh: '哑铃 RDL' },
-    { key: 'smith',    label: 'Smith RDL',  labelZh: '史密斯 RDL',
-      youtubeId: 'CBOhr6H7BEY' },
-    { key: 'bestpick', label: 'Best for Hamstrings', labelZh: '腿后链最佳',
-      isBestPick: true,
-      youtubeId: 'CBOhr6H7BEY' },
-  ],
-  's-leg-4': [
-    { key: 'dumbbell',   label: 'DB Bulgarian',  labelZh: '哑铃保加利亚' },
-    { key: 'bodyweight', label: 'Bodyweight',    labelZh: '徒手版',
-      youtubeId: 'uBSoEWZu07k' },
-    { key: 'bestpick',   label: 'Best for Side Glutes', labelZh: '侧臀最佳',
-      isBestPick: true,
-      youtubeId: 'uBSoEWZu07k' },
-  ],
-  's-leg-5': [
-    { key: 'cable',    label: 'Cable Lateral', labelZh: '绳索侧平举' },
-    { key: 'dumbbell', label: 'DB Lateral',    labelZh: '哑铃侧平举',
-      youtubeId: 'UFcaodmbXd8' },
-    { key: 'bestpick', label: 'Best for Side Delts', labelZh: '中束最佳',
-      isBestPick: true,
-      youtubeId: 'UFcaodmbXd8' },
-  ],
-  's-leg-6': [
-    { key: 'machine',    label: 'Calf Machine', labelZh: '提踵机' },
-    { key: 'bodyweight', label: 'Bodyweight',   labelZh: '徒手',
-      youtubeId: 'wdOkFomQNp8' },
-    { key: 'bestpick',   label: 'Best for Calf Shape', labelZh: '小腿最佳',
-      isBestPick: true,
-      youtubeId: 'wdOkFomQNp8' },
-  ],
-  's-leg-7': [
-    { key: 'bodyweight', label: 'Dead Bug',     labelZh: '死虫式' },
-    { key: 'dumbbell',   label: 'Weighted',     labelZh: '加重版',
-      youtubeId: 'qV0K0dwPYAU' },
-    { key: 'bestpick',   label: 'Best for Deep Core', labelZh: '深层核心最佳',
-      isBestPick: true,
-      youtubeId: 'qV0K0dwPYAU' },
-  ],
+
+  // Every other exercise has only ONE verified video. The modal
+  // intentionally hides the variant chip strip when length < 2 so the
+  // user doesn't see ghost options.
 };
 
 // Merge into the main DEMO_VARIANTS table so demoVariants() works for
