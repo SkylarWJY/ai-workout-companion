@@ -5,6 +5,7 @@ import {
   USER_PROFILE,
   getTodayWorkoutType,
   getWorkoutsForPlan,
+  getRecommendedSplit,
 } from '../../data/workoutData.js';
 import { useLang, locWorkout, locEx } from '../../i18n/index.jsx';
 import { useOverrides } from '../../hooks/useOverrides.jsx';
@@ -23,7 +24,6 @@ import MeshGradient from '../components/MeshGradient.jsx';
 import VolumeChart from '../components/VolumeChart.jsx';
 import SettingsSheet from '../components/SettingsSheet.jsx';
 import SessionHistorySheet from '../components/SessionHistorySheet.jsx';
-import GlassTabBar from '../components/GlassTabBar.jsx';
 import { useTheme as useV2Theme } from '../useTheme.js';
 import { tints, tintForKind, KIND_LABEL, KIND_LABEL_ZH, springs, stagger } from '../theme.js';
 
@@ -132,9 +132,6 @@ export default function Dashboard({ history = {}, onOpenWorkout }) {
 
   const [settingsOpen, setSettingsOpen] = React.useState(false);
   const [historyOpen, setHistoryOpen] = React.useState(false);
-  // Tracks which glass-pill tab is "active" — purely visual; tapping
-  // History/Plans opens their respective sheet rather than navigating.
-  const [activeTab, setActiveTab] = React.useState('home');
   const scrollRef = React.useRef(null);
   const { scrollY: motionScrollY } = useScroll({ container: scrollRef });
   // Hero parallax — text drifts up at 0.4x scroll, mesh drifts at 0.2x.
@@ -148,7 +145,9 @@ export default function Dashboard({ history = {}, onOpenWorkout }) {
   // User can customize the weekly split — overrides.weeklySplit is a
   // [{day, type}] array that mirrors WEEKLY_SPLIT but with any day's
   // type swapped through edit mode below.
-  const weeklySplit = overrides.weeklySplit || WEEKLY_SPLIT;
+  // Default is the active plan's coach-tuned recommendation (Skylar
+  // bumps to 5 training days: Pull/Push 2× each + Leg 1×).
+  const weeklySplit = overrides.weeklySplit || getRecommendedSplit(overrides.plan?.active);
   // Plan-aware workout lookup. `overrides.activePlan` cycles through
   // 'default' (the bundled program) and 'skylar' (coach plan tuned to
   // her side-delt + V-taper goals). Pull this once + use everywhere.
@@ -221,8 +220,7 @@ export default function Dashboard({ history = {}, onOpenWorkout }) {
         className="px-5 v2-body overflow-y-auto"
         style={{
           height: 'calc(100dvh - env(safe-area-inset-top))',
-          // Extra bottom space so content clears the floating tab bar.
-          paddingBottom: 'calc(env(safe-area-inset-bottom) + 110px)',
+          paddingBottom: 'calc(env(safe-area-inset-bottom) + 32px)',
         }}
       >
         {/* HERO with mesh, ring, parallax ─────────────────────────── */}
@@ -343,26 +341,8 @@ export default function Dashboard({ history = {}, onOpenWorkout }) {
         <Mission overrides={overrides} lang={lang} t={t} />
       </main>
 
-      <SettingsSheet open={settingsOpen} onClose={() => { setSettingsOpen(false); setActiveTab('home'); }} />
-      <SessionHistorySheet open={historyOpen} onClose={() => { setHistoryOpen(false); setActiveTab('home'); }} />
-
-      {/* Liquid-glass bottom nav — floats over content. Home stays
-          the active tab; Plans / History open their sheets and revert
-          to Home on close so the lime highlight never lies about the
-          current screen. */}
-      <GlassTabBar
-        active={activeTab}
-        onChange={(id) => {
-          setActiveTab(id);
-          if (id === 'plans') { setSettingsOpen(true); }
-          else if (id === 'history') { setHistoryOpen(true); }
-        }}
-        tabs={[
-          { id: 'home',    label: lang === 'zh' ? '主页' : 'Home' },
-          { id: 'plans',   label: lang === 'zh' ? '计划' : 'Plans' },
-          { id: 'history', label: lang === 'zh' ? '历史' : 'History' },
-        ]}
-      />
+      <SettingsSheet open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <SessionHistorySheet open={historyOpen} onClose={() => setHistoryOpen(false)} />
     </Screen>
   );
 }

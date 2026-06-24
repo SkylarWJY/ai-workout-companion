@@ -747,6 +747,8 @@ export const PLANS = {
     summary: 'Balanced Push / Pull / Leg',
     summaryZh: '均衡推 / 拉 / 腿',
     workouts: WORKOUTS,
+    // Original split — push 1×, pull 2×, leg 1× over 4 training days
+    recommendedSplit: WEEKLY_SPLIT,
   },
   skylar: {
     id: 'skylar',
@@ -755,8 +757,35 @@ export const PLANS = {
     summary: 'Side+rear delts · V-taper (NO traps) · abs',
     summaryZh: '侧+后束 · V 型背（不动斜方）· 腹肌',
     workouts: SKYLAR_PLAN,
+    // Coach-tuned 5-day split, designed for the user's actual goals:
+    //   – Side-delt frequency = 3× / week (Push + Push + Leg finisher)
+    //   – V-taper back frequency = 2× / week (Pull + Pull) for max
+    //     lat-width specificity without hitting traps
+    //   – Single leg day = glutes + RDL + 3rd side-delt dose
+    //   – 2 rest days inserted between heavy back/shoulder pairs so
+    //     CNS recovers between specialized work
+    //
+    //   Mon  Pull · V-Taper      (back fresh)
+    //   Tue  Push · Sculpt       (shoulders fresh)
+    //   Wed  REST                (recovery)
+    //   Thu  Leg · Glutes + Cap  (lower + side delt #3)
+    //   Fri  Pull · V-Taper      (back-width frequency)
+    //   Sat  Push · Sculpt       (shoulder cap frequency)
+    //   Sun  REST                (full recovery)
+    recommendedSplit: [
+      { day: 'Mon', type: 'pull', label: 'Pull' },
+      { day: 'Tue', type: 'push', label: 'Push' },
+      { day: 'Wed', type: 'rest', label: 'Rest' },
+      { day: 'Thu', type: 'leg',  label: 'Leg'  },
+      { day: 'Fri', type: 'pull', label: 'Pull' },
+      { day: 'Sat', type: 'push', label: 'Push' },
+      { day: 'Sun', type: 'rest', label: 'Rest' },
+    ],
   },
 };
+
+export const getRecommendedSplit = (planId) =>
+  PLANS[planId]?.recommendedSplit || WEEKLY_SPLIT;
 
 // Returns the workouts dict for a plan name. Falls back to default
 // when an unknown plan id slips through (e.g. localStorage stuck on a

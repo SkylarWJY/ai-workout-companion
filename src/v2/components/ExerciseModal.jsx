@@ -220,20 +220,36 @@ function ModalBody({ exercise, onEdit }) {
           </Chip>
         </div>
       ) : meta?.youtubeId ? (
-        <div className="mt-4 rounded-3xl overflow-hidden relative" style={{ aspectRatio: '16/9' }}>
-          <iframe
-            src={`https://www.youtube.com/embed/${meta.youtubeId}?rel=0&modestbranding=1&playsinline=1`}
-            title="Exercise tutorial"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-            className="absolute inset-0 w-full h-full"
-          />
-          {perVariantYt && (
-            <Chip size="sm" tint={tints.blue} className="absolute top-3 left-3 z-10">
-              {lang === 'zh' ? '自定义' : 'Custom'}
-            </Chip>
-          )}
-        </div>
+        <>
+          <div className="mt-4 rounded-3xl overflow-hidden relative" style={{ aspectRatio: '16/9' }}>
+            <iframe
+              src={`https://www.youtube.com/embed/${meta.youtubeId}?rel=0&modestbranding=1&playsinline=1`}
+              title="Exercise tutorial"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              className="absolute inset-0 w-full h-full"
+            />
+            {perVariantYt && (
+              <Chip size="sm" tint={tints.blue} className="absolute top-3 left-3 z-10">
+                {lang === 'zh' ? '自定义' : 'Custom'}
+              </Chip>
+            )}
+          </div>
+          {/* Fallback: some YouTube videos block iframe embedding. This
+              button is the always-works escape hatch. */}
+          <a
+            href={`https://www.youtube.com/watch?v=${meta.youtubeId}`}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-2 flex items-center justify-center gap-2 v2-caption text-[11px] v2-t2 hover:v2-t1 transition py-2"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#FF0000">
+              <path d="M21.6 7.2c-.2-1-.9-1.7-1.9-1.9C18 5 12 5 12 5s-6 0-7.7.3c-1 .2-1.7.9-1.9 1.9C2 9 2 12 2 12s0 3 .4 4.8c.2 1 .9 1.7 1.9 1.9C6 19 12 19 12 19s6 0 7.7-.3c1-.2 1.7-.9 1.9-1.9C22 15 22 12 22 12s0-3-.4-4.8z" />
+              <path d="M10 15.5l5-3.5-5-3.5v7z" fill="#fff" />
+            </svg>
+            {lang === 'zh' ? '看不了？在 YouTube 打开' : 'Video blocked? Open on YouTube'}
+          </a>
+        </>
       ) : null}
 
       {/* Progress hero — big animated chart with count-up + tracker */}
