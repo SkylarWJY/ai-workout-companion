@@ -16,6 +16,10 @@ export default function WarmUpCard({ workoutType }) {
   const { overrides, setOverride } = useOverrides();
   const warmup = WARMUPS[workoutType];
   const [playing, setPlaying] = useState(false);
+  // Two-source toggle: 'mov' = bundled, 'alt' = altYoutubeId.
+  // Lets the user swap to a different tutorial inline without leaving
+  // the page (what the v0.8 ↓ Watch alternate button did).
+  const [source, setSource] = useState('mov');
 
   const done = !!overrides.warmupDone?.[workoutType];
 
@@ -56,9 +60,17 @@ export default function WarmUpCard({ workoutType }) {
         className="v2-card overflow-hidden"
         style={done ? { boxShadow: `inset 0 0.5px 0 0 ${rgba(tints.green, 0.32)}` } : undefined}
       >
-        {/* Video tile */}
+        {/* Video tile — switches between bundled MOV and YouTube alt. */}
         <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
-          {playing ? (
+          {source === 'alt' && warmup.altYoutubeId ? (
+            <iframe
+              src={`https://www.youtube.com/embed/${warmup.altYoutubeId}?autoplay=${playing ? 1 : 0}&playsinline=1&rel=0`}
+              title="Warm-up tutorial"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              className="w-full h-full"
+            />
+          ) : playing ? (
             <video
               autoPlay
               controls
@@ -106,41 +118,68 @@ export default function WarmUpCard({ workoutType }) {
           )}
         </div>
 
+        {/* Source toggle — bundled vs YouTube tutorial. */}
+        {warmup.altYoutubeId && (
+          <div className="px-4 pt-3 flex items-center gap-1.5">
+            <SourceTab
+              active={source === 'mov'}
+              onClick={() => { setSource('mov'); setPlaying(false); }}
+              label={lang === 'zh' ? '主视频' : 'Main video'}
+              icon="●"
+            />
+            <SourceTab
+              active={source === 'alt'}
+              onClick={() => { setSource('alt'); setPlaying(true); }}
+              label={lang === 'zh' ? '换一个教程' : 'Alt tutorial'}
+              icon="▶"
+            />
+          </div>
+        )}
+
         {/* Bottom row */}
         <div className="p-4 space-y-3">
           <p className="v2-body text-[13px] v2-t1 leading-relaxed">
             {lang === 'zh' ? subKeyZh : subKeyEn}
           </p>
-          <div className="flex gap-2">
-            <a
-              href={`https://www.youtube.com/watch?v=${warmup.altYoutubeId}`}
-              target="_blank"
-              rel="noreferrer"
-              className="flex-1 py-2.5 rounded-full text-center text-[12px] font-semibold tracking-wide v2-t1"
-              style={{ background: 'var(--hairline)', boxShadow: 'inset 0 0 0 0.5px var(--hairline-strong)' }}
-            >
-              {lang === 'zh' ? '看 YouTube 教程' : 'Watch tutorial'}
-            </a>
-            <motion.button
-              type="button"
-              whileTap={{ scale: 0.96 }}
-              transition={springs.press}
-              onClick={markDone}
-              className="flex-[1.4] py-2.5 rounded-full text-[12px] font-semibold tracking-wide"
-              style={
-                done
-                  ? { background: rgba(tints.green, 0.16), color: tints.green, boxShadow: `inset 0 0 0 0.5px ${rgba(tints.green, 0.32)}` }
-                  : { background: 'var(--accent)', color: 'var(--canvas)' }
-              }
-            >
-              {done
-                ? (lang === 'zh' ? '已完成 ✓' : 'Done ✓')
-                : (lang === 'zh' ? '热身完成' : 'Mark warm-up done')}
-            </motion.button>
-          </div>
+          <motion.button
+            type="button"
+            whileTap={{ scale: 0.97 }}
+            transition={springs.press}
+            onClick={markDone}
+            className="w-full py-3 rounded-full text-[13px] font-semibold tracking-wide"
+            style={
+              done
+                ? { background: rgba(tints.green, 0.16), color: tints.green, boxShadow: `inset 0 0 0 0.5px ${rgba(tints.green, 0.32)}` }
+                : { background: 'var(--accent)', color: 'var(--canvas)' }
+            }
+          >
+            {done
+              ? (lang === 'zh' ? '已完成 ✓' : 'Warm-up done ✓')
+              : (lang === 'zh' ? '热身完成' : 'Mark warm-up done')}
+          </motion.button>
         </div>
       </div>
     </motion.section>
+  );
+}
+
+function SourceTab({ active, onClick, label, icon }) {
+  return (
+    <motion.button
+      type="button"
+      whileTap={{ scale: 0.94 }}
+      transition={springs.press}
+      onClick={onClick}
+      className="h-7 px-3 rounded-full inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-wide"
+      style={
+        active
+          ? { background: 'var(--accent)', color: 'var(--canvas)' }
+          : { background: 'var(--hairline)', color: 'var(--label-1)', boxShadow: 'inset 0 0 0 0.5px var(--hairline-strong)' }
+      }
+    >
+      <span style={{ opacity: 0.55 }}>{icon}</span>
+      {label}
+    </motion.button>
   );
 }
 

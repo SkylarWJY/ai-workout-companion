@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLang } from '../../i18n/index.jsx';
 import { fmtTime } from '../../utils/format.js';
@@ -48,7 +49,11 @@ export default function RestOverlay({ timer, exerciseName, onDone, onStop }) {
   const R = 134;
   const CIRC = 2 * Math.PI * R;
 
-  return (
+  // Portal to body — see WorkOverlay for the framer-motion / fixed-pos rationale.
+  const portalRoot = typeof document !== 'undefined' ? document.body : null;
+  if (!portalRoot) return null;
+
+  const inner = (
     <AnimatePresence>
       {(active || done) && (
         <motion.div
@@ -221,6 +226,10 @@ export default function RestOverlay({ timer, exerciseName, onDone, onStop }) {
       )}
     </AnimatePresence>
   );
+
+  const rootEl = typeof document !== 'undefined' ? document.querySelector('.v2') : null;
+  const themeClass = `v2${rootEl?.classList.contains('light') ? ' light' : ''}`;
+  return createPortal(<div className={themeClass}>{inner}</div>, portalRoot);
 }
 
 function Ctrl({ onClick, label, filled }) {

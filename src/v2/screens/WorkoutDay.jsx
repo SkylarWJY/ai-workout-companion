@@ -20,6 +20,7 @@ import ExerciseModal from '../components/ExerciseModal.jsx';
 import SessionClock from '../components/SessionClock.jsx';
 import RestTimer from '../components/RestTimer.jsx';
 import RestOverlay from '../components/RestOverlay.jsx';
+import WorkOverlay from '../components/WorkOverlay.jsx';
 import ReorderSheet from '../components/ReorderSheet.jsx';
 import { useRestTimer } from '../../hooks/useRestTimer.js';
 import { springs, tints, tintForKind, KIND_LABEL, KIND_LABEL_ZH } from '../theme.js';
@@ -55,6 +56,7 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
   const [modalFor, setModalFor] = useState(null);            // exercise opened in detail modal
   const [reorderOpen, setReorderOpen] = useState(false);
   const [restExerciseName, setRestExerciseName] = useState('');
+  const [workingFor, setWorkingFor] = useState(null);   // active-set work-mode overlay
   const restTimer = useRestTimer();                          // rest countdown after Save set
 
   // Same merged-and-overridden exercise list shape as v0.8.
@@ -231,6 +233,7 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
               t={t}
               weightUnit={weightUnit}
               onLog={() => setLoggerFor(ex)}
+              onStartSet={() => setWorkingFor(ex)}
               onChipTap={(idx, log) => setActionFor({ exId: ex.id, idx, log })}
               onOpenDetail={() => setModalFor(ex)}
             />
@@ -383,6 +386,21 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
         onClose={() => setModalFor(null)}
       />
 
+      {/* IMMERSIVE WORK OVERLAY ────────────────────────────────── */}
+      <WorkOverlay
+        open={!!workingFor}
+        exerciseName={workingFor ? locEx(workingFor, 'name', lang) : ''}
+        expectedSeconds={workingFor ? expectedSetSeconds(workingFor) : 30}
+        onLogSet={() => {
+          // Transition: close work overlay, open the logger.
+          // Save inside the logger fires rest overlay (same path as
+          // the "direct log" button).
+          setLoggerFor(workingFor);
+          setWorkingFor(null);
+        }}
+        onCancel={() => setWorkingFor(null)}
+      />
+
       {/* IMMERSIVE REST OVERLAY ────────────────────────────────── */}
       <RestOverlay
         timer={restTimer}
@@ -406,7 +424,7 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
 // Exercise card
 // ─────────────────────────────────────────────────────────────────────
 
-function ExerciseCard({ idx, ex, session, history, lang, t, weightUnit, onLog, onChipTap, onOpenDetail }) {
+function ExerciseCard({ idx, ex, session, history, lang, t, weightUnit, onLog, onStartSet, onChipTap, onOpenDetail }) {
   const logs = session?.completedSets?.[ex.id] || [];
   const planned = ex.sets || 0;
   const done = logs.length;
@@ -512,21 +530,48 @@ function ExerciseCard({ idx, ex, session, history, lang, t, weightUnit, onLog, o
             </span>
           )}
         </div>
-        <motion.button
-          type="button"
-          whileTap={{ scale: 0.94 }}
-          transition={springs.press}
-          onClick={onLog}
-          className="h-9 px-4 rounded-full font-semibold text-[13px] tracking-[-0.01em]"
-          style={{ background: 'var(--accent)', color: 'var(--canvas)' }}
-        >
-          {complete
-            ? (lang === 'zh' ? '+ 加一组' : '+ Extra set')
-            : (lang === 'zh' ? '记录这组' : 'Log set')}
-        </motion.button>
+        <div className="flex items-center gap-1.5">
+          <motion.button
+            type="button"
+            whileTap={{ scale: 0.94 }}
+            transition={springs.press}
+            onClick={onStartSet}
+            className="h-9 px-4 rounded-full font-semibold text-[13px] tracking-[-0.01em] inline-flex items-center gap-1.5"
+            style={{ background: tints.green, color: '#000' }}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7L8 5z" />
+            </svg>
+            {complete
+              ? (lang === 'zh' ? '加一组' : 'Extra')
+              : (lang === 'zh' ? '开练' : 'Start')}
+          </motion.button>
+          <motion.button
+            type="button"
+            whileTap={{ scale: 0.94 }}
+            transition={springs.press}
+            onClick={onLog}
+            className="h-9 px-3 rounded-full font-semibold text-[12px] v2-t1"
+            style={{ background: 'var(--hairline)', boxShadow: 'inset 0 0 0 0.5px var(--hairline-strong)' }}
+          >
+            {lang === 'zh' ? '直接记' : 'Log'}
+          </motion.button>
+        </div>
       </div>
     </motion.div>
   );
+}
+
+// Rough expected set duration: reps × (tempo total + 0.5 transition).
+// Falls back to a sane default when tempo is unknown.
+function expectedSetSeconds(exercise) {
+  const rangeMatch = String(exercise.repRange || '').match(/(\d+)\D+(\d+)/);
+  const targetReps = rangeMatch ? Math.round((parseInt(rangeMatch[1], 10) + parseInt(rangeMatch[2], 10)) / 2) : 10;
+  const tempo = (exercise.tempo || '').match(/^(\d+)-(\d+)-(\d+)(?:-(\d+))?$/);
+  const repSeconds = tempo
+    ? (parseInt(tempo[1], 10) + parseInt(tempo[2], 10) + parseInt(tempo[3], 10) + (tempo[4] ? parseInt(tempo[4], 10) : 0)) + 0.5
+    : 4;
+  return Math.max(15, Math.round(targetReps * repSeconds));
 }
 
 function SetChip({ log, displayUnit, onClick }) {

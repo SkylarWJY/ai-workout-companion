@@ -57,12 +57,9 @@ function ModalBody({ exercise, onEdit }) {
   const [variantIdx, setVariantIdx] = useState(0);
   useEffect(() => { setVariantIdx(0); }, [exercise.id]);
 
-  // Skip the editorial ★ Best Pick when present — it's a curated combo,
-  // not a swappable variant.
-  const selectableVariants = useMemo(
-    () => variants.filter((v) => !v.isBestPick),
-    [variants],
-  );
+  // Include the editorial ★ Best Pick — it's a curated "best for this
+  // muscle" tab the user explicitly wants surfaced.
+  const selectableVariants = variants;
 
   const variant = selectableVariants[variantIdx] || variants[0];
 
@@ -163,12 +160,42 @@ function ModalBody({ exercise, onEdit }) {
                 : v.labelZh && lang === 'zh'
                   ? v.labelZh
                   : t(`variant.${v.key}`);
+            const isBest = !!v.isBestPick;
+            const selected = i === variantIdx;
+            if (isBest) {
+              // Editorial Best Pick — gold-tinted, ★ glyph, distinct
+              // styling so it stands out from swappable variants.
+              return (
+                <motion.button
+                  key={v.key || i}
+                  type="button"
+                  whileTap={{ scale: 0.94 }}
+                  transition={springs.press}
+                  onClick={() => setVariantIdx(i)}
+                  className="h-7 px-3 rounded-full inline-flex items-center gap-1.5 font-semibold text-[12px] whitespace-nowrap"
+                  style={
+                    selected
+                      ? { background: tints.orange, color: '#000' }
+                      : {
+                          background: `rgba(255, 159, 10, 0.16)`,
+                          color: tints.orange,
+                          boxShadow: 'inset 0 0 0 0.5px rgba(255, 159, 10, 0.42)',
+                        }
+                  }
+                >
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.1 6.3 7 1-5 4.9 1.2 7L12 17.8 5.7 21l1.2-7-5-4.9 7-1L12 2z" />
+                  </svg>
+                  {label}
+                </motion.button>
+              );
+            }
             return (
               <Chip
                 key={v.key || i}
                 size="md"
                 variant="ghost"
-                selected={i === variantIdx}
+                selected={selected}
                 onClick={() => setVariantIdx(i)}
               >
                 <VariantIcon kind={v.key} size={12} />
