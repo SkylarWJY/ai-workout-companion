@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useCallback } from 'react';
+import React, { createContext, useContext, useCallback, useEffect } from 'react';
 import { STRINGS } from './strings.js';
 import { EXERCISES_ZH } from './exercisesZh.js';
 import { WORKOUTS_ZH } from './workoutsZh.js';
@@ -6,13 +6,39 @@ import { COOLDOWNS_ZH } from './warmCoolZh.js';
 import { useLocalStorage } from '../hooks/useLocalStorage.js';
 
 const LanguageContext = createContext({
-  lang: 'en',
+  lang: 'zh',
   setLang: () => {},
   t: (k) => k,
 });
 
+// First-load default: Chinese, unless the browser explicitly reports
+// an English locale. Existing users with a stale 'en' from an earlier
+// build get a one-time migration via the v2 lang flip below — they
+// can still toggle back to English from the nav badge.
+const initialLang = (() => {
+  if (typeof navigator === 'undefined') return 'zh';
+  return /^en\b/i.test(navigator.language || '') ? 'en' : 'zh';
+})();
+
 export function LanguageProvider({ children }) {
-  const [lang, setLang] = useLocalStorage('atlas.lang', 'en');
+  const [lang, setLang] = useLocalStorage('atlas.lang', initialLang);
+
+  // One-time migration: older installs stored 'en' as the hard-coded
+  // default before this build. If the user is on a non-English
+  // browser and the lang flag was never confirmed, flip them to zh
+  // exactly once. Keyed by a separate localStorage flag so a deliberate
+  // EN choice survives the migration.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const migrated = localStorage.getItem('atlas.langMigratedV2');
+      if (migrated) return;
+      localStorage.setItem('atlas.langMigratedV2', '1');
+      const langPref = (navigator.language || '').toLowerCase();
+      if (!/^en/.test(langPref) && lang === 'en') setLang('zh');
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const t = useCallback(
     (key, fallback) => {
