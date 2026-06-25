@@ -24,8 +24,15 @@ export const eases = {
 // Stagger for list reveals.
 export const stagger = { delayChildren: 0.04, staggerChildren: 0.04 };
 
-// Apple system tint hex codes — synced with index.css :root.
-export const tints = {
+// Theme-aware tints. Components import `tints.green` etc. as inline-style
+// color strings. Returning hard-coded hexes here would defeat the .v2.neon
+// CSS overrides (e.g. "mint" was rendering as #66D4CF cyan even when the
+// active theme had aliased --tint-mint to lime).
+//
+// The Proxy resolves each access through the live CSS variable on the .v2
+// root, so component renders pick up the current theme's value. Fallback
+// hexes mirror the dark-theme tokens for SSR / pre-mount safety.
+const TINT_FALLBACK = {
   blue:   '#0A84FF',
   indigo: '#5E5CE6',
   green:  '#30D158',
@@ -34,6 +41,16 @@ export const tints = {
   mint:   '#66D4CF',
   pink:   '#FF375F',
 };
+
+export const tints = new Proxy(TINT_FALLBACK, {
+  get(target, prop) {
+    if (typeof document === 'undefined' || typeof prop !== 'string') return target[prop];
+    const root = document.querySelector('.v2');
+    if (!root) return target[prop];
+    const v = getComputedStyle(root).getPropertyValue(`--tint-${prop}`).trim();
+    return v || target[prop];
+  },
+});
 
 // Map a recommendation `kind` from progression.js to a visual tint.
 // Used by Logger banner + Dashboard row chip.

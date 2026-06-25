@@ -729,11 +729,12 @@ function WeeklyStrip({ history, onPick, lang, t, weeklySplit, setDayType, editin
               )}
             </div>
             <span
-              className={`w-1 h-1 rounded-full ${
-                completed
-                  ? isToday ? 'bg-black' : 'bg-[#30D158]'
-                  : 'bg-transparent'
-              }`}
+              className="w-1 h-1 rounded-full"
+              style={{
+                background: completed
+                  ? (isToday ? '#000' : 'var(--tint-green)')
+                  : 'transparent',
+              }}
             />
           </motion.button>
         );
