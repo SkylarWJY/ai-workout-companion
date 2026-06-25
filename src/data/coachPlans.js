@@ -132,54 +132,58 @@ export const SKYLAR_PUSH = {
     },
     {
       id: 's-push-3',
-      name: 'Reverse Pec Deck Machine',
-      nameZh: '反向蝴蝶机',
+      // Was Reverse Pec Deck — moved to Pull day so rear delts get a
+      // full 48hr recovery window. Replaced here by an incline press
+      // that hits upper chest + front delt (no rear-delt overlap with
+      // the next pull day).
+      name: 'Incline Dumbbell Press',
+      nameZh: '上斜哑铃推举',
       order: 3,
       sets: 4,
-      repRange: '12–15',
-      restSeconds: 60,
-      suggestedWeight: 'Machine 10–18 kg (start light — rear delts are small)',
+      repRange: '8–12',
+      restSeconds: 90,
+      suggestedWeight: 'DB 8–14 kg ea',
       currentWeight: '',
       goalWeight: '',
-      priority: 'extreme',
-      primaryMuscles: ['Rear Delts'],
-      secondaryMuscles: ['Upper Back'],
+      priority: 'high',
+      primaryMuscles: ['Upper Chest', 'Front Delts'],
+      secondaryMuscles: ['Triceps'],
       whyItMatters:
-        'Best rear-delt isolation on the planet. Fixed path = elbows can\'t cheat upward into trap range. Chest pad takes lower-back stress out. This is what gives your shoulders the 3D look from the back.',
+        'Upper-chest + clavicular front-delt builder. Stacks on top of the OHP — together they give the shoulder its rounded front cap WITHOUT bringing rear delts into Push day (those belong on Pull day).',
       whyItMattersZh:
-        '地球上最好的后束孤立动作。固定轨道 = 肘部不会偷偷抬上斜方肌区域。胸垫去掉下背压力。这就是让肩膀从背面看有 3D 立体感的核心动作。',
+        '练上胸 + 锁骨段前束。和推肩机叠加 — 一起打圆肩膀前帽，**不动后束**（后束留给拉日，48 小时恢复）。',
       howTo: [
-        'Chest pinned to the pad, handles forward at shoulder height.',
-        'Pull straight out (not down) — elbows lead, slight bend held.',
-        'Squeeze rear delts at the back — pause 1 second.',
-        '3-sec controlled return. Don\'t bang the stack.',
+        'Bench at 30°. Lie flat against the pad, feet planted.',
+        'Dumbbells at shoulder height, palms facing forward.',
+        '2-sec press up — squeeze the upper chest at the top.',
+        '3-sec controlled descent. Touch lightly, drive back up.',
       ],
       howToZh: [
-        '胸部紧贴胸垫，握把放在肩膀高度的前方。',
-        '直接往两侧拉（不是往下）— 肘部领动，微弯保持。',
-        '后端夹紧后束 — 顶端停 1 秒。',
-        '3 秒控制回去，不要砸配重片。',
+        '凳子调到 30°。背紧贴凳子，脚踩实地面。',
+        '哑铃从肩膀高度开始，手掌朝前。',
+        '2 秒推上去 — 顶部夹紧上胸。',
+        '3 秒控制下降。轻碰肩膀位再推。',
       ],
       tips: [
-        'Imagine pinching a pencil between your shoulder blades, NOT shrugging.',
-        'Hands NEUTRAL or slightly thumbs-up — opens up rear delt activation.',
+        'Drive the elbows slightly in (not flared) — protects shoulders, hits chest more.',
+        'Keep wrists STACKED over elbows the whole press.',
       ],
       tipsZh: [
-        '想象两个肩胛骨之间夹一支铅笔，不是耸肩。',
-        '握把保持 中性 或稍微大拇指朝上 — 后束最容易激活。',
+        '肘部稍微往内收（不要外翻）— 保护肩膀，胸部发力更准。',
+        '手腕始终在肘部正上方。',
       ],
       commonMistakes: [
-        'Pulling DOWN into a row — that activates traps.',
-        'Bringing the elbows above shoulder height = trap recruitment.',
-        'Letting the chest come off the pad.',
+        'Bench too high (45°+) — turns into a shoulder press, kills upper chest.',
+        'Elbows flared 90° — wrecks rotator cuff.',
+        'Bouncing the DBs off the chest.',
       ],
       commonMistakesZh: [
-        '往下拉做成划船 — 那是斜方肌发力。',
-        '肘部抬到肩膀以上 = 斜方肌偷工。',
-        '胸离开胸垫。',
+        '凳子太陡（45°+） — 变成推肩，上胸完全没刺激。',
+        '肘部完全外翻 90° — 容易伤旋转肌袖。',
+        '哑铃砸胸口反弹。',
       ],
-      coachNote: 'Anti-trap: elbows stay LEVEL with shoulders. Never above. This + Cable Lateral is your shoulder sculpt foundation.',
-      coachNoteZh: '🚫 不动斜方：肘部与肩膀齐平，永远不超过。这个 + 绳索侧平举 = 你雕刻肩膀的两个基石。',
+      coachNote: '30° is the sweet spot for clavicular delt + upper chest. Higher = OHP, flat = chest only.',
+      coachNoteZh: '30° 是上胸 + 前束最佳角度。再陡就是推肩，再平就是普通卧推。',
       kneeFriendly: true,
       lowerBackFriendly: true,
     },
@@ -451,52 +455,61 @@ export const SKYLAR_PULL = {
     },
     {
       id: 's-pull-3',
-      name: 'Straight-Arm Cable Pulldown',
-      nameZh: '直臂绳索下压',
+      // Was Straight-Arm Pulldown — dropped because I had no verified
+      // short tutorial video for that exact motion, so the modal was
+      // showing a generic Lat Pulldown clip instead. Replaced with
+      // Single-Arm DB Row (verified DeltaBolic clip jpi4reqwiKY) which
+      // targets lat THICKNESS — pairs cleanly with the wide-grip
+      // pulldown above (width) without overlapping the chest-supp
+      // machine row (which is the bilateral upper-back move).
+      name: 'Single-Arm Dumbbell Row',
+      nameZh: '单臂哑铃划船',
       order: 3,
       sets: 3,
-      repRange: '12–15',
-      restSeconds: 60,
-      suggestedWeight: 'Cable 12–18 kg (light — the stretch is the point)',
+      repRange: '10–12',
+      restSeconds: 75,
+      suggestedWeight: 'DB 10–18 kg per side',
       currentWeight: '',
       goalWeight: '',
       priority: 'high',
       primaryMuscles: ['Lats'],
-      secondaryMuscles: [],
+      secondaryMuscles: ['Mid Back', 'Rear Delts'],
       whyItMatters:
-        'Pure lat isolation — biceps OFF, only the lat works. Locked-arm pulldown = the move that builds the LOWER lat point (the part that makes the V taper into the waist).',
+        'Lat thickness builder — the unilateral version lets you get a deeper stretch at the bottom and a stronger squeeze at the top than any bilateral row. Bigger lats from behind = more V-taper from the side.',
       whyItMattersZh:
-        '纯阔背孤立 — 二头不参与，只有阔背工作。锁臂下压 = 练下阔背最尖那一段（让 V 字真正收到腰部的关键）。',
+        '练阔背厚度 — 单臂版底端拉伸更深、顶端挤压更狠，比任何双手划船刺激都大。背阔厚 = V 字从侧面看更明显。',
       howTo: [
-        'Cable HIGH. Straight bar attachment.',
-        'Arms locked (slight bend, not bent). Step back so cable is at ~45° forward.',
-        'Push the bar DOWN to your thighs in a clean arc. Lats squeeze at the bottom.',
-        '3-sec control back up + feel the stretch at the top.',
+        'One knee + same-side hand on a flat bench. Back parallel to the floor.',
+        'DB hanging straight down. Let the lat stretch all the way at the bottom.',
+        'Row the elbow UP and slightly BACK — drive it past your ribcage.',
+        '1-sec squeeze at top, 3-sec controlled return.',
       ],
       howToZh: [
-        '绳索 高位。直杆把手。',
-        '手臂锁住（微弯，不是弯曲）。往后站让绳索往前 约 45°。',
-        '画弧线把杆 往下 压到大腿。底端阔背用力夹一下。',
-        '3 秒控制回去 + 顶端感受拉伸。',
+        '一边膝盖 + 同侧手撑在平板凳上。背与地面平行。',
+        '哑铃自然下垂。底端让阔背完全拉开。',
+        '肘部往 上 + 微微往后 — 越过肋骨位置。',
+        '顶端夹 1 秒，3 秒控制回去。',
       ],
       tips: [
-        'Imagine you\'re pushing the floor away with the bar — engages lats max.',
-        'Hinge slightly at the hip to clear the bar path.',
+        'Pull with the ELBOW, not the hand — keeps the lat doing the work.',
+        'Look slightly down so the spine stays neutral.',
       ],
       tipsZh: [
-        '想象用杆把地板推开 — 阔背激活最大化。',
-        '髋部稍微前倾给杆让出运动轨迹。',
+        '用 肘部 拉，不是用手 — 阔背才会发力。',
+        '微微低头让脊柱保持中立。',
       ],
       commonMistakes: [
-        'Bending the arms — turns it into a pushdown.',
-        'Going too heavy → losing the lat squeeze.',
+        'Twisting the torso to swing the DB up — that\'s momentum, not lat.',
+        'Pulling the elbow out wide — turns it into a rear delt row.',
+        'Not stretching at the bottom — half the value of this exercise is the bottom stretch.',
       ],
       commonMistakesZh: [
-        '手肘弯曲 — 变成三头下压了。',
-        '上重量太大 → 阔背的挤压感丢掉。',
+        '扭身体把哑铃甩起来 — 那是借力，不是阔背。',
+        '肘部往外开 — 变成后束划船了。',
+        '底端不拉伸 — 这个动作一半的价值在底端的拉伸。',
       ],
-      coachNote: 'Zero biceps, zero traps. This is the secret weapon for lower-lat V.',
-      coachNoteZh: '零二头、零斜方。这是练下背阔（V 字最尖部分）的秘密武器。',
+      coachNote: 'Bigger stretch > heavier weight. Drop 20% from your normal row weight.',
+      coachNoteZh: '拉伸深度 > 重量。比平时划船减 20%。',
       kneeFriendly: true,
       lowerBackFriendly: true,
     },
@@ -848,36 +861,58 @@ export const SKYLAR_LEG = {
     },
     {
       id: 's-leg-5',
-      name: 'Cable Lateral Raise (3rd shoulder dose)',
-      nameZh: '绳索侧平举（本周第 3 剂）',
+      // Was a 3rd side-delt session (overlapped Push days' side-delt
+      // work and broke 48hr shoulder recovery). Replaced with seated
+      // hamstring curl — pure hamstring isolation that doesn't dup
+      // anything on Push or Pull day.
+      name: 'Seated Leg Curl',
+      nameZh: '坐姿勾腿机',
       order: 5,
-      sets: 4,
-      repRange: '12–15',
+      sets: 3,
+      repRange: '10–12',
       restSeconds: 60,
-      suggestedWeight: 'Cable 2.5–4.5 kg ea',
+      suggestedWeight: 'Machine 18–30 kg',
       currentWeight: '',
       goalWeight: '',
       priority: 'high',
-      primaryMuscles: ['Side Delts'],
-      secondaryMuscles: [],
+      primaryMuscles: ['Hamstrings'],
+      secondaryMuscles: ['Calves'],
       whyItMatters:
-        'Third side-delt session of the week. Frequency drives cap roundness — the more often you train it (within recovery), the faster it grows.',
+        'RDLs hit the hamstrings at the hip — this hits them at the knee. Together they cover both hamstring functions, which is what builds a full, round hamstring shape (the part that gives the glute-hamstring tie-in shape from behind).',
       whyItMattersZh:
-        '本周中束的第 3 次。频率决定肩膀帽的圆度 — 在恢复范围内训练越频繁，长得越快。',
+        '罗马尼亚硬拉打髋部的腿后链 — 这个动作打膝部的腿后链。两个一起做才能把腿后两个功能都覆盖，腿后才能长出真正圆润的形状（从背面看臀腿衔接的关键）。',
       howTo: [
-        'Same as Push day. Single arm cable, control the eccentric.',
-        'After lower-body work, this hits fresh — make it count.',
+        'Pad just above the heel, knees aligned with the machine pivot.',
+        'Curl heels under your butt — squeeze hamstrings at the bottom.',
+        '1-sec squeeze, 3-sec controlled return.',
+        'Keep hips pinned to the seat — no lifting up.',
       ],
       howToZh: [
-        '动作和推日一样：单手绳索，控制离心。',
-        '做完腿之后，肩膀还是新的 — 别敷衍。',
+        '滚轮卡在脚踝上方，膝盖对准机器转轴。',
+        '把脚跟卷到屁股下方 — 底端夹紧腿后。',
+        '夹 1 秒，3 秒控制回去。',
+        '臀部始终压在座位上 — 不要顶起来。',
       ],
-      tips: ['Set this up AFTER your lower body so you don\'t skip it tired.'],
-      tipsZh: ['先做下肢再做这个，免得累了就直接跳过。'],
-      commonMistakes: ['Skipping it because legs are toasted.'],
-      commonMistakesZh: ['因为腿做完累了就跳过。'],
-      coachNote: 'Side-delt frequency dose #3 of the week.',
-      coachNoteZh: '本周中束训练的第 3 次 — 频率才是圆肩膀的关键。',
+      tips: [
+        'Point the toes slightly UP — gets more direct hamstring activation.',
+        'Slow eccentric is where the growth happens — don\'t let the weight crash back.',
+      ],
+      tipsZh: [
+        '脚尖稍微 上勾 — 腿后激活更直接。',
+        '慢慢离心是长肌肉的关键 — 不要让重量直接砸下去。',
+      ],
+      commonMistakes: [
+        'Lifting hips off the seat — turns into a glute exercise.',
+        'Using momentum from a fast curl up.',
+        'Going too heavy → losing the bottom squeeze.',
+      ],
+      commonMistakesZh: [
+        '屁股离开座位 — 变成臀部发力了。',
+        '快速卷上去借力。',
+        '上重量太大 → 底端的挤压感丢掉。',
+      ],
+      coachNote: 'Pair with RDLs above for full hamstring development. Knee-friendly even on a heavy leg day.',
+      coachNoteZh: '配合上面的 RDL 一起做，腿后才能全面发展。这个动作对膝盖很友好，重腿日也能做。',
       kneeFriendly: true,
       lowerBackFriendly: true,
     },
@@ -983,14 +1018,14 @@ export const SKYLAR_TUTORIAL_FALLBACKS = {
   // Push
   's-push-1': 'UFcaodmbXd8', // Lateral Raise Tip — same channel/length as default push-2
   's-push-2': '6v4nrRVySj0', // The PERFECT Machine Shoulder Press (default push-1 machine variant)
-  's-push-3': 'LsT-bR_zxLo', // DeltaBolic — PERFECT Dumbbell Rear Delt Fly (same target as reverse pec deck)
+  's-push-3': 'V3BNe4vJX60', // DeltaBolic — Dumbbell Incline Press (s-push-3 now Incline DB Press, no rear delt overlap)
   's-push-4': 'UFcaodmbXd8', // Lateral Raise Tip
   's-push-5': '-PqzEk57xiw', // DeltaBolic — PERFECT Tricep Pushdown (rope variant from default push-5)
   's-push-6': 'KDbFKEScp1M', // Hanging Leg Raise mistake — short clip
   // Pull
   's-pull-1': 'bNmvKpJSWKM', // The PERFECT Lat Pulldown (default pull-3)
   's-pull-2': '4v59ShSjX2w', // DeltaBolic — Chest-Supported T-Bar Row (default pull-2 bestpick)
-  's-pull-3': 'bNmvKpJSWKM', // Closest verified clip — lat-focused pulldown form
+  's-pull-3': 'jpi4reqwiKY', // Single-Arm Dumbbell Bent-Over Row (s-pull-3 now lat thickness)
   's-pull-4': 'LsT-bR_zxLo', // DeltaBolic — Rear Delt Fly form
   's-pull-5': 'j1FjaWu5Am4', // Bicep form tips (default pull-6)
   's-pull-6': 'XWJmFD_AdbM', // Jeremy Ethier — Ab Roller form (default pull-7, closest cable-style ab work)
@@ -999,7 +1034,7 @@ export const SKYLAR_TUTORIAL_FALLBACKS = {
   's-leg-2': 'YSnMWxs7wss', // GOBLET SQUAT key points (default leg-1)
   's-leg-3': 'CBOhr6H7BEY', // RDL Tips (default leg-2)
   's-leg-4': 'uBSoEWZu07k', // Bulgarian Split Squat – Glute-Focused (default leg-3)
-  's-leg-5': 'UFcaodmbXd8', // Lateral Raise Tip
+  's-leg-5': 'xdbEG3xGLI8', // Seated Leg Curl tips (was Cable Lateral — moved to hamstring isolation)
   's-leg-6': 'wdOkFomQNp8', // Build BIGGER Calves (default leg-6)
   's-leg-7': 'qV0K0dwPYAU', // The Deadbug: Master This Core Exercise (default leg-7)
 };

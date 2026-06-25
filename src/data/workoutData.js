@@ -757,28 +757,30 @@ export const PLANS = {
     summary: 'Side+rear delts · V-taper (NO traps) · abs',
     summaryZh: '侧+后束 · V 型背（不动斜方）· 腹肌',
     workouts: SKYLAR_PLAN,
-    // Coach-tuned 5-day split, designed for the user's actual goals:
-    //   – Side-delt frequency = 3× / week (Push + Push + Leg finisher)
-    //   – V-taper back frequency = 2× / week (Pull + Pull) for max
-    //     lat-width specificity without hitting traps
-    //   – Single leg day = glutes + RDL + 3rd side-delt dose
-    //   – 2 rest days inserted between heavy back/shoulder pairs so
-    //     CNS recovers between specialized work
+    // True alternating Push / Pull / Leg with full 48h recovery
+    // between same-muscle days. Each push/pull/leg day now hits
+    // independent muscle groups (rear delts only on Pull, side
+    // delts only on Push, hamstrings only on Leg) so there's never
+    // a recovery clash.
     //
-    //   Mon  Pull · V-Taper      (back fresh)
-    //   Tue  Push · Sculpt       (shoulders fresh)
-    //   Wed  REST                (recovery)
-    //   Thu  Leg · Glutes + Cap  (lower + side delt #3)
-    //   Fri  Pull · V-Taper      (back-width frequency)
-    //   Sat  Push · Sculpt       (shoulder cap frequency)
-    //   Sun  REST                (full recovery)
+    //   Mon  Push  (front delt + side delt + tri + upper chest)
+    //   Tue  Pull  (lats + rear delt + bicep)
+    //   Wed  Rest
+    //   Thu  Leg   (glute + quad + hamstring + calf + abs)
+    //   Fri  Push  (2nd push — side-delt frequency)
+    //   Sat  Pull  (2nd pull — lat-width frequency)
+    //   Sun  Rest
+    //
+    // 5 training days. No muscle hits back-to-back. Side delts 2×/wk,
+    // rear delts 2×/wk, lats 2×/wk — every group gets the 48-72h
+    // window it needs to grow.
     recommendedSplit: [
-      { day: 'Mon', type: 'pull', label: 'Pull' },
-      { day: 'Tue', type: 'push', label: 'Push' },
+      { day: 'Mon', type: 'push', label: 'Push' },
+      { day: 'Tue', type: 'pull', label: 'Pull' },
       { day: 'Wed', type: 'rest', label: 'Rest' },
       { day: 'Thu', type: 'leg',  label: 'Leg'  },
-      { day: 'Fri', type: 'pull', label: 'Pull' },
-      { day: 'Sat', type: 'push', label: 'Push' },
+      { day: 'Fri', type: 'push', label: 'Push' },
+      { day: 'Sat', type: 'pull', label: 'Pull' },
       { day: 'Sun', type: 'rest', label: 'Rest' },
     ],
   },

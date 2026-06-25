@@ -1724,16 +1724,13 @@ const SKYLAR_VARIANTS = {
       youtubeId: '4LBVP2Oe7fg' },
   ],
 
-  // s-push-3: Reverse Pec Deck — Rear delts (matches exercise name!)
+  // s-push-3: Incline DB Press — front delt + upper chest (NEW; rear
+  // delt moved entirely to Pull day for proper recovery)
   's-push-3': [
-    { key: 'bestpick', label: 'Best for Rear Delts', labelZh: '后束最佳',
-      isBestPick: true, youtubeId: 'FeERX9UwspY' }, // PERFECT Cable Rear Fly
-    { key: 'machine',  label: 'Reverse Pec Deck', labelZh: '反向蝴蝶机',
-      youtubeId: 'H5UxZFl0lgk' },
-    { key: 'cable',    label: 'Cable Face Pull',  labelZh: '绳索面拉',
-      youtubeId: 'I41wK3wTZlo' },
-    { key: 'dumbbell', label: 'DB Rear Fly',      labelZh: '哑铃后飞鸟',
-      youtubeId: 'LsT-bR_zxLo' },
+    { key: 'dumbbell', label: 'Incline DB Press', labelZh: '上斜哑铃推举',
+      youtubeId: 'V3BNe4vJX60' },
+    { key: 'machine',  label: 'Machine Chest Press', labelZh: '坐姿推胸机',
+      youtubeId: 'Qu7-ceCvq7w' },
   ],
 
   // s-push-4: DB Lateral Raise myo-reps — Side delt burnout
@@ -1746,12 +1743,12 @@ const SKYLAR_VARIANTS = {
       youtubeId: 'JlT2xB92lY8' },
   ],
 
-  // s-push-5: Tricep Pushdown — Triceps
+  // s-push-5: Tricep Pushdown — Triceps. Dropped the "直杆下压"
+  // variant — the ID I had wasn't a confirmed straight-bar clip.
+  // The three remaining variants each have a verified tutorial.
   's-push-5': [
     { key: 'rope',     label: 'Rope Pushdown', labelZh: '绳索三头下压',
       youtubeId: '-PqzEk57xiw' },
-    { key: 'cable',    label: 'Straight Bar',  labelZh: '直杆下压',
-      youtubeId: '4NWWB0f0vzQ' },
     { key: 'overhead', label: 'Overhead Ext',  labelZh: '过头臂屈伸',
       youtubeId: 'NTk0Igxqcsk' },
     { key: 'kickback', label: 'DB Kickback',   labelZh: '哑铃后摆',
@@ -1856,14 +1853,12 @@ const SKYLAR_VARIANTS = {
       youtubeId: 'UbOcViik3hk' },
   ],
 
-  // s-leg-5: Cable Lateral Raise — Side delt finisher
+  // s-leg-5: Seated Leg Curl (was a 3rd side-delt session — moved to
+  // hamstring isolation so shoulders get a full recovery window
+  // between Push days).
   's-leg-5': [
-    { key: 'bestpick', label: 'Best for Side Delts', labelZh: '中束最佳',
-      isBestPick: true, youtubeId: 'Kl3LEzQ5Zqs' },
-    { key: 'cable',    label: 'Cable Lateral',  labelZh: '绳索侧平举',
-      youtubeId: 'JlT2xB92lY8' },
-    { key: 'dumbbell', label: 'DB Lateral',     labelZh: '哑铃侧平举',
-      youtubeId: 'UFcaodmbXd8' },
+    { key: 'machine', label: 'Seated Leg Curl', labelZh: '坐姿勾腿机',
+      youtubeId: 'xdbEG3xGLI8' },
   ],
 
   // s-leg-6: Calf Raise
