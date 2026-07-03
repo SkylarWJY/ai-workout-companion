@@ -312,6 +312,23 @@ function ModalBody({ exercise, onEdit }) {
         </section>
       )}
 
+      {/* Coach note — the one-line rule that makes or breaks the
+          exercise (anti-trap cue, myo-reps timer rule, …). Present on
+          coach-plan exercises; silently absent elsewhere. */}
+      {(exercise.coachNoteZh || exercise.coachNote) && (
+        <section className="mt-6">
+          <div className="v2-caption v2-t2 mb-2">{lang === 'zh' ? '教练备注' : 'Coach note'}</div>
+          <div
+            className="v2-card-flat p-4 flex gap-3"
+            style={{ boxShadow: `inset 2px 0 0 0 ${tints.orange}` }}
+          >
+            <span className="v2-body text-[13.5px] v2-t1 leading-relaxed">
+              {lang === 'zh' ? (exercise.coachNoteZh || exercise.coachNote) : (exercise.coachNote || exercise.coachNoteZh)}
+            </span>
+          </div>
+        </section>
+      )}
+
       {/* Joint-friendly tags */}
       {(exercise.kneeFriendly || exercise.lowerBackFriendly) && (
         <section className="mt-6 flex gap-2 flex-wrap">
