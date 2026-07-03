@@ -13,7 +13,7 @@ import PrimaryButton from './PrimaryButton.jsx';
 // v0.8 mechanics but with v2 glass card + animated ring.
 export default function CoolDownCard({ workoutType }) {
   const { t, lang } = useLang();
-  const { overrides, setOverride } = useOverrides();
+  const { overrides, setFlag } = useOverrides();
   const stretches = COOLDOWNS[workoutType] || [];
   const doneFlag = !!overrides.cooldownDone?.[workoutType];
 
@@ -77,7 +77,7 @@ export default function CoolDownCard({ workoutType }) {
   const next = () => {
     if (lastOne) {
       clearTick(); setRunning(false); setPhase('list');
-      setOverride('cooldownDone', null, workoutType, true);
+      setFlag('cooldownDone', workoutType, true);
       return;
     }
     const ni = idx + 1; idxRef.current = ni; setIdx(ni);

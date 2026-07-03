@@ -33,7 +33,7 @@ export default function ExerciseEditSheet({ open, exercise, onClose }) {
 
 function EditBody({ exercise, onClose }) {
   const { t, lang } = useLang();
-  const { overrides, setOverride, clearOverride } = useOverrides();
+  const { overrides, setExerciseField, clearOverride } = useOverrides();
 
   const variants = useMemo(
     () => demoVariants(exercise.id).filter((v) => !v.isBestPick),
@@ -82,22 +82,22 @@ function EditBody({ exercise, onClose }) {
       Object.entries(draftYt).filter(([, v]) => v && v.trim()).map(([k, v]) => [k, extractYouTubeId(v)]),
     );
     if (Object.keys(cleanYt).length) {
-      setOverride('exercise', exercise.id, 'youtubeIdByVariant', cleanYt);
+      setExerciseField(exercise.id, 'youtubeIdByVariant', cleanYt);
     } else {
       clearOverride('exercise', exercise.id, 'youtubeIdByVariant');
     }
     if (Object.keys(draftLocal).length) {
-      setOverride('exercise', exercise.id, 'localVideoByVariant', draftLocal);
+      setExerciseField(exercise.id, 'localVideoByVariant', draftLocal);
     } else {
       clearOverride('exercise', exercise.id, 'localVideoByVariant');
     }
     if (suggested && suggested !== exercise.suggestedWeight) {
-      setOverride('exercise', exercise.id, 'suggestedWeight', suggested);
+      setExerciseField(exercise.id, 'suggestedWeight', suggested);
     } else {
       clearOverride('exercise', exercise.id, 'suggestedWeight');
     }
     if (tempo && tempo.trim()) {
-      setOverride('exercise', exercise.id, 'tempo', tempo.trim());
+      setExerciseField(exercise.id, 'tempo', tempo.trim());
     } else {
       clearOverride('exercise', exercise.id, 'tempo');
     }

@@ -13,7 +13,14 @@ import DataExportSheet from './DataExportSheet.jsx';
 export default function SettingsSheet({ open, onClose }) {
   const { t, lang, setLang } = useLang();
   const { theme, setTheme } = useV2Theme();
-  const { overrides, weightUnit, setWeightUnit, setOverride, resetAll } = useOverrides();
+  const {
+    overrides,
+    weightUnit,
+    setWeightUnit,
+    setProfileField,
+    setActivePlan: setActivePlanTyped,
+    resetAll,
+  } = useOverrides();
   const [historyOpen, setHistoryOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
 
@@ -23,7 +30,7 @@ export default function SettingsSheet({ open, onClose }) {
   const pullUpCurrent = o.pullUpCurrent ?? USER_PROFILE.pullUpProgression.current;
   const pullUpTarget  = o.pullUpTarget  ?? USER_PROFILE.pullUpProgression.target;
   const activePlan = overrides.plan?.active || 'default';
-  const setActivePlan = (id) => setOverride('plan', null, 'active', id);
+  const setActivePlan = (id) => setActivePlanTyped(id);
 
   const handleReset = () => {
     if (window.confirm(
@@ -129,13 +136,13 @@ export default function SettingsSheet({ open, onClose }) {
               label={lang === 'zh' ? '当前体脂' : 'Current body fat'}
               suffix="%"
               value={currentBF}
-              onChange={(v) => setOverride('profile', null, 'bf', Number(v) || 0)}
+              onChange={(v) => setProfileField('bf', Number(v) || 0)}
             />
             <NumberRow
               label={lang === 'zh' ? '目标体脂' : 'Target body fat'}
               suffix="%"
               value={targetBF}
-              onChange={(v) => setOverride('profile', null, 'targetBf', Number(v) || 0)}
+              onChange={(v) => setProfileField('targetBf', Number(v) || 0)}
             />
           </Section>
 
@@ -144,12 +151,12 @@ export default function SettingsSheet({ open, onClose }) {
             <TextRow
               label={lang === 'zh' ? '当前能力' : 'Currently'}
               value={pullUpCurrent}
-              onChange={(v) => setOverride('profile', null, 'pullUpCurrent', v)}
+              onChange={(v) => setProfileField('pullUpCurrent', v)}
             />
             <TextRow
               label={lang === 'zh' ? '目标' : 'Target'}
               value={pullUpTarget}
-              onChange={(v) => setOverride('profile', null, 'pullUpTarget', v)}
+              onChange={(v) => setProfileField('pullUpTarget', v)}
             />
           </Section>
 

@@ -43,10 +43,26 @@ export function OverridesProvider({ children }) {
   const [overrides, setOverrides] = useLocalStorage('atlas.overrides', {});
   const [weightUnit, setWeightUnit] = useLocalStorage('atlas.weightUnit', 'lb');
 
-  // setOverride('profile', null, 'bf', 24)
-  // setOverride('exercise', 'leg-1', 'currentWeight', '60 lb')
+  // Generic setOverride — kept for back-compat with existing callsites,
+  // but now has a runtime guard: writing (scope, null, null, value)
+  // used to silently create `{ "null": value }` (the black-screen bug
+  // that crashed the weekly-split editor). All new code should use
+  // setTopLevel / setExerciseField / setProfileField / setFlag below
+  // instead — those are shape-safe by construction.
+  //
+  //   setOverride('profile',  null,     'bf',            24)
+  //   setOverride('exercise', 'leg-1',  'currentWeight', '60 lb')
   const setOverride = useCallback(
     (scope, id, field, value) => {
+      if (id == null && field == null) {
+        // eslint-disable-next-line no-console
+        console.error(
+          `setOverride('${scope}', null, null, value) is unsafe — ` +
+            `it stores { "null": value } and crashes .map()/.filter() ` +
+            `on the next render. Use setTopLevel('${scope}', value).`,
+        );
+        return;
+      }
       setOverrides((prev) => {
         const next = { ...prev };
         if (!next[scope]) next[scope] = {};
@@ -60,6 +76,70 @@ export function OverridesProvider({ children }) {
         }
         return next;
       });
+    },
+    [setOverrides],
+  );
+
+  // ─── Typed setters — prefer these in new code ────────────────
+  // Every callsite reads at a glance which slot it's writing, and
+  // the shape can't be miswired because the function name pins it.
+
+  // overrides.exercise.{id}.{field}
+  const setExerciseField = useCallback(
+    (exerciseId, field, value) => {
+      setOverrides((prev) => {
+        const next = { ...prev };
+        const scope = { ...(next.exercise || {}) };
+        scope[exerciseId] = { ...(scope[exerciseId] || {}), [field]: value };
+        next.exercise = scope;
+        return next;
+      });
+    },
+    [setOverrides],
+  );
+
+  // overrides.profile.{field}
+  const setProfileField = useCallback(
+    (field, value) => {
+      setOverrides((prev) => ({
+        ...prev,
+        profile: { ...(prev.profile || {}), [field]: value },
+      }));
+    },
+    [setOverrides],
+  );
+
+  // overrides.order.{workoutId} = arr
+  const setWorkoutOrder = useCallback(
+    (workoutId, exerciseIds) => {
+      setOverrides((prev) => ({
+        ...prev,
+        order: { ...(prev.order || {}), [workoutId]: exerciseIds },
+      }));
+    },
+    [setOverrides],
+  );
+
+  // overrides.plan.active = planId
+  const setActivePlan = useCallback(
+    (planId) => {
+      setOverrides((prev) => ({
+        ...prev,
+        plan: { ...(prev.plan || {}), active: planId },
+      }));
+    },
+    [setOverrides],
+  );
+
+  // Flag-style: overrides.{scope}.{key} = value.
+  // For warmupDone, cooldownDone, lastVariant, customExercises — any
+  // scope that's a flat dict of {key: value}.
+  const setFlag = useCallback(
+    (scope, key, value) => {
+      setOverrides((prev) => ({
+        ...prev,
+        [scope]: { ...(prev[scope] || {}), [key]: value },
+      }));
     },
     [setOverrides],
   );
@@ -110,6 +190,12 @@ export function OverridesProvider({ children }) {
         setOverride,
         clearOverride,
         setTopLevel,
+        // typed setters — prefer these
+        setExerciseField,
+        setProfileField,
+        setWorkoutOrder,
+        setActivePlan,
+        setFlag,
         resetAll,
         weightUnit,
         setWeightUnit,

@@ -13,7 +13,7 @@ import Chip from './Chip.jsx';
 // so checking off the warm-up persists per-day.
 export default function WarmUpCard({ workoutType }) {
   const { lang } = useLang();
-  const { overrides, setOverride } = useOverrides();
+  const { overrides, setFlag } = useOverrides();
   const warmup = WARMUPS[workoutType];
   const [playing, setPlaying] = useState(false);
   // Two-source toggle: 'mov' = bundled, 'alt' = altYoutubeId.
@@ -37,7 +37,7 @@ export default function WarmUpCard({ workoutType }) {
   }[workoutType];
 
   const markDone = () => {
-    setOverride('warmupDone', null, workoutType, !done);
+    setFlag('warmupDone', workoutType, !done);
   };
 
   return (

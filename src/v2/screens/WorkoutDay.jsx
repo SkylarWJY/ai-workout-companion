@@ -813,7 +813,7 @@ function StepperButton({ onClick, symbol }) {
 // ─────────────────────────────────────────────────────────────────────
 
 function AddExerciseForm({ workoutId, lang, onClose }) {
-  const { setOverride, overrides } = useOverrides();
+  const { setFlag } = useOverrides();
   const [name, setName] = useState('');
   const [sets, setSets] = useState(3);
   const [reps, setReps] = useState('10-15');
@@ -845,7 +845,7 @@ function AddExerciseForm({ workoutId, lang, onClose }) {
       workoutId,
       custom: true,
     };
-    setOverride('customExercises', null, id, ex);
+    setFlag('customExercises', id, ex);
     onClose();
   };
 

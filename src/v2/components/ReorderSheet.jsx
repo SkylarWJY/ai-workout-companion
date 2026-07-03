@@ -11,7 +11,7 @@ import PrimaryButton from './PrimaryButton.jsx';
 // overrides.order.{workoutId}.
 export default function ReorderSheet({ open, onClose, workout, exercises = [] }) {
   const { lang } = useLang();
-  const { setOverride, clearOverride } = useOverrides();
+  const { setWorkoutOrder, clearOverride } = useOverrides();
   const [order, setOrder] = useState(exercises);
 
   // Sync when sheet reopens with a new list.
@@ -20,7 +20,7 @@ export default function ReorderSheet({ open, onClose, workout, exercises = [] })
   }, [open, exercises]);
 
   const save = () => {
-    setOverride('order', null, workout.id, order.map((e) => e.id));
+    setWorkoutOrder(workout.id, order.map((e) => e.id));
     onClose();
   };
 
