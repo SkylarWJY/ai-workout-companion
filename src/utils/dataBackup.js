@@ -13,6 +13,8 @@
 const KEYS = [
   'atlas.history',
   'atlas.overrides',
+  'atlas.bodyStats',
+  'atlas.weightUnit',
   'atlas.v2theme',
   'atlas.theme',
   'atlas.lang',
@@ -28,17 +30,20 @@ const CURRENT_SCHEMA_VERSION = 1;
 //
 //   { from, to, apply: (snapshot) => nextSnapshot }
 //
-// Empty for v1 (initial schema). Every future breaking change adds
-// an entry here instead of silently mutating shape.
+// v0 → v1: the v0.8-era export (the old prod site's "Export data"
+// button) wrapped everything in `localStorage` with no version field.
+// Detected by shape rather than version so those files import as-is.
 const MIGRATIONS = [
-  // Example (when we later split overrides.plan into typed keys):
-  //   { from: 1, to: 2, apply: (s) => ({
-  //     ...s,
-  //     overrides: {
-  //       ...s.overrides,
-  //       activePlan: s.overrides?.plan?.active,
-  //     },
-  //   }) },
+  {
+    from: 0,
+    to: 1,
+    apply: (s) => ({
+      version: 1,
+      exportedAt: s.exportedAt ?? null,
+      origin: s.origin ?? null,
+      data: s.localStorage,
+    }),
+  },
 ];
 
 // Reads every ATLAS key and returns a single snapshot object.
@@ -85,7 +90,11 @@ export function migrate(snapshot) {
   if (!snapshot || typeof snapshot !== 'object') {
     throw new Error('Backup file is empty or malformed.');
   }
-  let v = snapshot.version ?? 1;
+  // Versionless files: v0.8 exports carry `localStorage` instead of
+  // `data` — that shape IS version 0. Anything else versionless is a
+  // v1 file written before the field existed.
+  const inferred = snapshot.localStorage && !snapshot.data ? 0 : 1;
+  let v = snapshot.version ?? inferred;
   let cur = snapshot;
   for (const step of MIGRATIONS) {
     if (v >= step.to) continue;
