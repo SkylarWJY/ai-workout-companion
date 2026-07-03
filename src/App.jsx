@@ -26,16 +26,18 @@ function countSets(session) {
   return n;
 }
 
-// Lazy-load v2 so the v0.8 bundle stays unaffected — the v2 chunk only
-// downloads when the gate trips. Production / root URL keeps shipping v1.
 const AppV2 = React.lazy(() => import('./v2/AppV2.jsx'));
-// Lazy-load v3 (neon performance aesthetic) — same isolation pattern.
+// Lazy-load v3 (neon performance aesthetic mockup) — kept behind ?v=3.
 const AppV3 = React.lazy(() => import('./v3/AppV3.jsx'));
 
 function useVersionGate() {
-  // ?v=1 → legacy, ?v=2 → v2, ?v=3 → v3. URL wins over localStorage.
+  // v2 IS the app as of v1.0 — the bare domain serves it. ?v=1 keeps
+  // the legacy v0.8 UI reachable, ?v=3 the design mockup. URL wins
+  // over localStorage. (Before v1.0 this defaulted to legacy, which
+  // meant the phone PWA at the root URL kept showing v0.8 even after
+  // the new build shipped.)
   const [v, setV] = React.useState(() => {
-    if (typeof window === 'undefined') return 1;
+    if (typeof window === 'undefined') return 2;
     const url = new URL(window.location.href);
     const param = url.searchParams.get('v');
     if (param === '3') return 3;
@@ -44,17 +46,17 @@ function useVersionGate() {
     try {
       const t = JSON.parse(localStorage.getItem('atlas.theme') || 'null');
       if (t === 'v3') return 3;
-      if (t === 'v2') return 2;
+      if (t === 'v1') return 1;
     } catch {}
-    return 1;
+    return 2;
   });
   React.useEffect(() => {
     const handler = () => setV((prev) => {
       try {
         const t = JSON.parse(localStorage.getItem('atlas.theme') || 'null');
         if (t === 'v3') return 3;
-        if (t === 'v2') return 2;
-        return 1;
+        if (t === 'v1') return 1;
+        return 2;
       } catch { return prev; }
     });
     window.addEventListener('storage', handler);
