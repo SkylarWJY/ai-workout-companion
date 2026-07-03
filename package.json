@@ -8,7 +8,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "audit:variants": "node scripts/audit-variants.mjs",
-    "prebuild": "node scripts/audit-variants.mjs && vitest run",
+    "validate:exercises": "node scripts/validate-exercises.mjs",
+    "prebuild": "node scripts/audit-variants.mjs && node scripts/validate-exercises.mjs && vitest run",
     "build": "vite build",
     "preview": "vite preview"
   },
