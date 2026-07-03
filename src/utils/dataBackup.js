@@ -118,8 +118,11 @@ export function importAll(rawText) {
       skipped.push(key);
       continue;
     }
-    const serialized = typeof value === 'string' ? value : JSON.stringify(value);
-    localStorage.setItem(key, serialized);
+    // Always JSON-encode: exportAll() parsed every value, and the
+    // storage layer (useLocalStorage) JSON.parses on read. Writing a
+    // bare string here (e.g. zh instead of "zh") corrupts the key for
+    // the next read — caught by the round-trip test in preview.
+    localStorage.setItem(key, JSON.stringify(value));
     written.push(key);
   }
 
