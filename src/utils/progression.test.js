@@ -179,6 +179,49 @@ describe('recommendNextWeight — double progression', () => {
   });
 });
 
+describe('recommendNextWeight — inverted (assist-weighted)', () => {
+  // Assisted pull-ups: logged weight = machine HELP. Less = stronger.
+  // Range mirrors the real Assisted Pull-Ups prescription (6–10).
+  const recInv = (h, extra = {}) => rec(h, { inverted: true, repRange: '6-10', ...extra });
+
+  it('above ceiling + easy → REDUCE assist by the big step', () => {
+    // 30 kg assist, 25–100 bracket → big = 5 kg… downward.
+    const h = historyOf(session('pull-1', [{ weight: 30, reps: 11, difficulty: 'easy', weightUnit: 'kg' }], T0));
+    const r = recInv(h);
+    expect(r.kind).toBe('bigBump');
+    expect(r.weight).toBe(25);
+    expect(r.reasoning).toBe('reduceAssistEasy');
+  });
+
+  it('at ceiling + easy → reduce assist a notch', () => {
+    const h = historyOf(session('pull-1', [{ weight: 30, reps: 10, difficulty: 'easy', weightUnit: 'kg' }], T0));
+    const r = recInv(h);
+    expect(r.weight).toBe(27.5);
+    expect(r.reasoning).toBe('reduceAssist');
+  });
+
+  it('below floor + failure → ADD assistance (~10%, at least one plate)', () => {
+    const h = historyOf(session('pull-1', [{ weight: 30, reps: 4, difficulty: 'failure', weightUnit: 'kg' }], T0));
+    const r = recInv(h);
+    expect(r.kind).toBe('deload');
+    expect(r.reasoning).toBe('increaseAssist');
+    expect(r.weight).toBeGreaterThan(30); // 33 kg — more help
+  });
+
+  it('assist never goes below zero — graduated to bodyweight', () => {
+    const h = historyOf(session('pull-1', [{ weight: 2, reps: 12, difficulty: 'easy', weightUnit: 'kg' }], T0));
+    const r = recInv(h, { repRange: '6-10' });
+    expect(r.weight).toBeGreaterThanOrEqual(0);
+  });
+
+  it('inside range / hold branches are direction-neutral', () => {
+    const h = historyOf(session('pull-1', [{ weight: 30, reps: 8, difficulty: 'hard', weightUnit: 'kg' }], T0));
+    const r = recInv(h);
+    expect(r.kind).toBe('maintain');
+    expect(r.weight).toBe(30);
+  });
+});
+
 // ── progressTrend ──────────────────────────────────────────────
 
 describe('progressTrend', () => {

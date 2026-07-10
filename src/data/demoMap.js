@@ -1771,6 +1771,8 @@ const SKYLAR_VARIANTS = {
     { key: 'cable',  label: 'Wide Pulldown',    labelZh: '宽距下拉',
       youtubeId: 'bNmvKpJSWKM' },
     { key: 'assist', label: 'Assisted Pull-Up', labelZh: '辅助引体',
+      // Logged weight = machine assist → progression runs inverted.
+      assistWeight: true,
       youtubeId: 'yF85efFDGY4' },
     { key: 'pullup', label: 'Bodyweight Pull-Up', labelZh: '徒手引体',
       youtubeId: 'ZPG8OsHKXLw' },

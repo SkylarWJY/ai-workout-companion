@@ -8,7 +8,10 @@ import CountUp from './CountUp.jsx';
 // point, and a velocity gauge showing first→latest % change.
 //
 // `points` is the array from progressTrend(): { weight, reps, date, ... }
-export default function ProgressHero({ points = [], unit = 'kg', lang = 'en' }) {
+// `inverted` — assist-weighted exercises: the logged number is machine
+// HELP, so a FALLING line is progress. Flips the trend tint + adds an
+// explanatory caption so -5 kg reads as the win it actually is.
+export default function ProgressHero({ points = [], unit = 'kg', lang = 'en', inverted = false }) {
   const gid = useId().replace(/[:]/g, '');
   const has = points.length > 0;
   const first = points[0];
@@ -43,7 +46,11 @@ export default function ProgressHero({ points = [], unit = 'kg', lang = 'en' }) 
     return { path: d, area, dots: xs.map((x, i) => ({ x, y: ny[i] })) };
   }, [points]);
 
-  const tint = delta > 0 ? tints.green : delta < 0 ? tints.orange : tints.mint;
+  // Direction-aware tint: for assist-weighted lifts a NEGATIVE delta
+  // (less machine help) is the win.
+  const improving = inverted ? delta < 0 : delta > 0;
+  const regressing = inverted ? delta > 0 : delta < 0;
+  const tint = improving ? tints.green : regressing ? tints.orange : tints.mint;
 
   return (
     <div className="v2-card p-5">
@@ -85,6 +92,11 @@ export default function ProgressHero({ points = [], unit = 'kg', lang = 'en' }) 
             <div className="v2-num text-[11px] v2-t3 mt-0.5 tabular-nums">
               {delta > 0 ? '+' : ''}{delta.toFixed(1)} {unit}
             </div>
+            {inverted && (
+              <div className="v2-caption text-[9px] mt-1" style={{ color: tint }}>
+                {lang === 'zh' ? '辅助更少 = 更强' : 'less assist = stronger'}
+              </div>
+            )}
           </motion.div>
         )}
       </div>

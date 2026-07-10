@@ -114,6 +114,9 @@ export const STRINGS = {
     'log.rec.pushReps': 'Stay at this weight — push for more reps this week.',
     'log.rec.underLow': "Couldn't reach the working range — de-load 10% to consolidate.",
     'log.rec.shortSet': 'Short set at low effort — keep the weight, complete the range this time.',
+    'log.rec.reduceAssistEasy': 'Cruised past the rep ceiling — drop the assist, you\'re stronger than the machine thinks.',
+    'log.rec.reduceAssist': 'Hit the top of the range — reduce assistance a notch.',
+    'log.rec.increaseAssist': "Couldn't reach the range — add a little assistance and own the full reps.",
     // Legacy keys kept so history banners written under v0.7 don't break.
     'log.rec.moderateAtTop': 'Hit top of rep range at moderate effort → small bump.',
     'log.rec.hardAtTop': 'Pushed top range hard last time → time to try a bit more.',
@@ -468,6 +471,9 @@ export const STRINGS = {
     'log.rec.pushReps': '保持这个重量 — 这次冲多几下。',
     'log.rec.underLow': '上次连下限都没冲到 → 减 10% 重量先稳一周。',
     'log.rec.shortSet': '上次是低强度短组（没到区间但不吃力）→ 重量不动，这次做满区间。',
+    'log.rec.reduceAssistEasy': '轻松冲过次数上限 → 减辅助，你比机器以为的更强。',
+    'log.rec.reduceAssist': '顶到次数上限了 → 辅助减一档。',
+    'log.rec.increaseAssist': '没做到区间下限 → 加一点辅助，把完整次数拿回来。',
     // 旧 key 保留，避免历史 banner 出现 raw 文案
     'log.rec.moderateAtTop': '上次顶到上限中等吃力 → 小幅加重。',
     'log.rec.hardAtTop': '上次顶到上限挺吃力 → 该再往上试一点。',

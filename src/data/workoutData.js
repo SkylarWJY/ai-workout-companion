@@ -265,6 +265,9 @@ export const PULL_DAY = {
       id: 'pull-1',
       name: 'Assisted Pull-Ups',
       order: 1,
+      // Logged weight = machine ASSIST. Less assist = stronger, so the
+      // progression engine runs inverted for this exercise.
+      assistWeight: true,
       sets: 4,
       repRange: '6–10',
       restSeconds: 90,

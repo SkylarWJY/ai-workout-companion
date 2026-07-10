@@ -98,6 +98,10 @@ export function recommendNextWeight({
   variantKey,
   repRange,
   currentUnit,
+  // Assist-weighted exercises (assisted pull-ups): the logged number is
+  // the machine's HELP, so progress means the weight goes DOWN. Every
+  // bump below flips sign, and the deload becomes "add assistance".
+  inverted = false,
 }) {
   const ref = topSetLastSession(history, exerciseId, variantKey);
   if (!ref) return null;
@@ -122,25 +126,33 @@ export function recommendNextWeight({
   // has been broken (or hit at very low effort). Anywhere inside the range
   // → hold the weight and push for more reps next session.
 
-  // Above ceiling: clearly ready to load up.
+  // Direction multiplier: normal lifts add weight to progress;
+  // assist-weighted lifts subtract it. Assist can't go below zero —
+  // at 0 the user has graduated to bodyweight pull-ups.
+  const dir = inverted ? -1 : 1;
+  const clamp = (x) => (inverted ? Math.max(0, x) : x);
+
+  // Above ceiling: clearly ready to progress.
   if (reps > range.high) {
     const kind = diff === 'easy' ? 'big' : 'small';
     return {
-      weight: roundToPlate(w + bumpSize(w, currentUnit, kind), currentUnit),
+      weight: roundToPlate(clamp(w + dir * bumpSize(w, currentUnit, kind)), currentUnit),
       kind: kind === 'big' ? 'bigBump' : 'smallBump',
-      reasoning: kind === 'big' ? 'exceededRangeEasy' : 'exceededRange',
+      reasoning: inverted
+        ? (kind === 'big' ? 'reduceAssistEasy' : 'reduceAssist')
+        : (kind === 'big' ? 'exceededRangeEasy' : 'exceededRange'),
       from,
     };
   }
 
-  // Exactly at ceiling: only bump if it felt easy. Otherwise consolidate
-  // — repeat at this weight, see if effort drops or reps go up.
+  // Exactly at ceiling: only progress if it felt easy. Otherwise
+  // consolidate — repeat, see if effort drops or reps go up.
   if (reps === range.high) {
     if (diff === 'easy') {
       return {
-        weight: roundToPlate(w + bumpSize(w, currentUnit, 'small'), currentUnit),
+        weight: roundToPlate(clamp(w + dir * bumpSize(w, currentUnit, 'small')), currentUnit),
         kind: 'smallBump',
-        reasoning: 'easyAtTop',
+        reasoning: inverted ? 'reduceAssist' : 'easyAtTop',
         from,
       };
     }
@@ -152,17 +164,22 @@ export function recommendNextWeight({
     };
   }
 
-  // Below the floor. Only deload when the effort says the weight is
-  // actually too heavy (hard / failure). An easy or moderate set cut
+  // Below the floor. Only back off when the effort says the load is
+  // actually wrong (hard / failure). An easy or moderate set cut
   // short below the range is a partial set — someone got interrupted,
-  // did a technique drill, or sandbagged — and dropping 10% off their
-  // working weight for it would sabotage progress. Hold instead.
+  // did a technique drill, or sandbagged — and backing off for it
+  // would sabotage progress. Hold instead.
   if (reps < range.low) {
     if (diff === 'hard' || diff === 'failure') {
       return {
-        weight: roundToPlate(w * 0.9, currentUnit),
+        // Normal: strip 10% of the load. Inverted: ADD ~10% more
+        // assistance (at least one small plate) so the range is
+        // reachable again.
+        weight: inverted
+          ? roundToPlate(Math.max(w * 1.1, w + bumpSize(w, currentUnit, 'small')), currentUnit)
+          : roundToPlate(w * 0.9, currentUnit),
         kind: 'deload',
-        reasoning: 'underLow',
+        reasoning: inverted ? 'increaseAssist' : 'underLow',
         from,
       };
     }

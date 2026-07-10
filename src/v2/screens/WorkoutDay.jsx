@@ -24,7 +24,7 @@ import RestOverlay from '../components/RestOverlay.jsx';
 import WorkOverlay from '../components/WorkOverlay.jsx';
 import ReorderSheet from '../components/ReorderSheet.jsx';
 import { useRestTimer } from '../../hooks/useRestTimer.js';
-import { springs, tints, tintForKind, KIND_LABEL, KIND_LABEL_ZH } from '../theme.js';
+import { springs, tints, tintForKind, kindLabel } from '../theme.js';
 
 const ICON = {
   back: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>,
@@ -440,8 +440,9 @@ function ExerciseCard({ idx, ex, session, history, lang, t, weightUnit, onLog, o
       variantKey: null,
       repRange: ex.repRange,
       currentUnit: weightUnit,
+      inverted: !!ex.assistWeight,
     }),
-    [history, ex.id, ex.repRange, weightUnit],
+    [history, ex.id, ex.repRange, weightUnit, ex.assistWeight],
   );
 
   const lastLog = useMemo(
@@ -499,7 +500,7 @@ function ExerciseCard({ idx, ex, session, history, lang, t, weightUnit, onLog, o
                     <circle cx="12" cy="12" r="4" />
                   </svg>
                   <span className="v2-num">{rec.weight} {weightUnit}</span>
-                  <span className="opacity-75">· {(lang === 'zh' ? KIND_LABEL_ZH : KIND_LABEL)[rec.kind]}</span>
+                  <span className="opacity-75">· {kindLabel(rec.kind, lang, !!ex.assistWeight)}</span>
                 </span>
               )}
               {!rec && lastLog && (
@@ -638,17 +639,20 @@ function formatSetSummary(log, unit) {
 function variantPropsFor(exercise, overrides, lang) {
   if (!exercise) return {};
   const variants = demoVariants(exercise.id) || [];
-  if (variants.length === 0) return {};
+  if (variants.length === 0) return { inverted: !!exercise.assistWeight };
   const savedKey = overrides.exercise?.[exercise.id]?.selectedVariant;
   const variant = variants.find((v) => v.key === savedKey) || variants[0];
   return {
     variants,
     variantKey: variant.key,
     variantLabel: (lang === 'zh' ? variant.labelZh : variant.label) || variant.key,
+    // Assist-weighted (exercise-level like Assisted Pull-Ups, or the
+    // selected variant like Skylar's 辅助引体) → progression inverts.
+    inverted: !!(exercise.assistWeight || variant.assistWeight),
   };
 }
 
-function LoggerForm({ exercise, history, weightUnit, lang, t, onSave, onCancel, initial = null, variantKey = null, variantLabel = null, variants = [] }) {
+function LoggerForm({ exercise, history, weightUnit, lang, t, onSave, onCancel, initial = null, variantKey = null, variantLabel = null, variants = [], inverted = false }) {
   const rec = useMemo(
     () => recommendNextWeight({
       history,
@@ -656,8 +660,9 @@ function LoggerForm({ exercise, history, weightUnit, lang, t, onSave, onCancel, 
       variantKey,
       repRange: exercise?.repRange,
       currentUnit: weightUnit,
+      inverted,
     }),
-    [history, exercise?.id, exercise?.repRange, weightUnit, variantKey],
+    [history, exercise?.id, exercise?.repRange, weightUnit, variantKey, inverted],
   );
   // Last ACTUAL set for the selected variant — cable / dumbbell /
   // machine weights are different worlds and never cross-prefill.
@@ -760,7 +765,7 @@ function LoggerForm({ exercise, history, weightUnit, lang, t, onSave, onCancel, 
               {rec.weight} {weightUnit}
             </Chip>
             <span className="v2-caption text-[10px] whitespace-nowrap" style={{ color: tintForKind(rec.kind) }}>
-              {(lang === 'zh' ? KIND_LABEL_ZH : KIND_LABEL)[rec.kind]}
+              {kindLabel(rec.kind, lang, inverted)}
             </span>
             {String(rec.weight) !== weight && (
               <button

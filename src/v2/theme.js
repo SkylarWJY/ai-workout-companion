@@ -84,3 +84,30 @@ export const KIND_LABEL_ZH = {
   maintain:  '冲 reps',
   deload:    '减重',
 };
+
+// Assist-weighted exercises run inverted: "progress" = LESS assist.
+const KIND_LABEL_INV = {
+  bigBump:   'Less assist',
+  smallBump: 'Less assist',
+  easyAtTop: 'Less assist',
+  holdAtTop: 'Hold + push',
+  maintain:  'Push reps',
+  deload:    'More assist',
+};
+const KIND_LABEL_INV_ZH = {
+  bigBump:   '减辅助',
+  smallBump: '减辅助',
+  easyAtTop: '减辅助',
+  holdAtTop: '保持·冲 reps',
+  maintain:  '冲 reps',
+  deload:    '加辅助',
+};
+
+// One resolver for every kind-chip in the app — picks language and
+// flips wording for assist-weighted lifts.
+export function kindLabel(kind, lang, inverted = false) {
+  const map = inverted
+    ? (lang === 'zh' ? KIND_LABEL_INV_ZH : KIND_LABEL_INV)
+    : (lang === 'zh' ? KIND_LABEL_ZH : KIND_LABEL);
+  return map[kind] || kind;
+}

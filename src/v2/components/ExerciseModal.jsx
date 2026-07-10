@@ -246,7 +246,12 @@ function ModalBody({ exercise, onEdit }) {
         <div className="v2-caption v2-t2 mb-2">
           {lang === 'zh' ? '进步曲线' : 'Your progress'}
         </div>
-        <ProgressHero points={trend.points} unit={weightUnit} lang={lang} />
+        <ProgressHero
+          points={trend.points}
+          unit={weightUnit}
+          lang={lang}
+          inverted={!!(exercise.assistWeight || variant?.assistWeight)}
+        />
       </section>
 
       {/* Why it matters */}
