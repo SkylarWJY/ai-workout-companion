@@ -152,12 +152,24 @@ export function recommendNextWeight({
     };
   }
 
-  // Below the floor: too heavy to even hit the working range.
+  // Below the floor. Only deload when the effort says the weight is
+  // actually too heavy (hard / failure). An easy or moderate set cut
+  // short below the range is a partial set — someone got interrupted,
+  // did a technique drill, or sandbagged — and dropping 10% off their
+  // working weight for it would sabotage progress. Hold instead.
   if (reps < range.low) {
+    if (diff === 'hard' || diff === 'failure') {
+      return {
+        weight: roundToPlate(w * 0.9, currentUnit),
+        kind: 'deload',
+        reasoning: 'underLow',
+        from,
+      };
+    }
     return {
-      weight: roundToPlate(w * 0.9, currentUnit),
-      kind: 'deload',
-      reasoning: 'underLow',
+      weight: roundToPlate(w, currentUnit),
+      kind: 'maintain',
+      reasoning: 'shortSet',
       from,
     };
   }

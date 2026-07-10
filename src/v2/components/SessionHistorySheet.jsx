@@ -18,6 +18,14 @@ function formatDate(ts, lang) {
   }
 }
 
+function isToday(session) {
+  const ts = session?.startedAt || session?.completedAt;
+  if (!ts) return false;
+  const d = new Date(ts);
+  const n = new Date();
+  return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth() && d.getDate() === n.getDate();
+}
+
 function formatElapsed(start, end) {
   if (!start || !end) return '—';
   const mins = Math.max(1, Math.round((end - start) / 60000));
@@ -25,7 +33,7 @@ function formatElapsed(start, end) {
   return `${Math.floor(mins / 60)}h ${mins % 60}m`;
 }
 
-export default function SessionHistorySheet({ open, onClose }) {
+export default function SessionHistorySheet({ open, onClose, onReopen }) {
   const { lang } = useLang();
   const [history, setHistory] = useLocalStorage('atlas.history', {});
   const [expanded, setExpanded] = useState(null);
@@ -131,6 +139,21 @@ export default function SessionHistorySheet({ open, onClose }) {
                       className="overflow-hidden"
                       style={{ borderTop: '0.5px solid var(--hairline)' }}
                     >
+                      {/* Reopen — walk back into today's session with all
+                          sets intact. "提前结束" is a pause, not a wall. */}
+                      {onReopen && isToday(s) && (
+                        <div className="px-4 pt-3">
+                          <PrimaryButton
+                            size="md"
+                            fullWidth
+                            variant="tinted"
+                            tint={tints.green}
+                            onClick={() => { onReopen(s.type); onClose?.(); }}
+                          >
+                            {lang === 'zh' ? '重新打开这次训练' : 'Reopen this session'}
+                          </PrimaryButton>
+                        </div>
+                      )}
                       <ul>
                         {workout.exercises.map((e) => {
                           const logs = s.completedSets?.[e.id] || [];

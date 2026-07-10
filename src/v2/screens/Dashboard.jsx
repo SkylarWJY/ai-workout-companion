@@ -341,8 +341,16 @@ export default function Dashboard({ history = {}, onOpenWorkout }) {
         <Mission overrides={overrides} lang={lang} t={t} />
       </main>
 
-      <SettingsSheet open={settingsOpen} onClose={() => setSettingsOpen(false)} />
-      <SessionHistorySheet open={historyOpen} onClose={() => setHistoryOpen(false)} />
+      <SettingsSheet
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        onReopenSession={(type) => { setSettingsOpen(false); onOpenWorkout(type); }}
+      />
+      <SessionHistorySheet
+        open={historyOpen}
+        onClose={() => setHistoryOpen(false)}
+        onReopen={(type) => { setHistoryOpen(false); onOpenWorkout(type); }}
+      />
     </Screen>
   );
 }

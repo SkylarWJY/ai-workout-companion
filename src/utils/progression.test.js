@@ -97,12 +97,27 @@ describe('recommendNextWeight — double progression', () => {
     expect(r.weight).toBe(40);
   });
 
-  it('below the floor → 10% deload, plate-rounded', () => {
+  it('below the floor at hard/failure → 10% deload, plate-rounded', () => {
     const h = historyOf(session('pull-1', [{ weight: 40, reps: 6, difficulty: 'failure', weightUnit: 'kg' }], T0));
     const r = rec(h);
     expect(r.kind).toBe('deload');
     // 40 * 0.9 = 36 → rounds to 36 (0.5 kg precision)
     expect(r.weight).toBe(36);
+    const h2 = historyOf(session('pull-1', [{ weight: 40, reps: 6, difficulty: 'hard', weightUnit: 'kg' }], T0));
+    expect(rec(h2).kind).toBe('deload');
+  });
+
+  it('below the floor at easy/moderate → hold, not deload (short set)', () => {
+    // A 6-rep set logged "easy" isn't a strength failure — it's an
+    // interrupted / technique set. Deloading off it would sabotage
+    // the working weight.
+    const h = historyOf(session('pull-1', [{ weight: 40, reps: 6, difficulty: 'easy', weightUnit: 'kg' }], T0));
+    const r = rec(h);
+    expect(r.kind).toBe('maintain');
+    expect(r.reasoning).toBe('shortSet');
+    expect(r.weight).toBe(40);
+    const h2 = historyOf(session('pull-1', [{ weight: 40, reps: 6, difficulty: 'moderate', weightUnit: 'kg' }], T0));
+    expect(rec(h2).reasoning).toBe('shortSet');
   });
 
   it('anchors on the TOP set of the latest session, not the last log entry', () => {

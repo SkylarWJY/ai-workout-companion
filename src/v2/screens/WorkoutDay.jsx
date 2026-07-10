@@ -5,7 +5,8 @@ import { useOverrides, applyExerciseOverrides } from '../../hooks/useOverrides.j
 import { useLocalStorage } from '../../hooks/useLocalStorage.js';
 import { recommendNextWeight } from '../../utils/progression.js';
 import { convertWeight } from '../../utils/weight.js';
-import { lastLogForExercise } from '../../utils/historyLookup.js';
+import { lastLogForExercise, lastLogsByVariant } from '../../utils/historyLookup.js';
+import { demoVariants } from '../../data/demoMap.js';
 import Screen from '../components/Screen.jsx';
 import GlassNavBar from '../components/GlassNavBar.jsx';
 import IconButton from '../components/IconButton.jsx';
@@ -283,6 +284,7 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
             weightUnit={weightUnit}
             lang={lang}
             t={t}
+            {...variantPropsFor(loggerFor, overrides, lang)}
             onSave={(log) => {
               upsertLog(loggerFor.id, log);
               const restSecs = loggerFor.restSeconds || 60;
@@ -311,6 +313,7 @@ export default function WorkoutDay({ workout, session, setSession, onBack, onCom
             weightUnit={weightUnit}
             lang={lang}
             t={t}
+            {...variantPropsFor(orderedExercises.find((e) => e.id === editingSet.exId), overrides, lang)}
             initial={editingSet.log}
             onSave={(log) => {
               upsertLog(editingSet.exId, log, editingSet.idx);
@@ -629,27 +632,57 @@ function formatSetSummary(log, unit) {
 // Logger form (used inside Logger Sheet AND Edit Sheet)
 // ─────────────────────────────────────────────────────────────────────
 
-function LoggerForm({ exercise, history, weightUnit, lang, t, onSave, onCancel, initial = null }) {
+// Resolves the persisted variant choice (set from the modal's chip
+// strip) into the props LoggerForm needs. Exercises without variants
+// log untagged, exactly as before.
+function variantPropsFor(exercise, overrides, lang) {
+  if (!exercise) return {};
+  const variants = demoVariants(exercise.id) || [];
+  if (variants.length === 0) return {};
+  const savedKey = overrides.exercise?.[exercise.id]?.selectedVariant;
+  const variant = variants.find((v) => v.key === savedKey) || variants[0];
+  return {
+    variants,
+    variantKey: variant.key,
+    variantLabel: (lang === 'zh' ? variant.labelZh : variant.label) || variant.key,
+  };
+}
+
+function LoggerForm({ exercise, history, weightUnit, lang, t, onSave, onCancel, initial = null, variantKey = null, variantLabel = null, variants = [] }) {
   const rec = useMemo(
     () => recommendNextWeight({
       history,
       exerciseId: exercise?.id,
-      variantKey: null,
+      variantKey,
       repRange: exercise?.repRange,
       currentUnit: weightUnit,
     }),
-    [history, exercise?.id, exercise?.repRange, weightUnit],
+    [history, exercise?.id, exercise?.repRange, weightUnit, variantKey],
   );
-  const refLog = useMemo(() => lastLogForExercise(history, exercise?.id), [history, exercise?.id]);
+  // Last ACTUAL set for the selected variant — cable / dumbbell /
+  // machine weights are different worlds and never cross-prefill.
+  const refLog = useMemo(
+    () => lastLogForExercise(history, exercise?.id, variantKey),
+    [history, exercise?.id, variantKey],
+  );
+  // Per-variant last logs — rendered as a compare strip so the user
+  // sees "哑铃 4kg × 12 · 绳索 9kg × 15" at a glance while logging.
+  const byVariant = useMemo(
+    () => lastLogsByVariant(history, exercise?.id),
+    [history, exercise?.id],
+  );
 
+  // Prefill = the numbers you ACTUALLY did last time (per variant).
+  // The recommendation stays a banner with a one-tap apply — a
+  // suggestion, not a silent overwrite.
   const [weight, setWeight] = useState(() => {
     if (initial?.weight != null) {
       return String(convertWeight(initial.weight, initial.weightUnit || weightUnit, weightUnit));
     }
-    if (rec?.weight != null) return String(rec.weight);
     if (refLog?.weight != null) {
       return String(convertWeight(refLog.weight, refLog.weightUnit || weightUnit, weightUnit));
     }
+    if (rec?.weight != null) return String(rec.weight);
     return '';
   });
   const [reps, setReps] = useState(() => (initial?.reps != null ? String(initial.reps) : (refLog?.reps != null ? String(refLog.reps) : '')));
@@ -673,7 +706,44 @@ function LoggerForm({ exercise, history, weightUnit, lang, t, onSave, onCancel, 
 
   return (
     <div className="px-5 pb-6 pt-1">
-      {/* Recommendation banner */}
+      {/* Variant context — which tool these numbers belong to, plus a
+          compare strip of last logs across the other variants. */}
+      {(variantLabel || Object.keys(byVariant).length > 1) && (
+        <div className="mb-4">
+          {variantLabel && (
+            <div className="flex items-center gap-2 mb-2">
+              <Chip size="sm" tint={tints.green}>{variantLabel}</Chip>
+              <span className="v2-caption text-[10px] v2-t3">
+                {lang === 'zh' ? '记录到这个版本' : 'Logging this variant'}
+              </span>
+            </div>
+          )}
+          {Object.keys(byVariant).length > 0 && (
+            <div className="flex gap-1.5 overflow-x-auto scroll-clean -mx-5 px-5 pb-1">
+              {variants
+                .filter((v) => byVariant[v.key])
+                .map((v) => {
+                  const log = byVariant[v.key];
+                  const w = convertWeight(log.weight, log.weightUnit || weightUnit, weightUnit);
+                  const isCurrent = v.key === variantKey;
+                  return (
+                    <span
+                      key={v.key}
+                      className="shrink-0 rounded-full px-3 py-1.5 text-[11px] font-medium v2-num"
+                      style={isCurrent
+                        ? { background: hexToRgba(tints.green, 0.18), color: 'var(--label-1)', boxShadow: `inset 0 0 0 1px ${hexToRgba(tints.green, 0.5)}` }
+                        : { background: 'var(--hairline)', color: 'var(--label-2)' }}
+                    >
+                      {(lang === 'zh' ? v.labelZh : v.label) || v.key} · {w}{weightUnit} × {log.reps}
+                    </span>
+                  );
+                })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Recommendation banner — one tap applies the suggested load */}
       {rec && (
         <motion.div
           initial={{ opacity: 0, y: 6 }}
@@ -692,6 +762,16 @@ function LoggerForm({ exercise, history, weightUnit, lang, t, onSave, onCancel, 
             <span className="v2-caption text-[10px] whitespace-nowrap" style={{ color: tintForKind(rec.kind) }}>
               {(lang === 'zh' ? KIND_LABEL_ZH : KIND_LABEL)[rec.kind]}
             </span>
+            {String(rec.weight) !== weight && (
+              <button
+                type="button"
+                onClick={() => setWeight(String(rec.weight))}
+                className="ml-auto shrink-0 rounded-full px-3 py-1 text-[11px] font-semibold"
+                style={{ background: tintForKind(rec.kind), color: '#000' }}
+              >
+                {lang === 'zh' ? '用这个' : 'Apply'}
+              </button>
+            )}
           </div>
           <div className="v2-body text-[12.5px] v2-t2 mt-1.5">
             {t(`log.rec.${rec.reasoning}`)}
@@ -755,7 +835,14 @@ function LoggerForm({ exercise, history, weightUnit, lang, t, onSave, onCancel, 
           size="lg"
           fullWidth
           disabled={!canSave}
-          onClick={() => onSave({ weight: Number(weight), reps: Number(reps), difficulty })}
+          onClick={() => onSave({
+            weight: Number(weight),
+            reps: Number(reps),
+            difficulty,
+            // Tag the log with the tool so future prefills + progression
+            // recommendations stay within this variant's weight stream.
+            ...(variantKey ? { variant: variantKey } : (initial?.variant ? { variant: initial.variant } : {})),
+          })}
         >
           {initial
             ? (lang === 'zh' ? '保存修改' : 'Save changes')

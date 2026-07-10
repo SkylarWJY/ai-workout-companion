@@ -79,7 +79,22 @@ function Root() {
       activeSession?.startedAt &&
       dateKeyFor(activeSession.startedAt) === dateKeyFor(Date.now());
     if (!activeSession || activeSession.type !== type || !sessionIsToday) {
-      setActiveSession({ type, startedAt: Date.now(), completedSets: {} });
+      // If today already has a finished session of this type, REOPEN it
+      // instead of starting fresh. Two birds: "提前结束" is no longer
+      // final (walk back in, keep logging, edit any chip), and the
+      // fresh-session path can't clobber the day's history entry
+      // (same dateKey-type id) with an empty set list anymore.
+      // Matched by content (type + started today), not by key format —
+      // imported/legacy histories don't always use dateKey-type ids.
+      const todayKey = dateKeyFor(Date.now());
+      const finished = Object.values(history)
+        .filter((s) => s?.type === type && s?.startedAt && dateKeyFor(s.startedAt) === todayKey)
+        .sort((a, b) => (b.completedAt || 0) - (a.completedAt || 0))[0];
+      setActiveSession(
+        finished
+          ? { ...finished, type }
+          : { type, startedAt: Date.now(), completedSets: {} },
+      );
     }
     setView('workout');
   };

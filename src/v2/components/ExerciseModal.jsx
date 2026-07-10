@@ -50,12 +50,26 @@ export default function ExerciseModal({ open, exercise, onClose }) {
 
 function ModalBody({ exercise, onEdit }) {
   const { t, lang } = useLang();
-  const { overrides, weightUnit } = useOverrides();
+  const { overrides, weightUnit, setExerciseField } = useOverrides();
   const [history] = useLocalStorage('atlas.history', {});
 
   const variants = useMemo(() => demoVariants(exercise.id), [exercise.id]);
-  const [variantIdx, setVariantIdx] = useState(0);
-  useEffect(() => { setVariantIdx(0); }, [exercise.id]);
+  // Variant choice persists per exercise — the logger reads it so
+  // cable / dumbbell / machine weights stay separate streams.
+  const savedVariantKey = overrides.exercise?.[exercise.id]?.selectedVariant;
+  const initialIdx = Math.max(0, variants.findIndex((v) => v.key === savedVariantKey));
+  const [variantIdx, setVariantIdxRaw] = useState(initialIdx);
+  useEffect(() => {
+    const saved = overrides.exercise?.[exercise.id]?.selectedVariant;
+    const idx = Math.max(0, variants.findIndex((v) => v.key === saved));
+    setVariantIdxRaw(idx);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exercise.id]);
+  const setVariantIdx = (i) => {
+    setVariantIdxRaw(i);
+    const key = variants[i]?.key;
+    if (key) setExerciseField(exercise.id, 'selectedVariant', key);
+  };
 
   // Include the editorial ★ Best Pick — it's a curated "best for this
   // muscle" tab the user explicitly wants surfaced.

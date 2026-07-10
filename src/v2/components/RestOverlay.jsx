@@ -18,6 +18,10 @@ export default function RestOverlay({ timer, exerciseName, onDone, onStop }) {
   const { lang } = useLang();
   const { active, done, running, duration, remaining, pause, resume, skip, reset } = timer;
   const [showGoFlash, setShowGoFlash] = useState(false);
+  // Minimized = countdown keeps running in a small floating pill while
+  // the user scrolls back to the exercise card / tutorial video.
+  const [minimized, setMinimized] = useState(false);
+  useEffect(() => { if (!active) setMinimized(false); }, [active]);
   const doneFiredRef = useRef(false);
 
   // When timer flips to done, briefly flash "GO" then auto-close.
@@ -53,9 +57,58 @@ export default function RestOverlay({ timer, exerciseName, onDone, onStop }) {
   const portalRoot = typeof document !== 'undefined' ? document.body : null;
   if (!portalRoot) return null;
 
+  // ── Minimized pill — countdown keeps ticking bottom-center while
+  // the workout page is fully visible + scrollable behind it.
+  const miniPill = (
+    <AnimatePresence>
+      {(active || done) && minimized && (
+        <motion.button
+          key="rest-mini"
+          type="button"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 24 }}
+          transition={springs.smooth}
+          onClick={() => setMinimized(false)}
+          className="fixed z-40 flex items-center gap-2.5 rounded-full pl-3 pr-4 py-2.5"
+          style={{
+            left: '50%',
+            transform: 'translateX(-50%)',
+            bottom: 'calc(env(safe-area-inset-bottom) + 84px)',
+            background: 'rgba(0,0,0,0.82)',
+            backdropFilter: 'blur(20px) saturate(160%)',
+            WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+            boxShadow: `0 12px 32px -8px rgba(0,0,0,0.5), inset 0 0 0 1px ${rgba(ringTint, 0.45)}`,
+          }}
+          aria-label="Expand rest timer"
+        >
+          {/* Mini drain ring */}
+          <svg width="26" height="26" viewBox="0 0 26 26" className="-rotate-90">
+            <circle cx="13" cy="13" r="10" stroke="rgba(255,255,255,0.15)" strokeWidth="3" fill="none" />
+            <circle
+              cx="13" cy="13" r="10"
+              stroke={ringTint}
+              strokeWidth="3"
+              strokeLinecap="round"
+              fill="none"
+              strokeDasharray={2 * Math.PI * 10}
+              strokeDashoffset={2 * Math.PI * 10 * drained}
+            />
+          </svg>
+          <span className="v2-num text-[16px] font-bold" style={{ color: '#fff', letterSpacing: '-0.01em' }}>
+            {done ? 'GO' : fmtTime(remaining)}
+          </span>
+          <span className="v2-caption text-[10px]" style={{ color: 'rgba(255,255,255,0.5)' }}>
+            {lang === 'zh' ? '点击返回' : 'tap to expand'}
+          </span>
+        </motion.button>
+      )}
+    </AnimatePresence>
+  );
+
   const inner = (
     <AnimatePresence>
-      {(active || done) && (
+      {(active || done) && !minimized && (
         <motion.div
           key="rest-overlay"
           initial={{ opacity: 0 }}
@@ -102,12 +155,25 @@ export default function RestOverlay({ timer, exerciseName, onDone, onStop }) {
                 </div>
               )}
             </div>
-            <button
-              onClick={onStop}
-              className="v2-caption text-[11px] text-white/45 hover:text-white/85 transition"
-            >
-              {lang === 'zh' ? '结束' : 'End'}
-            </button>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setMinimized(true)}
+                className="v2-caption text-[11px] px-3 py-1.5 rounded-full transition"
+                style={{
+                  color: 'rgba(255,255,255,0.9)',
+                  background: 'rgba(255,255,255,0.12)',
+                  boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.2)',
+                }}
+              >
+                {lang === 'zh' ? '看动作 ↓' : 'View exercise ↓'}
+              </button>
+              <button
+                onClick={onStop}
+                className="v2-caption text-[11px] text-white/45 hover:text-white/85 transition"
+              >
+                {lang === 'zh' ? '结束' : 'End'}
+              </button>
+            </div>
           </div>
 
           {/* GIANT DRAIN RING ─────────────────────────────────────── */}
@@ -228,8 +294,8 @@ export default function RestOverlay({ timer, exerciseName, onDone, onStop }) {
   );
 
   const rootEl = typeof document !== 'undefined' ? document.querySelector('.v2') : null;
-  const themeClass = `v2${rootEl?.classList.contains('light') ? ' light' : ''}`;
-  return createPortal(<div className={themeClass}>{inner}</div>, portalRoot);
+  const themeClass = `v2${rootEl?.classList.contains('light') ? ' light' : ''}${rootEl?.classList.contains('neon') ? ' neon' : ''}`;
+  return createPortal(<div className={themeClass}>{inner}{miniPill}</div>, portalRoot);
 }
 
 function Ctrl({ onClick, label, filled }) {

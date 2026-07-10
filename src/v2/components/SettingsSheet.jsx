@@ -10,7 +10,7 @@ import PrimaryButton from './PrimaryButton.jsx';
 import SessionHistorySheet from './SessionHistorySheet.jsx';
 import DataExportSheet from './DataExportSheet.jsx';
 
-export default function SettingsSheet({ open, onClose }) {
+export default function SettingsSheet({ open, onClose, onReopenSession }) {
   const { t, lang, setLang } = useLang();
   const { theme, setTheme } = useV2Theme();
   const {
@@ -185,7 +185,13 @@ export default function SettingsSheet({ open, onClose }) {
         </div>
       </Sheet>
 
-      <SessionHistorySheet open={historyOpen} onClose={() => setHistoryOpen(false)} />
+      <SessionHistorySheet
+        open={historyOpen}
+        onClose={() => setHistoryOpen(false)}
+        onReopen={onReopenSession
+          ? (type) => { setHistoryOpen(false); onClose?.(); onReopenSession(type); }
+          : undefined}
+      />
       <DataExportSheet open={exportOpen} onClose={() => setExportOpen(false)} />
     </>
   );
